@@ -44,3 +44,15 @@ services:
       - ./backend/src:/app/src
     depends_on:
       - db
+  app:
+    container_name: vp-app
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "${APP_EXTERNAL_PORT}:${APP_INTERNAL_PORT}"
+    volumes:
+      - ./frontend/src:/app/src
+    depends_on:
+      - api
+    environment:
+      - API_URL=${API_INTERNAL_PORT}
