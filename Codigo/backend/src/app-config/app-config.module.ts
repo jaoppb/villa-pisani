@@ -1,15 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AppConfigService } from './app-config.service';
 import { ConfigModule } from '@nestjs/config';
-import * as Joi from 'joi';
+import validationSchema from './app-config.schema';
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({
 			isGlobal: true,
-			validationSchema: Joi.object({
-				API_LOG_LEVEL: Joi.string().default('level=info'),
-			}),
+			validationSchema,
 		}),
 	],
 	providers: [AppConfigService],

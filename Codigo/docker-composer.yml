@@ -32,6 +32,12 @@ services:
       - ./backend/.env
     environment:
       - DB_TYPE=mysql
+      - DB_HOST=db
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_INTERNAL_PORT=${DB_INTERNAL_PORT}
+      - API_INTERNAL_PORT=${API_INTERNAL_PORT}
     ports:
       - "${API_EXTERNAL_PORT}:${API_INTERNAL_PORT}"
     volumes:
