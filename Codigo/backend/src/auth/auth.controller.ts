@@ -14,11 +14,11 @@ export class AuthController {
 
 	@Post('signup')
 	async signUp(@Body() body: SignUpAuthDto) {
-		const { email, password } = body;
-		const user = await this.authService.signUp(email, password);
+		const user = await this.authService.signUp(body);
 
 		const result = {
 			id: user.id,
+			name: user.name,
 			email: user.email,
 			createAt: user.createAt,
 			updateAt: user.updateAt,

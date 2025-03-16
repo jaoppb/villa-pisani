@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { PasswordEncryption } from 'src/encryption/password-encryption.provider';
 import { User } from 'src/user/entities/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { SignUpAuthDto } from './dto/signup-auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,8 +21,11 @@ export class AuthService {
 		private eventEmitter: EventEmitter2,
 	) {}
 
-	async signUp(email: string, password: string) {
-		const userExist = await this.userRepository.findOneBy({ email });
+	async signUp(body: SignUpAuthDto) {
+		const userExist = await this.userRepository.findOneBy({
+			email: body.email,
+		});
+		const { password } = body;
 		if (userExist) {
 			this.logger.error('User exists', userExist);
 			throw new BadRequestException('User already exists');
@@ -29,12 +33,10 @@ export class AuthService {
 
 		const result = await this.passwordEncryption.encrypt(password);
 		const user = await this.userRepository.save({
-			email,
+			email: body.email,
+			name: body.name,
+			birthDate: body.birthDate,
 			password: result,
-		});
-
-		this.eventEmitter.emit('user.create', {
-			user,
 		});
 
 		this.logger.log('User create', user);

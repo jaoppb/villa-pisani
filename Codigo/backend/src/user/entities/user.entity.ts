@@ -1,4 +1,11 @@
-import { BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+	BeforeUpdate,
+	Column,
+	CreateDateColumn,
+	Entity,
+	PrimaryGeneratedColumn,
+	UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -17,10 +24,10 @@ export class User {
 	@Column({ type: 'datetime', nullable: true })
 	birthDate: Date;
 
-	@Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+	@CreateDateColumn()
 	createAt: Date;
 
-	@Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+	@UpdateDateColumn()
 	updateAt: Date;
 
 	@BeforeUpdate()
