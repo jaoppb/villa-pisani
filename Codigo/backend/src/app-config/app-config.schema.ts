@@ -1,6 +1,10 @@
 import * as Joi from 'joi';
 
 export const validationSchema = Joi.object({
+	API_LOG_LEVEL: Joi.string().default('level=info'),
+	API_PASSWORD_KEY_LENGTH: Joi.number().default(32),
+	API_PASSWORD_SALT_LENGTH: Joi.number().default(8),
+	API_JWT_SECRET: Joi.string().required(),
 	DB_TYPE: Joi.string().required(),
 	DB_NAME: Joi.string().required(),
 	DB_HOST: Joi.string().required(),
