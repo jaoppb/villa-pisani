@@ -27,4 +27,6 @@ function configureSwagger(app: INestApplication) {
 	SwaggerModule.setup('swagger', app, document);
 }
 
-bootstrap();
+bootstrap().catch((error) => {
+	console.error('Error during bootstrap:', error);
+});
