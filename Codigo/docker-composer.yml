@@ -30,11 +30,11 @@ services:
     restart: unless-stopped
     env_file:
       - ./backend/.env
+    environment:
+      - DB_TYPE=mysql
     ports:
       - "${API_EXTERNAL_PORT}:${API_INTERNAL_PORT}"
     volumes:
       - ./backend/src:/app/src
-      - ./backend/node_modules:/app/node_modules
-      - ./backend/.env:/app/.env
     depends_on:
       - db
