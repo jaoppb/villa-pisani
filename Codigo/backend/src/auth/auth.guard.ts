@@ -8,13 +8,16 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import { Request } from 'src/http/request';
+import { PayloadAuthDto } from './dto/payload-auth.dto';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
 	private readonly logger = new Logger(AuthGuard.name);
 	constructor(
 		private readonly jwtService: JwtService,
+		private readonly authService: AuthService,
 		private readonly reflector: Reflector,
 	) {}
 
@@ -29,23 +32,30 @@ export class AuthGuard implements CanActivate {
 
 		const request = context.switchToHttp().getRequest<Request>();
 		const token = this.extractToken(request);
-		if (!(await this.validateToken(token))) {
+		const payload = this.validateToken(token);
+		if (!payload) {
 			throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
 		}
+
+		const user = await this.authService.getUserFromAuthPayload(payload);
+		if (!user) {
+			throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+		}
+
+		request.user = user;
 
 		return true;
 	}
 
-	private async validateToken(
+	private validateToken(
 		token: string | null | undefined,
-	): Promise<boolean> {
+	): PayloadAuthDto | false {
 		if (!token) {
 			return false;
 		}
 
 		try {
-			await this.jwtService.verify(token);
-			return true;
+			return this.jwtService.verify<PayloadAuthDto>(token);
 		} catch {
 			return false;
 		}
