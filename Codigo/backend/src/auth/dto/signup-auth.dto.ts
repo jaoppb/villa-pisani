@@ -25,5 +25,5 @@ export class SignUpAuthDto {
 
 	@IsDateString()
 	@IsOptional()
-	birthDate: Date;
+	birthDate?: Date;
 }
