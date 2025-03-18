@@ -11,6 +11,7 @@ import { User } from 'src/user/entities/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SignUpAuthDto } from './dto/signup-auth.dto';
 import { PayloadAuthDto } from './dto/payload-auth.dto';
+import { Role } from './roles/role.entity';
 
 @Injectable()
 export class AuthService {
@@ -38,6 +39,7 @@ export class AuthService {
 			name: body.name,
 			birthDate: body.birthDate,
 			password: result,
+			roles: [Role.INHABITANT],
 		});
 
 		this.logger.log('User create', user);
