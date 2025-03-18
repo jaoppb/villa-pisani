@@ -23,7 +23,7 @@ export class User {
 	password: string;
 
 	@Column({ type: 'datetime', nullable: true })
-	birthDate: Date;
+	birthDate?: Date;
 
 	@Column({ type: 'set', enum: Role, default: [] })
 	roles: Role[];
