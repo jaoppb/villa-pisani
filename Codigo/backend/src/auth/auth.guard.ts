@@ -1,5 +1,4 @@
 import {
-	CanActivate,
 	ExecutionContext,
 	HttpException,
 	HttpStatus,
@@ -11,25 +10,22 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'src/http/request';
 import { PayloadAuthDto } from './dto/payload-auth.dto';
 import { AuthService } from './auth.service';
+import { CheckPublic } from './meta/check-public.decorator';
+import { BaseGuard } from './base.guard';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthGuard extends BaseGuard {
 	private readonly logger = new Logger(AuthGuard.name);
 	constructor(
 		private readonly jwtService: JwtService,
 		private readonly authService: AuthService,
-		private readonly reflector: Reflector,
-	) {}
-
-	private isPublic(context: ExecutionContext): boolean {
-		return this.reflector.get<boolean>('isPublic', context.getHandler());
+		protected readonly reflector: Reflector,
+	) {
+		super();
 	}
 
+	@CheckPublic
 	async canActivate(context: ExecutionContext): Promise<boolean> {
-		if (this.isPublic(context)) {
-			return true;
-		}
-
 		const request = context.switchToHttp().getRequest<Request>();
 		const token = this.extractToken(request);
 		const payload = this.validateToken(token);

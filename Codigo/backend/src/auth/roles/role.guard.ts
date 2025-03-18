@@ -1,19 +1,19 @@
-import {
-	CanActivate,
-	ExecutionContext,
-	Injectable,
-	Logger,
-} from '@nestjs/common';
+import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'src/http/request';
 import { Role } from './role.entity';
+import { BaseGuard } from '../base.guard';
+import { CheckPublic } from '../meta/check-public.decorator';
 
 @Injectable()
-export class RoleGuard implements CanActivate {
+export class RoleGuard extends BaseGuard {
 	private readonly logger = new Logger(RoleGuard.name);
-	constructor(private readonly reflector: Reflector) {}
+	constructor(protected readonly reflector: Reflector) {
+		super();
+	}
 
-	canActivate(context: ExecutionContext): boolean {
+	@CheckPublic
+	canActivate(context: ExecutionContext): Promise<boolean> | boolean {
 		const request = context.switchToHttp().getRequest<Request>();
 
 		const roles = this.reflector.getAllAndOverride<Role[]>('roles', [
