@@ -1,4 +1,11 @@
+import { Role } from '../roles/role.entity';
+
 export class CurrentUserDto {
-	userId: string;
-	username: string;
+	id: string;
+	name: string;
+	email: string;
+	createAt: Date;
+	updateAt: Date;
+	birthDate?: Date;
+	roles: Role[];
 }
