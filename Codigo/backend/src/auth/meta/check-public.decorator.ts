@@ -9,10 +9,10 @@ export function CheckPublic(
 ) {
 	const logger = new Logger(target.constructor.name);
 	const reflector = new Reflector();
-	const old = target.canActivate.bind(target) as (
+	const original = descriptor.value as (
 		context: ExecutionContext,
 	) => Promise<boolean>;
-	descriptor.value = async (context: ExecutionContext): Promise<boolean> => {
+	descriptor.value = async function (context: ExecutionContext): Promise<boolean> {
 		logger.debug('CheckPublic');
 
 		const isPublic = reflector.get<boolean>(
@@ -20,8 +20,11 @@ export function CheckPublic(
 			context.getHandler(),
 		);
 		if (isPublic) {
+			logger.debug('Public');
 			return true;
 		}
-		return old(context);
+
+		logger.debug('Not public');
+		return original.apply(this, [context]) as Promise<boolean>;
 	};
 }
