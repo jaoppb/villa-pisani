@@ -26,20 +26,24 @@ export class AuthGuard extends BaseGuard {
 
 	@CheckPublic
 	async canActivate(context: ExecutionContext): Promise<boolean> {
+		this.logger.debug('AuthGuard');
 		const request = context.switchToHttp().getRequest<Request>();
 		const token = this.extractToken(request);
 		const payload = this.validateToken(token);
 		if (!payload) {
+			this.logger.debug('Invalid token');
 			throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
 		}
 
 		const user = await this.authService.getUserFromAuthPayload(payload);
 		if (!user) {
+			this.logger.debug('User not found');
 			throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
 		}
 
 		request.user = user;
 
+		this.logger.debug('User authenticated', user);
 		return true;
 	}
 

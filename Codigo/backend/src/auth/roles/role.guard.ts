@@ -14,6 +14,7 @@ export class RoleGuard extends BaseGuard {
 
 	@CheckPublic
 	canActivate(context: ExecutionContext): Promise<boolean> | boolean {
+		this.logger.debug('RoleGuard');
 		const request = context.switchToHttp().getRequest<Request>();
 
 		const roles = this.reflector.getAllAndOverride<Role[]>('roles', [
