@@ -40,10 +40,12 @@ services:
       - API_INTERNAL_PORT=${API_INTERNAL_PORT}
     ports:
       - "${API_EXTERNAL_PORT}:${API_INTERNAL_PORT}"
+      - "${API_DEBUG_EXTERNAL_PORT}:${API_DEBUG_INTERNAL_PORT}"
     volumes:
       - ./backend/src:/app/src
     depends_on:
       - db
+    command: "npm run start:debug"
   app:
     container_name: vp-app
     build: ./frontend
