@@ -8,6 +8,7 @@ import { DatabaseModule } from 'src/database/database.module';
 
 describe('AuthService', () => {
 	let service: AuthService;
+	const email = `test${Date.now()}@test.com`;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -25,5 +26,21 @@ describe('AuthService', () => {
 
 	it('should be defined', () => {
 		expect(service).toBeDefined();
+	});
+
+	it('should signup', async () => {
+		const user = await service.signUp({
+			name: 'Test',
+			email: email,
+			password: 'AbCd1234',
+		});
+		expect(user).toBeDefined();
+		expect(user.id).toBeDefined();
+	});
+
+	it('should login', async () => {
+		const user = await service.signIn(email, 'AbCd1234');
+		expect(user).toBeDefined();
+		expect(user.id).toBeDefined();
 	});
 });

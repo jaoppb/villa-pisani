@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { Repository } from 'typeorm';
 import { EncryptionModule } from 'src/encryption/encryption.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
@@ -13,6 +12,7 @@ import { DatabaseModule } from 'src/database/database.module';
 
 describe('AuthController', () => {
 	let controller: AuthController;
+	const email = `test${Date.now()}@test.com`;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -39,5 +39,24 @@ describe('AuthController', () => {
 
 	it('should be defined', () => {
 		expect(controller).toBeDefined();
+	});
+
+	it('should signup', async () => {
+		const user = await controller.signUp({
+			name: 'Test',
+			email: email,
+			password: 'AbCd1234',
+		});
+		expect(user).toBeDefined();
+		expect(user.id).toBeDefined();
+	});
+
+	it('should login', async () => {
+		const token = await controller.signIn({
+			email: email,
+			password: 'AbCd1234',
+		});
+		expect(token).toBeDefined();
+		expect(token.accessToken).toBeDefined();
 	});
 });
