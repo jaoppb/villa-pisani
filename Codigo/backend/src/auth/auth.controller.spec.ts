@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AppConfigModule } from 'src/app-config/app-config.module';
 import { AppConfigService } from 'src/app-config/app-config.service';
 import { PasswordEncryption } from 'src/encryption/password-encryption.provider';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 
 describe('AuthController', () => {
 	let controller: AuthController;
@@ -73,6 +74,22 @@ describe('AuthController', () => {
 		expect(user.id).toBeDefined();
 	});
 
+	it('should not signup', async () => {
+		jest.spyOn(mockRepository, 'findOneBy').mockResolvedValueOnce({
+			id: faker.string.uuid(),
+			email: email,
+			password: password,
+		});
+
+		await expect(
+			controller.signUp({
+				name: name,
+				email: email,
+				password: password,
+			}),
+		).rejects.toThrow(BadRequestException);
+	});
+
 	it('should login', async () => {
 		jest.spyOn(passwordEncryption, 'compare').mockResolvedValueOnce(true);
 		jest.spyOn(mockRepository, 'findOneBy').mockResolvedValueOnce({
@@ -87,5 +104,21 @@ describe('AuthController', () => {
 		});
 		expect(token).toBeDefined();
 		expect(token.accessToken).toBeDefined();
+	});
+
+	it('should not login', async () => {
+		jest.spyOn(passwordEncryption, 'compare').mockResolvedValueOnce(false);
+		jest.spyOn(mockRepository, 'findOneBy').mockResolvedValueOnce({
+			id: faker.string.uuid(),
+			email: email,
+			password: password,
+		});
+
+		await expect(
+			controller.signIn({
+				email: email,
+				password: password,
+			}),
+		).rejects.toThrow(UnauthorizedException);
 	});
 });
