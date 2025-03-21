@@ -2,26 +2,36 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { EncryptionModule } from 'src/encryption/encryption.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { faker } from '@faker-js/faker';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
-import { DatabaseModule } from 'src/database/database.module';
+import { PasswordEncryption } from 'src/encryption/password-encryption.provider';
 
 describe('AuthService', () => {
 	let service: AuthService;
-	const email = `test${Date.now()}@test.com`;
+	let passwordEncryption: PasswordEncryption;
+	const name = faker.person.fullName();
+	const email = faker.internet.email();
+	const password = faker.internet.password();
+	const mockRepository = {
+		save: jest.fn(),
+		findOneBy: jest.fn(),
+	};
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [AuthService],
-			imports: [
-				EncryptionModule,
-				DatabaseModule,
-				TypeOrmModule.forFeature([User]),
-				EventEmitterModule.forRoot(),
+			providers: [
+				AuthService,
+				{
+					provide: getRepositoryToken(User),
+					useValue: mockRepository,
+				},
 			],
+			imports: [EncryptionModule, EventEmitterModule.forRoot()],
 		}).compile();
 
 		service = module.get<AuthService>(AuthService);
+		passwordEncryption = module.get<PasswordEncryption>(PasswordEncryption);
 	});
 
 	it('should be defined', () => {
@@ -29,17 +39,35 @@ describe('AuthService', () => {
 	});
 
 	it('should signup', async () => {
-		const user = await service.signUp({
-			name: 'Test',
+		jest.spyOn(mockRepository, 'save').mockResolvedValueOnce({
+			id: faker.string.uuid(),
+			name: name,
 			email: email,
-			password: 'AbCd1234',
+			createAt: new Date(),
+			updateAt: new Date(),
+		});
+
+		const user = await service.signUp({
+			name: name,
+			email: email,
+			password: password,
 		});
 		expect(user).toBeDefined();
 		expect(user.id).toBeDefined();
 	});
 
 	it('should login', async () => {
-		const user = await service.signIn(email, 'AbCd1234');
+		jest.spyOn(passwordEncryption, 'compare').mockResolvedValueOnce(true);
+		jest.spyOn(mockRepository, 'findOneBy').mockResolvedValueOnce({
+			id: faker.string.uuid(),
+			name: name,
+			email: email,
+			password: password,
+			createAt: new Date(),
+			updateAt: new Date(),
+		});
+
+		const user = await service.signIn(email, password);
 		expect(user).toBeDefined();
 		expect(user.id).toBeDefined();
 	});
