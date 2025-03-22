@@ -30,8 +30,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 	],
 	controllers: [AuthController],
 	providers: [AuthService, PasswordEncryption, JwtStrategy],
-	exports: [JwtModule, JwtStrategy],
+	exports: [AuthService, JwtModule, JwtStrategy],
 })
 export class AuthModule {
-	constructor(private readonly authService: AuthService) {}
+	constructor() {}
 }

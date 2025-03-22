@@ -1,3 +1,4 @@
+import { Role } from 'src/auth/roles/role.entity';
 import {
 	BeforeUpdate,
 	Column,
@@ -22,7 +23,10 @@ export class User {
 	password: string;
 
 	@Column({ type: 'datetime', nullable: true })
-	birthDate: Date;
+	birthDate?: Date;
+
+	@Column({ type: 'set', enum: Role, default: [] })
+	roles: Role[];
 
 	@CreateDateColumn()
 	createAt: Date;

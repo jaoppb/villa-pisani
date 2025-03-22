@@ -10,6 +10,8 @@ import { PasswordEncryption } from 'src/encryption/password-encryption.provider'
 import { User } from 'src/user/entities/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SignUpAuthDto } from './dto/signup-auth.dto';
+import { PayloadAuthDto } from './dto/payload-auth.dto';
+import { Role } from './roles/role.entity';
 
 @Injectable()
 export class AuthService {
@@ -37,6 +39,7 @@ export class AuthService {
 			name: body.name,
 			birthDate: body.birthDate,
 			password: result,
+			roles: [Role.INHABITANT],
 		});
 
 		this.logger.log('User create', user);
@@ -57,6 +60,19 @@ export class AuthService {
 
 		this.logger.log('User sign in', user);
 
+		return user;
+	}
+
+	async getUserFromAuthPayload(payload: PayloadAuthDto) {
+		const user = await this.userRepository.findOneBy({
+			email: payload.email,
+		});
+		if (!user) {
+			this.logger.error('User not exists', payload.email);
+			throw new UnauthorizedException('User not exists');
+		}
+
+		this.logger.log('User from payload', user);
 		return user;
 	}
 }
