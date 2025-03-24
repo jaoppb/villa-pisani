@@ -1,12 +1,12 @@
 ## Layout sugerido
 <!-- Image -->
-![Layout do Login](../images/registro.png)
+![Layout do Registro](../images/registro.png)
 
 ## Relacionamentos com outras interfaces
 <!-- Image dos redirecionamento -->
-![Layout do Login](../images/button-login.png)<br/>
-![Layout do Login](../images/arrow-login.png)<br/>
-![Layout do Login](../images/link-registro.png)<br/>
+![Layout do Registro](../images/button-login.png)<br/>
+![Layout do Registro](../images/arrow-login.png)<br/>
+![Layout do Registro](../images/link-registro.png)<br/>
 
 ## Campos
 
