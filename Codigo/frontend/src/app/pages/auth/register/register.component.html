@@ -1,0 +1,33 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+	<app-input
+    formControlName="fullName"
+    placeholder="NOME COMPLETO"
+    id="full-name"
+    type="text"/>
+
+    <app-input
+    formControlName="email"
+    placeholder="Email"
+    id="email"
+    type="email"/>
+
+    <app-input
+    formControlName="dateBirth"
+    placeholder="Data de Nascimento"
+    id="date-birth"
+    type="date"/>
+
+    <app-input
+    formControlName="password"
+    placeholder="Email"
+    id="email"
+    type="password"/>
+
+    <app-input
+    formControlName="passwordVerification"
+    placeholder="Verificar a senha"
+    id="email"
+    type="password"/>
+    
+    <button type="submit" [disabled]="form.invalid"> Registra</button>
+</form>
