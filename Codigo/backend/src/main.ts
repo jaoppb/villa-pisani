@@ -8,6 +8,7 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	configLogger(app);
 	configureSwagger(app);
+	configureCors(app);
 	await app.listen(process.env.API_INTERNAL_PORT ?? 3000);
 }
 
@@ -25,6 +26,10 @@ function configureSwagger(app: INestApplication) {
 		.build();
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('swagger', app, document);
+}
+
+function configureCors(app: INestApplication) {
+	app.enableCors();
 }
 
 bootstrap().catch((error) => {
