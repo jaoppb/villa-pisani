@@ -1,0 +1,31 @@
+<div class="input-container">
+	<div class="input">
+		@if (leftIcon){
+			<app-icons name="'leftIcon'" size="140" />
+		}
+		<input
+		[id]="id"
+		[type]="type"
+		[placeholder]="placeholder"
+		[value]="value"
+		(input)="onInput($event)"
+		(blur)="onBlur(value)"
+		/>
+		@if (rightIcon){
+			<app-icons name="'rightIcon'" size="140" />
+		}
+	</div>
+	@if (touched && errors){
+		<div class="error-messages">
+			@if (errors['required']){
+				<small>Este campo é obrigatório.</small>
+			}
+			@if (errors['email']){
+				<small>O email não é válido.</small>
+			}
+			@if (errors['minlength']){
+				<small>O campo deve ter pelo menos {{ errors['minlength'].requiredLength }} caracteres.</small>
+			}
+		</div>
+	}
+</div>
