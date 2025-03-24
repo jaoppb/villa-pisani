@@ -1,0 +1,10 @@
+@use 'color';
+
+@mixin dark-definitions() {
+	--background-color-app: var(--black);
+	--text-color-app: var(--white);
+}
+@mixin light-definitions() {
+	--background-color-app: var(--white);
+	--text-color-app: var(--black);
+}

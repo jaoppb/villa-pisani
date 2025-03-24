@@ -1,0 +1,39 @@
+@use 'themes';
+@use 'color';
+
+@include themes.themes;
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    list-style: none;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+    color: inherit;
+    position: relative;
+    z-index: 1;
+}
+
+html,body{
+    min-height: 100vh;
+	background-color: var(--background-color-app);
+	color: var(--text-color-app);
+}
+html{
+    scroll-behavior: smooth;
+    scroll-snap-type:y mandatory;
+    overflow-x: hidden;
+    font-size: 14px;
+}
+
+::-webkit-scrollbar{
+    width: 7px;
+}
+::-webkit-scrollbar-thumb{
+    background-color: #a9a9a9;
+    color: white;
+}
+
+a:link{
+    color: inherit;
+}
