@@ -1,0 +1,70 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+@Injectable()
+export class AppConfigService {
+	private readonly logger = new Logger(AppConfigService.name);
+	private static log = false;
+	constructor(private readonly config: ConfigService) {
+		if (!AppConfigService.log) {
+			this.logger.debug(
+				`application log level: ${this.config.get<string>('API_LOG_LEVEL')}`,
+			);
+			this.logger.debug(
+				`database type: ${this.config.get<string>('DB_TYPE')}`,
+			);
+			this.logger.debug(
+				`database name: ${this.config.get<string>('DB_NAME')}`,
+			);
+			this.logger.debug(
+				`database host: ${this.config.get<string>('DB_HOST')}`,
+			);
+			this.logger.debug(
+				`database port: ${this.config.get<number>('DB_INTERNAL_PORT')}`,
+			);
+			this.logger.debug(
+				`using database user: ${this.config.get<string>('DB_USER')}`,
+			);
+			this.logger.debug(
+				`using database password: ${this.config.get<string>('DB_PASS')}`,
+			);
+			this.logger.debug(
+				`password encryption size: ${this.config.get<string>('API_PASSWORD_KEY_LENGTH')}`,
+			);
+			this.logger.debug(
+				`salt size: ${this.config.get<string>('API_PASSWORD_SALT_LENGTH')}`,
+			);
+			this.logger.debug(
+				`jwt secret: ${this.config.get<string>('API_JWT_SECRET')}`,
+			);
+			AppConfigService.log = true;
+		}
+	}
+
+	get LogLevel(): string {
+		return this.config.get<string>('API_LOG_LEVEL')!;
+	}
+
+	get PasswordKeyLength(): number {
+		return this.config.get<number>('API_PASSWORD_KEY_LENGTH')!;
+	}
+
+	get SaltLength(): number {
+		return this.config.get<number>('API_PASSWORD_SALT_LENGTH')!;
+	}
+
+	get JwtSecret(): string {
+		return this.config.get<string>('API_JWT_SECRET')!;
+	}
+
+	get database() {
+		return {
+			type: this.config.get<string>('DB_TYPE'),
+			name: this.config.get<string>('DB_NAME'),
+			host: this.config.get<string>('DB_HOST'),
+			port: this.config.get<number>('DB_INTERNAL_PORT'),
+			username: this.config.get<string>('DB_USER'),
+			password: this.config.get<string>('DB_PASS'),
+		};
+	}
+}
