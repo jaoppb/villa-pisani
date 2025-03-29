@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, Renderer2 } from '@angular/core';
+import { Component, inject} from '@angular/core';
 import { ThemeManagerService } from '../../services/theme-manager.service';
 import { IconsComponent } from '../icons/icons.component';
 
@@ -10,7 +10,7 @@ import { IconsComponent } from '../icons/icons.component';
 })
 export class ThemeToggleComponent{
   private readonly themeManagerService = inject(ThemeManagerService);
-  themalight = true;
+  themalight = this.themeManagerService.themalight;
 
   toggleTheme(): void {
     this.themalight = this.themeManagerService.switchTheme();
