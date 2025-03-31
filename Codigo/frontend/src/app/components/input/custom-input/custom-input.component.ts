@@ -1,7 +1,7 @@
 import { Component, forwardRef, Input } from '@angular/core';
 import { InputTextInterface } from '../interface/input-text.interface';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { IconsComponent } from '../../icons/icons.component';
+import { IconsComponent } from '../../icons/iconBase/icons.component';
 
 @Component({
   selector: 'app-input',
