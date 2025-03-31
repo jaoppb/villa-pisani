@@ -13,6 +13,7 @@ import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { Public } from './meta/public.decorator';
 import { Request } from 'src/http/request';
 import { CurrentUserDto } from './dto/current-user.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -56,6 +57,7 @@ export class AuthController {
 		return { accessToken };
 	}
 
+	@ApiBearerAuth()
 	@Get('me')
 	profile(@RequestDecorator() req: Request): CurrentUserDto {
 		const { user } = req;
