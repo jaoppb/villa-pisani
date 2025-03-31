@@ -22,11 +22,13 @@ export class AccessTokenService {
 	get hasToken() {
 		const token = this.AccessToken;
 		if (!token) return false;
+
 		const { exp } = jwtDecode(token);
-		console.log(token, jwtDecode(token));
 		if (!exp) return false;
+
 		const expDate = new Date(exp * 1000);
 		const now = new Date();
+		
 		if (expDate < now) {
 			this.removeAccessToken();
 			return false;
