@@ -1,11 +1,13 @@
-button{
-	background-color: var(--yellow);
-	width: 100%;
-	color: var(--white);
-	border: none;
-	padding: 10px;
-	border-radius: 5px;
-	font-size: 1.2rem;
-	cursor: pointer;
-	transition: background-color 0.3s;
+@use 'auth' as main;
+@include main.main;
+
+form{
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 15px 10px;
+}
+.input-group {
+	gap: 5px;
 }

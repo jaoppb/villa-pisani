@@ -1,26 +1,35 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
-    <app-input
-    formControlName="email"
-    placeholder="Email"
-    id="email"
-    type="email"
-    [errors]="form.get('email')?.errors"
-    [touched]="form.get('email')?.touched ?? false"
-    />
+    <h1>Login</h1>
 
-    <app-input
-    formControlName="password"
-    placeholder="SENHA"
-    id="password"
-    type="password"
-    [errors]="form.get('password')?.errors"
-    [touched]="form.get('password')?.touched ?? false"
-    />
-
-    <div class="error-messages">
-        @if (form.errors?.['loginFailed']){
-            <small>Login ou senha inválidos.</small>
-        }
+    <div class="input-group">
+        <app-input
+        formControlName="email"
+        placeholder="Email"
+        id="email"
+        type="email"
+        leftIcon="mail"
+        [errors]="this.form.get('email')?.errors"
+        [touched]="this.form.get('email')?.touched ?? false"
+        />
+    
+        <app-input
+        formControlName="password"
+        placeholder="SENHA"
+        id="password"
+        type="password"
+        leftIcon="lock"
+        [errors]="this.form.get('password')?.errors"
+        [touched]="this.form.get('password')?.touched ?? false"
+        />
     </div>
-    <button type="submit" [disabled]="form.invalid"> Entrar</button>
+
+    <div class="button-group">
+        <div class="error-messages">
+            @if (this.form.errors?.['loginFailed']){
+                <small>Login ou senha inválidos.</small>
+            }
+        </div>
+        <a href="/auth/register">Não tem uma conta?</a>
+        <button type="submit" [disabled]="this.form.invalid"> Entrar </button>
+    </div>
 </form>

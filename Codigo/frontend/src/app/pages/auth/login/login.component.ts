@@ -26,7 +26,7 @@ export class LoginComponent {
   submit(): void {
     this.userService.login(this.form.value).subscribe({
       next: () => {
-        console.log('Login success');
+        window.location.href = '/condominium/home';
       },
       error: (err) => {
         this.form.setErrors({ loginFailed: true });
