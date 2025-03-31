@@ -19,9 +19,11 @@ function configLogger(app: INestApplication) {
 
 function configureSwagger(app: INestApplication) {
 	const config = new DocumentBuilder()
-		.setTitle('Projeto Patinhas')
-		.setDescription('Gerenciador de renda')
-		.setVersion('1.0')
+		.setTitle('Villa Pisani')
+		.setDescription(
+			'Sistema focado em automatizar processos do condomínio Villa Pisani',
+		)
+		.setVersion('0.1')
 		.addBearerAuth()
 		.build();
 	const document = SwaggerModule.createDocument(app, config);
