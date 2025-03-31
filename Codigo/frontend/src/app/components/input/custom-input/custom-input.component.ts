@@ -1,7 +1,7 @@
-import { Component, forwardRef, Input } from '@angular/core';
+import { Component, ElementRef, forwardRef, Input, ViewChild } from '@angular/core';
 import { InputTextInterface } from '../interface/input-text.interface';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { IconsComponent } from '../../icons/icons.component';
+import { IconsComponent } from '../../icons/iconBase/icons.component';
 
 @Component({
   selector: 'app-input',
@@ -17,6 +17,7 @@ import { IconsComponent } from '../../icons/icons.component';
   styleUrl: './custom-input.component.scss'
 })
 export class CustomInputComponent implements InputTextInterface{
+  @ViewChild('input') input!: ElementRef<HTMLInputElement>;
   @Input() id!: string;
   @Input() type: string = 'text';
   @Input() placeholder: string = '';
@@ -25,6 +26,8 @@ export class CustomInputComponent implements InputTextInterface{
   @Input() touched: boolean = false;
   @Input() leftIcon: string = '';
   @Input() rightIcon: string = '';
+
+  showPassword: boolean = false;
 
   writeValue(value: string): void {
     this.value = value || '';
@@ -53,4 +56,12 @@ export class CustomInputComponent implements InputTextInterface{
     this.onChange(this.value);
   }
 
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+    this.input.nativeElement.type = this.showPassword ? 'text' : 'password';
+  }
+
+  toggleCalendarVisibility(): void {
+    this.input.nativeElement.showPicker();
+  }
 }
