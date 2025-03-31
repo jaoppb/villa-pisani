@@ -1,14 +1,15 @@
 @use 'themes';
 @use 'color';
+@use 'typography';
 
 @include themes.themes;
+@include typography.typography;
 *{
     padding: 0;
     margin: 0;
     box-sizing: border-box;
     list-style: none;
     text-decoration: none;
-    font-family: 'Poppins', sans-serif;
     color: inherit;
     position: relative;
     z-index: 1;
@@ -30,10 +31,11 @@ html{
     width: 7px;
 }
 ::-webkit-scrollbar-thumb{
-    background-color: #a9a9a9;
-    color: white;
+    background-color: var(--scrollbar-background-color);
+    color: var(--scrollbar-color);
 }
 
-a:link{
-    color: inherit;
+a{
+    color: var(--link-color);
+    font-weight: 500;
 }

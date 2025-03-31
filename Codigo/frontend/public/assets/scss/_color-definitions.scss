@@ -1,10 +1,23 @@
 @use 'color';
 
 @mixin dark-definitions() {
-	--background-color-app: var(--black);
+	--background-color-app: var(--light-black);
 	--text-color-app: var(--white);
+	--primary-highlight-color: var(--blue);
+	--secondary-highlight-color: var(--yellow);
+	--link-color: var(--blue);
+	--scrollbar-background-color: var(--black);
+	--scrollbar-color: var(--gray);
+	--error-message-color: var(--red);
 }
 @mixin light-definitions() {
-	--background-color-app: var(--white);
+	--background-color-app: var(--light-white);
 	--text-color-app: var(--black);
+	--primary-highlight-color: var(--yellow);
+	--secondary-highlight-color: var(--blue);
+	--link-color: var(--blue);
+	--scrollbar-background-color: var(--white);
+	--scrollbar-color: var(--gray);
+	--error-message-color: var(--red);
+
 }
