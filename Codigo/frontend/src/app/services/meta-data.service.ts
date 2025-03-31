@@ -5,7 +5,7 @@ import { Meta, Title } from "@angular/platform-browser";
 	providedIn: 'root',
 })
 export class MetaData implements OnInit {
-	titleTemplate = '%s | Vila Pisane';
+	titleTemplate = '%s | Villa Pisani';
 	private metaData: Record<string, string> = {};
 
 	constructor(
@@ -16,9 +16,9 @@ export class MetaData implements OnInit {
 	ngOnInit(): void {
 		// Default meta data
 		this.setMetaData({
-			title: 'Vila Pisani',
-			description: 'Default description for Vila Pisani',
-			keywords: 'vila pisani',
+			title: 'Villa Pisani',
+			description: 'Default description for Villa Pisani',
+			keywords: 'villa pisani',
 		});
 	}
 
@@ -49,7 +49,9 @@ export class MetaData implements OnInit {
 	}
 
 	set title(title: string) {
-		const formattedTitle = title ? this.titleTemplate.replace('%s', title) : 'Vila Pisani';
+		const formattedTitle = 
+		(title.toLowerCase() === 'villa pisani') ? 'Villa Pisani' :
+		(title ? this.titleTemplate.replace('%s', title) : 'Villa Pisani');
 		this.titleService.setTitle(formattedTitle);
 	}
 }
