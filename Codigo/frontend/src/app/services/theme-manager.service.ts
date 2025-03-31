@@ -1,21 +1,69 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit, Renderer2 } from '@angular/core';
 import { Theme } from '../enums/themes.enum';
-
-const 
-	DARK_THEME_CLASS_NAME = 'theme-dark--mode',
-	LIGHT_THEME_CLASS_NAME = 'theme-light--mode',
-	PREFERS_COLOR_SCHEME_DARK = '(prefers-color-scheme: dark)',
-	THEME_PREFERENCE_LOCAL_STORAGE_KEY = 'themePreference';
-
-function preferredScheme(): Theme.DARK | Theme.LIGHT {
-	return globalThis.matchMedia(PREFERS_COLOR_SCHEME_DARK).matches ? Theme.DARK : Theme.LIGHT;
-}
 
 @Injectable({
 	providedIn: 'root',
 })
-export class ThemeManagerService {
-	constructor() {
-		console.log("globalThis", );
+export class ThemeManagerService implements OnInit{
+	themalight = true;
+	constructor(private renderer: Renderer2) {
+		this.ngOnInit();
+	}
+
+	ngOnInit(): void {
+		if (typeof window !== 'undefined') {
+			const savedTheme = localStorage.getItem('user-theme');
+			if (savedTheme) {
+				this.themalight = savedTheme === 'light';
+			} else {
+				this.detectSystemTheme();
+			}
+			this.updateBodyClass();
+		} else {
+			console.warn('localStorage não está disponível no lado do servidor.');
+		}
+	}
+
+	public switchTheme(): boolean {
+		this.themalight = !this.themalight;
+		localStorage.setItem('user-theme', this.themalight ? 'light' : 'dark');
+		this.updateBodyClass();
+		return this.themalight
+	}
+
+	private detectSystemTheme(): void {
+		if (typeof window !== 'undefined') {
+			const prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+			this.themalight = prefersLight.matches;
+	
+			prefersLight.addEventListener('change', (event) => {
+				this.themalight = event.matches;
+				this.updateBodyClass();
+			});
+		}
+	}
+
+	private updateBodyClass(): void {
+		const html = document.querySelector('html');
+		if (this.themalight) {
+			this.renderer.removeClass(html, 'dark-theme');
+			this.renderer.addClass(html, 'light-theme');
+		} else {
+			this.renderer.removeClass(html, 'light-theme');
+			this.renderer.addClass(html, 'dark-theme');
+		}
+	}
+
+	public setPageMetadata(title: string, description: string): void {
+		if (typeof document !== 'undefined') {
+			document.title = title;
+			let metaDescription = document.querySelector('meta[name="description"]');
+			if (!metaDescription) {
+				metaDescription = document.createElement('meta');
+				metaDescription.setAttribute('name', 'description');
+				document.head.appendChild(metaDescription);
+			}
+			metaDescription.setAttribute('content', description);
+		}
 	}
 }

@@ -16,7 +16,7 @@ export class MetaData implements OnInit {
 	ngOnInit(): void {
 		// Default meta data
 		this.setMetaData({
-			'title': 'Vila Pisani',
+			title: 'Vila Pisani',
 			description: 'Default description for Vila Pisani',
 			keywords: 'vila pisani',
 		});
