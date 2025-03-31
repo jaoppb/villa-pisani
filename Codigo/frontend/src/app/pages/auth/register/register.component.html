@@ -1,0 +1,64 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+    <h1>Registro</h1>
+
+    <div class="input-group">
+        <app-input
+        formControlName="name"
+        placeholder="NOME COMPLETO"
+        id="full-name"
+        type="text"
+        leftIcon="pen"
+        [errors]="this.form.get('name')?.errors"
+        [touched]="this.form.get('name')?.touched ?? false"
+        />
+        
+        <app-input
+        formControlName="email"
+        placeholder="Email"
+        id="email"
+        type="email"
+        leftIcon="mail"
+        [errors]="this.form.get('email')?.errors"
+        [touched]="this.form.get('email')?.touched ?? false"
+        />
+        
+        <app-input
+        formControlName="birthDate"
+        placeholder="Data de Nascimento"
+        id="date-birth"
+        type="date"
+        leftIcon="calendar"
+        [errors]="this.form.get('birthDate')?.errors"
+        [touched]="this.form.get('birthDate')?.touched ?? false"
+        />
+        
+        <app-input
+        formControlName="password"
+        placeholder="SENHA"
+        id="password"
+        type="password"
+        leftIcon="lock"
+        [errors]="this.form.get('password')?.errors"
+        [touched]="this.form.get('password')?.touched ?? false"
+        />
+        
+        <app-input
+        formControlName="passwordVerification"
+        placeholder="Verificar a senha"
+        id="password-verification"
+        type="password"
+        leftIcon="lock"
+        [errors]="this.form.get('passwordVerification')?.errors"
+        [touched]="this.form.get('passwordVerification')?.touched ?? false"
+        />
+    </div>
+    <div class="button-group">
+        <div class="error-messages">
+            @if (this.form.errors?.['RegisterFailed']){
+                <small>Erro ao criar a conta</small>
+            }
+        </div>
+        <a href="/auth/login">Já tem uma conta?</a>
+        <button type="submit" [disabled]="this.form.invalid"> Registra </button>
+    </div>
+</form>

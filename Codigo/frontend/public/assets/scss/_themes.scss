@@ -1,0 +1,18 @@
+@use 'color';
+@use 'color-definitions';
+
+@mixin themes() {
+	.dark-theme {
+		@include color.colors;
+		@include color-definitions.dark-definitions;
+		
+		background-color: var(--background-color-app);
+	}
+	
+	.light-theme {
+		@include color.colors;
+		@include color-definitions.light-definitions;
+
+		background-color: var(--background-color-app);
+	}
+}
