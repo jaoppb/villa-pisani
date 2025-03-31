@@ -1,0 +1,55 @@
+.input-container {
+	margin-bottom: 1rem;
+
+	.input{
+		display: inline-flex;
+		border: 2px solid var(--primary-highlight-color);
+		background-color: transparent;
+		border-radius: 5px;
+		width: 100%;
+		align-items: center;
+	
+		app-icons{
+			margin: 0 10px;
+			color: var(--gray);
+		}
+		app-icons.click{
+			cursor: pointer;
+		}
+	
+		input{
+			all: unset;
+			height: 100%;
+			width: 100%;
+			background-color: transparent;
+			color: var(--text-color-app);
+			flex-grow: 1;
+			min-height: 40px;
+			padding: 2px 5px;
+			border-radius: inherit;
+			font-weight: bold;
+	
+			&::placeholder{
+				color: var(--gray);
+			}
+			appearance: none;
+		}
+
+		input[type="date"]::-webkit-calendar-picker-indicator {
+			cursor: auto;
+			filter: blur(9999999px)
+		}
+
+		
+	}
+
+	.error-messages{
+		color: var(--error-message-color);
+		min-height: 20px;
+		margin-top: 5px;
+		
+		small{
+			display: block;
+		}
+	}
+}

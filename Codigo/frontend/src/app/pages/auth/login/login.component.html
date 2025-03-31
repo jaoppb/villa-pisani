@@ -1,0 +1,35 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+    <h1>Login</h1>
+
+    <div class="input-group">
+        <app-input
+        formControlName="email"
+        placeholder="Email"
+        id="email"
+        type="email"
+        leftIcon="mail"
+        [errors]="this.form.get('email')?.errors"
+        [touched]="this.form.get('email')?.touched ?? false"
+        />
+    
+        <app-input
+        formControlName="password"
+        placeholder="SENHA"
+        id="password"
+        type="password"
+        leftIcon="lock"
+        [errors]="this.form.get('password')?.errors"
+        [touched]="this.form.get('password')?.touched ?? false"
+        />
+    </div>
+
+    <div class="button-group">
+        <div class="error-messages">
+            @if (this.form.errors?.['loginFailed']){
+                <small>Login ou senha inválidos.</small>
+            }
+        </div>
+        <a href="/auth/register">Não tem uma conta?</a>
+        <button type="submit" [disabled]="this.form.invalid"> Entrar </button>
+    </div>
+</form>

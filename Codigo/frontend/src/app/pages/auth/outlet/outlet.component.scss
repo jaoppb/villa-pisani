@@ -1,0 +1,37 @@
+:host{
+	display: block;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background-image: url('/assets/imgs/auth-img.jpg');
+	background-size: cover;
+}
+
+Header{
+	background-color: var(--background-color-app);
+	display: flex;
+	align-items: center;
+	padding: 0 40px;
+}
+
+Header app-icons{
+	margin: 0 auto;
+	color: var(--text-color-app);
+}
+
+main{
+	display: flex;
+	backdrop-filter: blur(4px);
+	background-color: #0000004d;
+	flex-grow: 1;
+
+	.forms{
+		margin: auto auto;
+		min-width: 450px;
+		padding: 20px;
+		border-radius: 5px;
+		box-shadow: 5px 17px 5px 7px var(--black-translucent);
+		background-color: var(--background-color-app);
+	}
+}
+
