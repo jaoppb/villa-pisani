@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomInputComponent } from '../../../components/input/custom-input/custom-input.component';
 import { UserService } from '../../../services/user.service';
+import { MetaData } from '../../../services/meta-data.service';
 
 @Component({
   selector: 'app-login',
@@ -12,11 +13,18 @@ import { UserService } from '../../../services/user.service';
 })
 export class LoginComponent {
   form: FormGroup;
+  
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
+    private meta: MetaData,
   ) {
+    this.meta.setMetaData({
+      title: 'Login',
+      description: 'Entre na sua conta',
+      keywords: 'login, account, user, vila pisane',
+    });
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],

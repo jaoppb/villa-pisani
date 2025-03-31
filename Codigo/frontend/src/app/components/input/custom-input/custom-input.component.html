@@ -1,16 +1,9 @@
 <div class="input-container">
 	<div class="input">
-		@if (leftIcon && type === 'date'){
-			<app-icons [name]="leftIcon" 
-			size="24" 
-			class="click" 
-			(click)="toggleCalendarVisibility()" />
-		}
-		@else if (leftIcon){
+		@if (leftIcon){
 			<app-icons [name]="leftIcon" size="24" />
 		}
 		<input
-		#input
 		[id]="id"
 		[type]="type"
 		[placeholder]="placeholder"
@@ -18,20 +11,12 @@
 		(input)="onInput($event)"
 		(blur)="onBlur(value)"
 		/>
-		@if (type === 'password'){
-			<app-icons 
-				[name]="showPassword ? 'eye' : 'eye-close'" 
-				size="24"
-				class="click" 
-				(click)="togglePasswordVisibility()" 
-			/>
-		}
-		@else if (rightIcon){
+		@if (rightIcon){
 			<app-icons [name]="rightIcon" size="24" />
 		}
 	</div>
 	<div class="error-messages">
-		@if (errors && this.value && this.value.length > 0){
+		@if (errors){
 			@if (this.errors.required){
 				<small>Este campo é obrigatório.</small>
 			}

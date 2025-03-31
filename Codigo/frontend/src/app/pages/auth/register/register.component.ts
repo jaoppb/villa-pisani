@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CustomInputComponent } from '../../../components/input/custom-input/custom-input.component';
 import { UserService } from '../../../services/user.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MetaData } from '../../../services/meta-data.service';
 
 @Component({
   selector: 'app-register',
@@ -16,7 +17,14 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
+    private meta: MetaData,
   ) {
+    this.meta.setMetaData({
+      title: 'Registro',
+      description: 'Se registre no comdominio',
+      keywords: 'login, account, user, vila pisane',
+    });
+
     this.form = this.fb.group({
       name: ['',[ 
         Validators.required,
