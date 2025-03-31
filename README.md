@@ -1,6 +1,6 @@
 # Villa Pisani
 
-[Escreva um ou dois  parágrafo resumindo o objetivo do seu projeto.]
+Desenvolver um sistema de gestão condominial para o Condomínio Villa Pisani, visando melhorar a comunicação entre moradores e administração. A plataforma permitirá acesso fácil a atas de reuniões, balancetes, relatórios anuais, reserva de áreas comuns e contato direto com os responsáveis. Dessa forma, busca-se otimizar a organização do condomínio, aumentar a transparência na gestão e facilitar a participação dos moradores nas decisões administrativas.
 
 ## Alunos integrantes da equipe
 
@@ -12,8 +12,9 @@
 
 ## Professores responsáveis
 
-* [Nome completo do professor 1]
-* [Nome completo do professor 2]
+* Danilo de Quadros Maia Filho
+* João Paulo Carneiro Aramuni
+* Ramon Lacerda Marques
 
 ## Instruções de utilização
 
