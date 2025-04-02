@@ -24,14 +24,6 @@ export class TagsService {
 		return this.tagsRepository.find();
 	}
 
-	findAllFromIDs(ids: string[]) {
-		const tags = this.tagsRepository.find({
-			where: ids.map((id) => ({ id })),
-		});
-		this.logger.log(`Tag find all from ids ${JSON.stringify(ids)}`, tags);
-		return tags;
-	}
-
 	findOne(id: string) {
 		const tag = this.tagsRepository.findOneBy({ id });
 		this.logger.log(`Tag find ${id}`, tag);

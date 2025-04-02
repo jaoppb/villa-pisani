@@ -4,7 +4,6 @@ import { UpdateBilletDto } from './dto/update-billet.dto';
 import { Repository } from 'typeorm';
 import { Billet } from './entities/billet.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TagsService } from './tags/tags.service';
 import { Tag } from './tags/entities/tag.entity';
 
 @Injectable()
@@ -13,13 +12,14 @@ export class BilletsService {
 	constructor(
 		@InjectRepository(Billet)
 		private readonly billetsRepository: Repository<Billet>,
-		private readonly tagsService: TagsService,
+		@InjectRepository(Tag)
+		private readonly tagsRepository: Repository<Tag>,
 	) {}
 
 	async create(createBilletDto: CreateBilletDto) {
-		const tags: Tag[] = await this.tagsService.findAllFromIDs(
-			createBilletDto.tagIDs,
-		);
+		const tags: Tag[] = await this.tagsRepository.find({
+			where: createBilletDto.tagIDs.map((id) => ({ id })),
+		});
 
 		if (tags.length !== createBilletDto.tagIDs.length) {
 			this.logger.error('Tags not found', createBilletDto.tagIDs);
