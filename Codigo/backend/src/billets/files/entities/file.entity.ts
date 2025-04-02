@@ -1,9 +1,15 @@
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
-export class Tag {
+export class File {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
 	@Column()
-	label: string;
+	name: string;
+
+	@Column()
+	size: number;
+
+	@Column()
+	url: string;
 }
