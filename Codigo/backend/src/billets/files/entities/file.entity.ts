@@ -1,5 +1,13 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Billet } from 'src/billets/entities/billet.entity';
+import {
+	Column,
+	Entity,
+	ManyToOne,
+	PrimaryGeneratedColumn,
+	Relation,
+} from 'typeorm';
 
+@Entity('billet_files')
 export class File {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
@@ -12,4 +20,7 @@ export class File {
 
 	@Column()
 	url: string;
+
+	@ManyToOne(() => Billet, (billet) => billet.files)
+	billet: Relation<Billet>;
 }

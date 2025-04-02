@@ -2,17 +2,24 @@ import {
 	BeforeUpdate,
 	Column,
 	CreateDateColumn,
+	Entity,
+	JoinTable,
+	ManyToMany,
+	OneToMany,
 	PrimaryGeneratedColumn,
+	Relation,
 	UpdateDateColumn,
 } from 'typeorm';
 import { Tag } from '../tags/entities/tag.entity';
 import { File } from '../files/entities/file.entity';
 
+@Entity('billets')
 export class Billet {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@Column({ default: [] })
+	@ManyToMany(() => Tag, { cascade: true })
+	@JoinTable()
 	tags: Tag[];
 
 	@Column()
@@ -32,8 +39,8 @@ export class Billet {
 
 	// TODO add apartment
 
-	@Column({ default: [] })
-	files: File[];
+	@OneToMany(() => File, (file) => file.billet, { cascade: true })
+	files: Relation<File[]>;
 
 	@BeforeUpdate()
 	updateDate() {
