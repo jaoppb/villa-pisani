@@ -27,16 +27,16 @@ export class BilletsController {
 
 	@Get(':id')
 	findOne(@Param('id') id: string) {
-		return this.billetsService.findOne(+id);
+		return this.billetsService.findOne(id);
 	}
 
 	@Patch(':id')
 	update(@Param('id') id: string, @Body() updateBilletDto: UpdateBilletDto) {
-		return this.billetsService.update(+id, updateBilletDto);
+		return this.billetsService.update(id, updateBilletDto);
 	}
 
 	@Delete(':id')
 	remove(@Param('id') id: string) {
-		return this.billetsService.remove(+id);
+		return this.billetsService.remove(id);
 	}
 }
