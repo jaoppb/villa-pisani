@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { RoleGuard } from './auth/roles/role.guard';
+import { BilletsModule } from './billets/billets.module';
 
 @Module({
 	imports: [
@@ -29,6 +30,7 @@ import { RoleGuard } from './auth/roles/role.guard';
 		}),
 		UserModule,
 		AuthModule,
+		BilletsModule,
 	],
 	controllers: [AppController],
 	providers: [
