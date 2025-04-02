@@ -1,15 +1,11 @@
-import { IsArray, IsCurrency, IsDate } from 'class-validator';
+import { IsDate, IsPositive, IsUUID } from 'class-validator';
 
 export class CreateBilletDto {
-	@IsArray()
-	tags: string[];
+	@IsUUID(undefined, { each: true })
+	tagIDs: string[];
 
-	@IsCurrency({
-		decimal_separator: ',',
-		allow_negatives: false,
-		symbol: 'R$',
-	})
-	value: string;
+	@IsPositive()
+	value: number;
 
 	@IsDate()
 	dueDate: Date;
