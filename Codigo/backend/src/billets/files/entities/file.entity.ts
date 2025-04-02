@@ -21,6 +21,9 @@ export class File {
 	@Column()
 	url: string;
 
+	@Column()
+	mimetype: string;
+
 	@ManyToOne(() => Billet, (billet) => billet.files)
 	billet: Relation<Billet>;
 }
