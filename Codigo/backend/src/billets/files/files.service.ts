@@ -1,0 +1,99 @@
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { File } from './entities/file.entity';
+import { Billet } from '../entities/billet.entity';
+
+@Injectable()
+export class FilesService {
+	private readonly logger = new Logger(FilesService.name);
+	constructor(
+		@InjectRepository(File)
+		private readonly filesRepository: Repository<File>,
+		@InjectRepository(Billet)
+		private readonly billetsRepository: Repository<Billet>,
+		private readonly dataSource: DataSource,
+	) {}
+
+	private _saveFile(file: Express.Multer.File): string {
+		// TODO implement file saving (cloud or disk?)
+		return 'url_placeholder';
+	}
+
+	private _deleteFile(url: string) {
+		// TODO implement file deleting (cloud or disk?)
+	}
+
+	async upload(billetId: string, incomeFile: Express.Multer.File) {
+		const billet = await this.billetsRepository.findOneBy({ id: billetId });
+
+		if (!billet) {
+			this.logger.error(`Billet not found ${billetId}`);
+			throw new BadRequestException('Billet not found');
+		}
+
+		const url = this._saveFile(incomeFile);
+
+		if (!url) {
+			this.logger.error('File upload error');
+			throw new BadRequestException('File upload error');
+		}
+
+		const file = this.filesRepository.create({
+			mimetype: incomeFile.mimetype,
+			name: incomeFile.filename,
+			size: incomeFile.size,
+			billet,
+			url,
+		});
+		this.logger.log('File create', file);
+		return this.filesRepository.save(file);
+	}
+
+	async uploadAll(billetId: string, incomeFiles: Array<Express.Multer.File>) {
+		const billet = await this.billetsRepository.findOneBy({ id: billetId });
+
+		if (!billet) {
+			this.logger.error(`Billet not found ${billetId}`);
+			throw new BadRequestException('Billet not found');
+		}
+
+		const queryRunner = this.dataSource.createQueryRunner();
+
+		await queryRunner.connect();
+		await queryRunner.startTransaction();
+
+		const uploadedUrls: string[] = [];
+		try {
+			incomeFiles.forEach((file) => {
+				const url = this._saveFile(file);
+				uploadedUrls.push(url);
+				queryRunner.manager.create(File, {
+					billet,
+					mimetype: file.mimetype,
+					name: file.filename,
+					size: file.size,
+					url,
+				});
+			});
+
+			await queryRunner.commitTransaction();
+		} catch (error) {
+			uploadedUrls.forEach((url) => this._deleteFile(url));
+
+			await queryRunner.rollbackTransaction();
+			this.logger.error('File create all', error);
+			throw error;
+		} finally {
+			await queryRunner.release();
+		}
+
+		this.logger.log('Files create all');
+	}
+
+	async remove(id: string) {
+		const file = await this.filesRepository.delete({ id });
+		this.logger.log('File remove', file);
+		return file;
+	}
+}
