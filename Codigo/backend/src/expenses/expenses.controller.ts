@@ -23,7 +23,6 @@ export class ExpensesController {
 		return this.expensesService.create(createExpenseDto);
 	}
 
-	// TODO we are missing the apartment entity to return the expenses of an inhabitant user
 	@Get()
 	findAll() {
 		return this.expensesService.findAll();
