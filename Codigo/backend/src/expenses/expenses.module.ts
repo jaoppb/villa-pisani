@@ -1,16 +1,18 @@
 import { Module } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { ExpensesController } from './expenses.controller';
-import { TagsModule } from './tags/tags.module';
 import { FilesController } from './files/files.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Expense } from './entities/expense.entity';
 import { Tag } from './tags/entities/tag.entity';
 import { File } from './files/entities/file.entity';
+import { TagsController } from './tags/tags.controller';
+import { TagsService } from './tags/tags.service';
+import { FilesService } from './files/files.service';
 
 @Module({
-	controllers: [ExpensesController, FilesController],
-	providers: [ExpensesService],
-	imports: [TagsModule, TypeOrmModule.forFeature([Expense, Tag, File])],
+	controllers: [ExpensesController, TagsController, FilesController],
+	providers: [ExpensesService, FilesService, TagsService],
+	imports: [TypeOrmModule.forFeature([Expense, Tag, File])],
 })
 export class ExpensesModule {}

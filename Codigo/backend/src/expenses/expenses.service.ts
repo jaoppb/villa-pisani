@@ -27,9 +27,6 @@ export class ExpensesService {
 		}
 
 		const expense = this.expensesRepository.create({
-			dueDate: createExpenseDto.dueDate,
-			value: createExpenseDto.value,
-			paid: false,
 			files: [],
 			tags,
 		});
