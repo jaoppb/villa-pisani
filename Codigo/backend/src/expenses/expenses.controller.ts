@@ -36,7 +36,10 @@ export class ExpensesController {
 
 	@Patch(':id')
 	@Roles(Role.MANAGER)
-	update(@Param('id') id: string, @Body() updateExpenseDto: UpdateExpenseDto) {
+	update(
+		@Param('id') id: string,
+		@Body() updateExpenseDto: UpdateExpenseDto,
+	) {
 		return this.expensesService.update(id, updateExpenseDto);
 	}
 
