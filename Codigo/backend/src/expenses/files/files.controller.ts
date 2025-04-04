@@ -16,7 +16,7 @@ export class FilesController {
 	constructor(private readonly filesService: FilesService) {}
 
 	@Post(':expenseId')
-	@UseInterceptors(FilesInterceptor)
+	@UseInterceptors(FilesInterceptor('file'))
 	@Roles(Role.MANAGER)
 	upload(
 		@UploadedFiles() files: Array<Express.Multer.File>,

@@ -9,10 +9,22 @@ import { File } from './files/entities/file.entity';
 import { TagsController } from './tags/tags.controller';
 import { TagsService } from './tags/tags.service';
 import { FilesService } from './files/files.service';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Module({
 	controllers: [TagsController, FilesController, ExpensesController],
 	providers: [ExpensesService, FilesService, TagsService],
-	imports: [TypeOrmModule.forFeature([Expense, Tag, File])],
+	imports: [
+		TypeOrmModule.forFeature([Expense, Tag, File]),
+		MulterModule.register({
+			storage: diskStorage({
+				destination: './files/expenses',
+				filename: (req, file, cb) => {
+					cb(null, Date.now() + '-' + file.originalname);
+				},
+			}),
+		}),
+	],
 })
 export class ExpensesModule {}

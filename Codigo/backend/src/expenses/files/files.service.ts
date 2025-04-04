@@ -16,8 +16,7 @@ export class FilesService {
 	) {}
 
 	private _saveFile(file: Express.Multer.File): string {
-		// TODO implement file saving (cloud or disk?)
-		return 'url_placeholder';
+		return file.path;
 	}
 
 	private _deleteFile(url: string) {
@@ -25,7 +24,9 @@ export class FilesService {
 	}
 
 	async upload(expenseId: string, incomeFile: Express.Multer.File) {
-		const expense = await this.expensesRepository.findOneBy({ id: expenseId });
+		const expense = await this.expensesRepository.findOneBy({
+			id: expenseId,
+		});
 
 		if (!expense) {
 			this.logger.error(`Expense not found ${expenseId}`);
@@ -50,8 +51,13 @@ export class FilesService {
 		return file;
 	}
 
-	async uploadAll(expenseId: string, incomeFiles: Array<Express.Multer.File>) {
-		const expense = await this.expensesRepository.findOneBy({ id: expenseId });
+	async uploadAll(
+		expenseId: string,
+		incomeFiles: Array<Express.Multer.File>,
+	) {
+		const expense = await this.expensesRepository.findOneBy({
+			id: expenseId,
+		});
 
 		if (!expense) {
 			this.logger.error(`Expense not found ${expenseId}`);
@@ -65,17 +71,17 @@ export class FilesService {
 
 		const uploadedUrls: string[] = [];
 		try {
-			incomeFiles.forEach((file) => {
+			for (const file of incomeFiles) {
 				const url = this._saveFile(file);
 				uploadedUrls.push(url);
-				queryRunner.manager.create(File, {
+				await queryRunner.manager.save(File, {
 					expense,
 					mimetype: file.mimetype,
 					name: file.filename,
 					size: file.size,
 					url,
 				});
-			});
+			}
 
 			await queryRunner.commitTransaction();
 		} catch (error) {
@@ -88,7 +94,12 @@ export class FilesService {
 			await queryRunner.release();
 		}
 
-		this.logger.log('Files create all');
+		const savedFiles = this.filesRepository
+			.createQueryBuilder('files')
+			.where('files.url IN (:...urls)', { urls: uploadedUrls })
+			.getMany();
+		this.logger.log('Files create all', savedFiles);
+		return savedFiles;
 	}
 
 	async remove(id: string) {
