@@ -23,6 +23,7 @@ export class ExpensesController {
 		return this.expensesService.create(createExpenseDto);
 	}
 
+	// TODO add pagination to this method
 	@Get()
 	findAll() {
 		return this.expensesService.findAll();
