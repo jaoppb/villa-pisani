@@ -26,7 +26,7 @@ export class ExpensesService {
 			throw new BadRequestException('Tags not found');
 		}
 
-		const expense = this.expensesRepository.create({
+		const expense = this.expensesRepository.save({
 			...createExpenseDto,
 			files: [],
 			tags,

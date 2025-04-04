@@ -14,7 +14,7 @@ export class TagsService {
 	) {}
 
 	create(createTagDto: CreateTagDto) {
-		const tag = this.tagsRepository.create(createTagDto);
+		const tag = this.tagsRepository.save(createTagDto);
 		this.logger.log('Tag create', tag);
 		return tag;
 	}

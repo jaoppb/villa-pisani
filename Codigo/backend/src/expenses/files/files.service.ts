@@ -39,7 +39,7 @@ export class FilesService {
 			throw new BadRequestException('File upload error');
 		}
 
-		const file = this.filesRepository.create({
+		const file = this.filesRepository.save({
 			mimetype: incomeFile.mimetype,
 			name: incomeFile.filename,
 			size: incomeFile.size,
@@ -47,7 +47,7 @@ export class FilesService {
 			url,
 		});
 		this.logger.log('File create', file);
-		return this.filesRepository.save(file);
+		return file;
 	}
 
 	async uploadAll(expenseId: string, incomeFiles: Array<Express.Multer.File>) {
