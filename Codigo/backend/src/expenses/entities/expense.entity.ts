@@ -24,7 +24,7 @@ export class Expense {
 	@Column()
 	description: string;
 
-	@ManyToMany(() => Tag, { cascade: true })
+	@ManyToMany(() => Tag, { cascade: true, eager: true })
 	@JoinTable()
 	tags: Tag[];
 
@@ -34,7 +34,10 @@ export class Expense {
 	@UpdateDateColumn()
 	updatedAt: Date;
 
-	@OneToMany(() => File, (file) => file.expense, { cascade: true })
+	@OneToMany(() => File, (file) => file.expense, {
+		cascade: true,
+		eager: true,
+	})
 	files: Relation<File[]>;
 
 	@BeforeUpdate()
