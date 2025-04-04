@@ -1,7 +1,10 @@
 import {
 	Controller,
 	Delete,
+	FileTypeValidator,
+	MaxFileSizeValidator,
 	Param,
+	ParseFilePipe,
 	Post,
 	UploadedFiles,
 	UseInterceptors,
@@ -19,7 +22,16 @@ export class FilesController {
 	@UseInterceptors(FilesInterceptor('file'))
 	@Roles(Role.MANAGER)
 	upload(
-		@UploadedFiles() files: Array<Express.Multer.File>,
+		@UploadedFiles(
+			new ParseFilePipe({
+				fileIsRequired: true,
+				validators: [
+					new FileTypeValidator({ fileType: 'application/pdf' }),
+					new MaxFileSizeValidator({ maxSize: 200_000_000 }),
+				],
+			}),
+		)
+		files: Array<Express.Multer.File>,
 		@Param('expenseId') expenseId: string,
 	) {
 		return this.filesService.uploadAll(expenseId, files);
