@@ -32,7 +32,8 @@ export class ExpensesService {
 		}
 
 		const expense = this.expensesRepository.save({
-			...createExpenseDto,
+			title: createExpenseDto.title,
+			description: createExpenseDto.description,
 			files: [],
 			tags,
 		});
