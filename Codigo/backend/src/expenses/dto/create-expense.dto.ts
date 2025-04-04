@@ -1,12 +1,12 @@
-import { IsDate, IsPositive, IsUUID } from 'class-validator';
+import { IsString, IsUUID } from 'class-validator';
 
 export class CreateExpenseDto {
 	@IsUUID(undefined, { each: true })
 	tagIDs: string[];
 
-	@IsPositive()
-	value: number;
+	@IsString()
+	title: string;
 
-	@IsDate()
-	dueDate: Date;
+	@IsString()
+	description: string;
 }

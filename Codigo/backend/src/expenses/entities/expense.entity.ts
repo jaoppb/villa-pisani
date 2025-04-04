@@ -18,26 +18,21 @@ export class Expense {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
+	@Column()
+	title: string;
+
+	@Column()
+	description: string;
+
 	@ManyToMany(() => Tag, { cascade: true })
 	@JoinTable()
 	tags: Tag[];
-
-	@Column()
-	value: number;
 
 	@CreateDateColumn()
 	createdAt: Date;
 
 	@UpdateDateColumn()
 	updatedAt: Date;
-
-	@Column({ type: 'datetime' })
-	dueDate: Date;
-
-	@Column()
-	paid: boolean;
-
-	// TODO add apartment
 
 	@OneToMany(() => File, (file) => file.expense, { cascade: true })
 	files: Relation<File[]>;
