@@ -11,7 +11,7 @@ import { TagsService } from './tags/tags.service';
 import { FilesService } from './files/files.service';
 
 @Module({
-	controllers: [ExpensesController, TagsController, FilesController],
+	controllers: [TagsController, FilesController, ExpensesController],
 	providers: [ExpensesService, FilesService, TagsService],
 	imports: [TypeOrmModule.forFeature([Expense, Tag, File])],
 })
