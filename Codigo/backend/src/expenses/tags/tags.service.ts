@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -24,8 +24,14 @@ export class TagsService {
 		return this.tagsRepository.find();
 	}
 
-	findOne(id: string) {
-		const tag = this.tagsRepository.findOneBy({ id });
+	async findOne(id: string) {
+		const tag = await this.tagsRepository.findOneBy({ id });
+
+		if (!tag) {
+			this.logger.error('Tag not found', id);
+			throw new NotFoundException('Tag not found');
+		}
+
 		this.logger.log(`Tag find ${id}`, tag);
 		return tag;
 	}
@@ -36,8 +42,15 @@ export class TagsService {
 		return tag;
 	}
 
-	remove(id: string) {
-		const tag = this.tagsRepository.delete({ id });
+	async remove(id: string) {
+		const found = await this.tagsRepository.findOneBy({ id });
+
+		if (!found) {
+			this.logger.error('Tag not found', id);
+			throw new NotFoundException('Tag not found');
+		}
+
+		const tag = this.tagsRepository.remove(found);
 		this.logger.log('Tag remove', tag);
 		return tag;
 	}

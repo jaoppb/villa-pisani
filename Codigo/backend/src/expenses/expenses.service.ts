@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { Repository } from 'typeorm';
@@ -43,6 +48,12 @@ export class ExpensesService {
 
 	async findOne(id: string) {
 		const expense = await this.expensesRepository.findOneBy({ id });
+
+		if (!expense) {
+			this.logger.error('Expense not found', id);
+			throw new NotFoundException('Expense not found');
+		}
+
 		this.logger.log(`Expense find  ${id}`, expense);
 		return expense;
 	}
@@ -57,7 +68,13 @@ export class ExpensesService {
 	}
 
 	async remove(id: string) {
-		const expense = await this.expensesRepository.delete({ id });
+		const found = await this.expensesRepository.findOneBy({ id });
+		if (!found) {
+			this.logger.error('Expense not found', id);
+			throw new NotFoundException('Expense not found');
+		}
+
+		const expense = await this.expensesRepository.remove(found);
 		this.logger.log('Expense remove', expense);
 		return expense;
 	}
