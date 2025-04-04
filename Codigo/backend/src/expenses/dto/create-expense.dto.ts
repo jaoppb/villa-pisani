@@ -1,6 +1,6 @@
 import { IsDate, IsPositive, IsUUID } from 'class-validator';
 
-export class CreateBilletDto {
+export class CreateExpenseDto {
 	@IsUUID(undefined, { each: true })
 	tagIDs: string[];
 

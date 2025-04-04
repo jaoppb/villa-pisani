@@ -11,18 +11,18 @@ import { FilesService } from './files.service';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
 
-@Controller('billets/files')
+@Controller('expenses/files')
 export class FilesController {
 	constructor(private readonly filesService: FilesService) {}
 
-	@Post(':billetId')
+	@Post(':expenseId')
 	@UseInterceptors(FilesInterceptor)
 	@Roles(Role.MANAGER)
 	upload(
 		@UploadedFiles() files: Array<Express.Multer.File>,
-		@Param('billetId') billetId: string,
+		@Param('expenseId') expenseId: string,
 	) {
-		return this.filesService.uploadAll(billetId, files);
+		return this.filesService.uploadAll(expenseId, files);
 	}
 
 	@Delete(':id')

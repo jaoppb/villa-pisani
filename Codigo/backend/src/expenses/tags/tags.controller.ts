@@ -13,7 +13,7 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
 
-@Controller('billets/tags')
+@Controller('expenses/tags')
 export class TagsController {
 	constructor(private readonly tagsService: TagsService) {}
 

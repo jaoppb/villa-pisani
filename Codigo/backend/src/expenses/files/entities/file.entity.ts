@@ -1,4 +1,4 @@
-import { Billet } from 'src/billets/entities/billet.entity';
+import { Expense } from 'src/expenses/entities/expense.entity';
 import {
 	Column,
 	Entity,
@@ -7,7 +7,7 @@ import {
 	Relation,
 } from 'typeorm';
 
-@Entity('billet_files')
+@Entity('expense_files')
 export class File {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
@@ -24,6 +24,6 @@ export class File {
 	@Column()
 	mimetype: string;
 
-	@ManyToOne(() => Billet, (billet) => billet.files)
-	billet: Relation<Billet>;
+	@ManyToOne(() => Expense, (expense) => expense.files)
+	expense: Relation<Expense>;
 }

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { File } from './entities/file.entity';
-import { Billet } from '../entities/billet.entity';
+import { Expense } from '../entities/expense.entity';
 
 @Injectable()
 export class FilesService {
@@ -10,8 +10,8 @@ export class FilesService {
 	constructor(
 		@InjectRepository(File)
 		private readonly filesRepository: Repository<File>,
-		@InjectRepository(Billet)
-		private readonly billetsRepository: Repository<Billet>,
+		@InjectRepository(Expense)
+		private readonly expensesRepository: Repository<Expense>,
 		private readonly dataSource: DataSource,
 	) {}
 
@@ -24,12 +24,12 @@ export class FilesService {
 		// TODO implement file deleting (cloud or disk?)
 	}
 
-	async upload(billetId: string, incomeFile: Express.Multer.File) {
-		const billet = await this.billetsRepository.findOneBy({ id: billetId });
+	async upload(expenseId: string, incomeFile: Express.Multer.File) {
+		const expense = await this.expensesRepository.findOneBy({ id: expenseId });
 
-		if (!billet) {
-			this.logger.error(`Billet not found ${billetId}`);
-			throw new BadRequestException('Billet not found');
+		if (!expense) {
+			this.logger.error(`Expense not found ${expenseId}`);
+			throw new BadRequestException('Expense not found');
 		}
 
 		const url = this._saveFile(incomeFile);
@@ -43,19 +43,19 @@ export class FilesService {
 			mimetype: incomeFile.mimetype,
 			name: incomeFile.filename,
 			size: incomeFile.size,
-			billet,
+			expense,
 			url,
 		});
 		this.logger.log('File create', file);
 		return this.filesRepository.save(file);
 	}
 
-	async uploadAll(billetId: string, incomeFiles: Array<Express.Multer.File>) {
-		const billet = await this.billetsRepository.findOneBy({ id: billetId });
+	async uploadAll(expenseId: string, incomeFiles: Array<Express.Multer.File>) {
+		const expense = await this.expensesRepository.findOneBy({ id: expenseId });
 
-		if (!billet) {
-			this.logger.error(`Billet not found ${billetId}`);
-			throw new BadRequestException('Billet not found');
+		if (!expense) {
+			this.logger.error(`Expense not found ${expenseId}`);
+			throw new BadRequestException('Expense not found');
 		}
 
 		const queryRunner = this.dataSource.createQueryRunner();
@@ -69,7 +69,7 @@ export class FilesService {
 				const url = this._saveFile(file);
 				uploadedUrls.push(url);
 				queryRunner.manager.create(File, {
-					billet,
+					expense,
 					mimetype: file.mimetype,
 					name: file.filename,
 					size: file.size,

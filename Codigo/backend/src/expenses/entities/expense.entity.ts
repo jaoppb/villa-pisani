@@ -13,8 +13,8 @@ import {
 import { Tag } from '../tags/entities/tag.entity';
 import { File } from '../files/entities/file.entity';
 
-@Entity('billets')
-export class Billet {
+@Entity('expenses')
+export class Expense {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
@@ -39,7 +39,7 @@ export class Billet {
 
 	// TODO add apartment
 
-	@OneToMany(() => File, (file) => file.billet, { cascade: true })
+	@OneToMany(() => File, (file) => file.expense, { cascade: true })
 	files: Relation<File[]>;
 
 	@BeforeUpdate()
