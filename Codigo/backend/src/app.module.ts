@@ -11,6 +11,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { RoleGuard } from './auth/roles/role.guard';
 import { ExpensesModule } from './expenses/expenses.module';
+import { FileServeController } from './files/files.controller';
 
 @Module({
 	imports: [
@@ -32,7 +33,7 @@ import { ExpensesModule } from './expenses/expenses.module';
 		AuthModule,
 		ExpensesModule,
 	],
-	controllers: [AppController],
+	controllers: [AppController, FileServeController],
 	providers: [
 		AppService,
 		CustomLogger,
