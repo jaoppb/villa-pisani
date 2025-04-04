@@ -47,6 +47,21 @@ export class ExpensesService {
 		return this.expensesRepository.find();
 	}
 
+	async findByTags(ids: string[]) {
+		this.logger.log('Expense find by tags', ids);
+		const expenses = await this.expensesRepository
+			.createQueryBuilder('expense')
+			.leftJoinAndSelect('expense.tags', 'tags')
+			.where(
+				'expense.id IN (SELECT expensesId FROM expenses_tags_expense_tags WHERE expenseTagsId IN (:...ids))',
+				{ ids },
+			)
+			.getMany();
+
+		this.logger.log('Expense find by tags', expenses);
+		return expenses;
+	}
+
 	async findOne(id: string) {
 		const expense = await this.expensesRepository.findOneBy({ id });
 

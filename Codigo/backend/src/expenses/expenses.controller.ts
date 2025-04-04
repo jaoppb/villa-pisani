@@ -34,6 +34,11 @@ export class ExpensesController {
 		return this.expensesService.findOne(id);
 	}
 
+	@Get('/by-tags/:tags')
+	findByTags(@Param('tags') tagIDs: string) {
+		return this.expensesService.findByTags(tagIDs.split(','));
+	}
+
 	@Patch(':id')
 	@Roles(Role.MANAGER)
 	update(
