@@ -21,7 +21,8 @@ export class Expense {
 	@Column()
 	title: string;
 
-	@Column()
+	// TODO avaliate if we should limit the description size
+	@Column('text')
 	description: string;
 
 	@ManyToMany(() => Tag, { cascade: true, eager: true })
