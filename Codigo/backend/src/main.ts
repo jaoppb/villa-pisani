@@ -1,12 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CustomLogger } from './custom.logger';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import metadata from './metadata';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
+	configPipe(app);
 	configLogger(app);
 	await configureSwagger(app);
 	configureCors(app);
@@ -30,6 +31,15 @@ async function configureSwagger(app: INestApplication) {
 	await SwaggerModule.loadPluginMetadata(metadata);
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('swagger', app, document);
+}
+
+function configPipe(app: INestApplication) {
+	app.useGlobalPipes(
+		new ValidationPipe({
+			transform: true,
+			whitelist: true,
+		}),
+	);
 }
 
 function configureCors(app: INestApplication) {
