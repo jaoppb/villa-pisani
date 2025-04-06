@@ -1,0 +1,51 @@
+.input-container{
+	display: flex;
+	align-items: center;
+	gap: 5px;
+
+	label{
+		cursor: pointer;
+	}
+
+	.checke {
+		border: 1px solid var(--primary-highlight-color);
+		border-radius: 5px;
+		height: 20px;
+		width: 20px;
+		display: inline-flex;
+		overflow: hidden;
+	}
+
+	input{
+		display: none;
+
+		&:checked + .checke {
+			font-weight: bold;
+			color: var(--primary-highlight-color);
+
+			&::before {
+				content: '✔';
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: white;
+				flex: none;
+				background-color: var(--primary-highlight-color);
+				height: 100%;
+				width: 100%;
+			}
+		}
+		&[type=radio]:checked + .checke::before {
+			content: 'X';
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: white;
+			flex: none;
+			background-color: var(--primary-highlight-color);
+			height: 100%;
+			width: 100%;
+		}
+	}
+}
+
