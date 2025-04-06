@@ -4,6 +4,7 @@
 			<app-icons [name]="leftIcon" size="24" />
 		}
 		<input
+		#input
 		[id]="id"
 		[type]="type"
 		[placeholder]="placeholder"
@@ -11,9 +12,16 @@
 		(input)="onInput($event)"
 		(blur)="onBlur(value)"
 		/>
-		@if (rightIcon){
-			<app-icons [name]="rightIcon" size="24" />
-		}
+        @if (type === 'password'){
+            <app-icons 
+                [name]="showPassword ? 'eye' : 'eye-close'" 
+                size="24" 
+                (click)="togglePasswordVisibility()" 
+            />
+        }
+        @else if (rightIcon){
+            <app-icons [name]="rightIcon" size="24" />
+        }
 	</div>
 	<div class="error-messages">
 		@if (errors){
