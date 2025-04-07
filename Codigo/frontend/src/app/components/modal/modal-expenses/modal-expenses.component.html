@@ -20,6 +20,16 @@
 		[touched]="this.form.get('description')?.touched ?? false"
 		[errors]="this.form.get('description')?.errors"
 		/>
+		<label for="files">
+			<input 
+			formControlName="files"
+			type="file" 
+			id="files"
+			multiple 
+			(change)="handleFileChange($event)"
+			/>
+			Arquivos
+		</label>
 		<button 
 		type="submit" 
 		[disabled]="form.invalid"

@@ -3,6 +3,16 @@ export interface tag{
 	labe: string;
 }
 
+export interface fileResponse{
+	id: string;
+	name: string;
+	url: string;
+	size: number;
+	type: string;
+	mimetype: string;
+}
+
+
 export interface expense{
 	id: string;
 	title: string;
@@ -10,5 +20,11 @@ export interface expense{
 	createdAt: string;
 	updatedAt: string;
 	tags: tag[];
-	files: string[];
+	files: fileResponse[];
+}
+
+export interface expenseRequest{
+	title: string;
+	description: string;
+	tagIDs: string[];
 }

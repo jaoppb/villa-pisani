@@ -99,7 +99,10 @@ export class FilesService {
 			.where('files.url IN (:...urls)', { urls: uploadedUrls })
 			.getMany();
 		this.logger.log('Files create all', savedFiles);
-		return savedFiles;
+		return this.expensesRepository.findOne({
+			where: { id: expenseId },
+			relations: { files: true },
+		});
 	}
 
 	async remove(id: string) {
