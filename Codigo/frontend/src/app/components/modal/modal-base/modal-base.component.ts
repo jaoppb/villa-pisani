@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { IconsComponent } from '../icons/iconBase/icons.component';
+import { IconsComponent } from '../../icons/iconBase/icons.component';
 
 @Component({
   selector: 'app-modal-base',
@@ -9,10 +9,10 @@ import { IconsComponent } from '../icons/iconBase/icons.component';
 })
 export class ModalBaseComponent {
   @Input() isOpen: boolean = true;
-  @Output() closed = new EventEmitter<void>();
+  @Output() isOpenChange = new EventEmitter<boolean>();
 
   closeModal() {
     this.isOpen = false;
-    this.closed.emit();
+    this.isOpenChange.emit(this.isOpen);
   }
 }
