@@ -10,6 +10,8 @@ export class FeedbackService {
 		private http: HttpClient,
 	) {}
 
+	// TODO: Tira os mocks e faz a chamada real
+
 	getAllFeedback(){
 		return [
 			{
