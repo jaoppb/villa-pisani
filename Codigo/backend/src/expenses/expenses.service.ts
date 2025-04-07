@@ -22,13 +22,17 @@ export class ExpensesService {
 	) {}
 
 	async create(createExpenseDto: CreateExpenseDto) {
-		const tags: Tag[] = await this.tagsRepository.find({
-			where: createExpenseDto.tagIDs.map((id) => ({ id })),
-		});
+		let tags: Tag[] = [];
 
-		if (tags.length !== createExpenseDto.tagIDs.length) {
-			this.logger.error('Tags not found', createExpenseDto.tagIDs);
-			throw new BadRequestException('Tags not found');
+		if (createExpenseDto.tagIDs && createExpenseDto.tagIDs.length > 0) {
+			tags = await this.tagsRepository.find({
+				where: createExpenseDto.tagIDs.map((id) => ({ id })),
+			});
+
+			if (tags.length !== createExpenseDto.tagIDs.length) {
+				this.logger.error('Tags not found', createExpenseDto.tagIDs);
+				throw new BadRequestException('Tags not found');
+			}
 		}
 
 		const expense = this.expensesRepository.save({
