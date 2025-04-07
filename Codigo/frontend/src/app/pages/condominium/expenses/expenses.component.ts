@@ -6,17 +6,23 @@ import { ModalExpensesComponent } from '../../../components/modal/modal-expenses
 import { CustomInputComponent } from '../../../components/input/custom-input/custom-input.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { expense } from '../../../model/expense.model';
+import { IconsComponent } from '../../../components/icons/iconBase/icons.component';
 
 @Component({
   selector: 'app-expenses',
-  imports: [ModalExpensesComponent, CustomInputComponent, ReactiveFormsModule],
+  imports: [
+    ModalExpensesComponent, 
+    CustomInputComponent, 
+    ReactiveFormsModule,
+    IconsComponent
+  ],
   templateUrl: './expenses.component.html',
   styleUrl: './expenses.component.scss'
 })
 export class ExpensesComponent {
   form: FormGroup;
   expensesList: expense[] = [];  
-  openModal: boolean = true;
+  openModal: boolean = false;
   isAdmin: boolean = false;
   
   constructor(
@@ -50,6 +56,11 @@ export class ExpensesComponent {
 
   handleIsOpenChange(isOpen: boolean) {
     this.openModal = isOpen;
+  }
+
+  handleNewExpense(expense: expense) {
+    this.expensesList.unshift(expense);
+    this.expensesList = [...this.expensesList];
   }
 
 }

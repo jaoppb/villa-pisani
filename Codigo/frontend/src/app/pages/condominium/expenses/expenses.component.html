@@ -5,10 +5,18 @@
 <div class="expense-list">
 	@for (expense of this.expensesList; track expense.id) {
 		<div class="expense-card" key={expense.id}>
-			<h1>{{ expense.title }}</h1>
-			<p>{{ expense.description }}</p>
 			<div>
-				files
+				<h1>{{ expense.title }}</h1>
+				<h4>{{ expense.createdAt }}</h4>
+			</div>
+			<p>{{ expense.description }}</p>
+			<div class="file-list">
+				@for(file of expense.files; track file.id) {
+					<a [href]="file.url" target="_blank" class="file-card" key={file.id}>
+						<app-icons name="file" size="16" />
+						<span>{{ file.name }}</span>
+					</a>
+				}
 			</div>
 		</div>
 	} @empty{
@@ -19,5 +27,6 @@
 	<app-modal-expenses 
 	[isOpen]="openModal" 
 	(isOpenChange)="handleIsOpenChange($event)"
+	(newExpense)="handleNewExpense($event)"
 	/>
 }
