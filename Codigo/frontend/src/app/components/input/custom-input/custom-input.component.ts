@@ -4,7 +4,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { IconsComponent } from '../../icons/iconBase/icons.component';
 
 @Component({
-  selector: 'app-input',
+  selector: 'app-input[type="text"],app-input[type="text"],app-input[type="password"],app-input[type="date"],app-input[type="email"]',
   imports: [IconsComponent],
   providers: [
     {
