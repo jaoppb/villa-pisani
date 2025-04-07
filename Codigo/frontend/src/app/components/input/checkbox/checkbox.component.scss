@@ -19,6 +19,11 @@
 	input{
 		display: none;
 
+		&:focus + .checke{
+			border-color: var(--secondary-highlight-color);
+			box-shadow: 0 0 5px var(--secondary-highlight-color);
+		}
+
 		&:checked + .checke {
 			font-weight: bold;
 			color: var(--primary-highlight-color);

@@ -38,8 +38,16 @@
 		input[type="date"]::-webkit-calendar-picker-indicator {
 			cursor: auto;
 			filter: blur(9999999px)
+			}
+
+		input:focus {
+			outline: none;
 		}
 
+		&:has(input:focus) {
+			border-color: var(--secondary-highlight-color);
+			box-shadow: 0 0 5px var(--secondary-highlight-color);
+		}
 		
 	}
 
