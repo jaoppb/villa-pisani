@@ -32,6 +32,12 @@ export class CustomInputComponent implements InputTextInterface{
     this.showPassword = !this.showPassword;
     this.inputRef.nativeElement.type = this.showPassword ? 'text' : 'password';
   }
+  openCalendar(): void {
+    const inputElement = this.getInputElement();
+    if (inputElement) {
+      inputElement.showPicker?.();
+    }
+  }
   writeValue(value: string): void {
     this.value = value || '';
   }
@@ -53,11 +59,13 @@ export class CustomInputComponent implements InputTextInterface{
   onTouched(): void {
     this.touched = true;
   }
+
   onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.value = target.value;
     this.onChange(this.value);
   }
+
   getInputElement(): HTMLInputElement | null {
     return this.inputRef?.nativeElement || null;
   }

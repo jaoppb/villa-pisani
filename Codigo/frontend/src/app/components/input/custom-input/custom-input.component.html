@@ -1,6 +1,13 @@
 <div class="input-container">
 	<div class="input">
-		@if (leftIcon){
+		@if (type === 'date'){
+            <app-icons 
+                name="calendar" 
+                size="24" 
+                (click)="openCalendar()" 
+            />
+		}
+		@else if (leftIcon){
 			<app-icons [name]="leftIcon" size="24" />
 		}
 		<input
