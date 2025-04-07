@@ -22,7 +22,7 @@ Header app-icons{
 main{
 	display: flex;
 	backdrop-filter: blur(4px);
-	background-color: #0000004d;
+	background-color: var(--black-background);
 	flex-grow: 1;
 
 	.forms{
