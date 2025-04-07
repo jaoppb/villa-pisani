@@ -1,0 +1,23 @@
+<form [formGroup]="this.form">
+	<div></div>
+</form>
+<button (click)="openExpenceModal()">Novas Contas</button>
+<div class="expense-list">
+	@for (expense of this.expensesList; track expense.id) {
+		<div class="expense-card" key={expense.id}>
+			<h1>{{ expense.title }}</h1>
+			<p>{{ expense.description }}</p>
+			<div>
+				files
+			</div>
+		</div>
+	} @empty{
+		<p>Nenhuma despesa encontrada.</p>
+	}
+</div>
+@if(this.openModal && this.isAdmin){
+	<app-modal-expenses 
+	[isOpen]="openModal" 
+	(isOpenChange)="handleIsOpenChange($event)"
+	/>
+}

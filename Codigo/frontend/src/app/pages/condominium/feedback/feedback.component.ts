@@ -21,12 +21,14 @@ export class FeedbackComponent {
     private tokenService: AccessTokenService,
   ) {
     this.meta.setMetaData({
-      title: 'Feedback',
+      title: 'Ouvidoria',
       description: 'Feedback do comdominio',
       keywords: 'feedback, review, vila pisane',
     });
     this.isAdmin = this.tokenService.hasManager;
     this.getFeedbackList();
+    console.log(this.isAdmin);
+    console.log(this.openModal);
   }
 
   getFeedbackList() {
