@@ -1,7 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('files')
-export class File {
+export abstract class File {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
