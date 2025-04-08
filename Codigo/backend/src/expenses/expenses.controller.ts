@@ -6,12 +6,15 @@ import {
 	Patch,
 	Param,
 	Delete,
+	UseInterceptors,
+	UploadedFiles,
 } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('expenses')
 export class ExpensesController {
@@ -19,8 +22,15 @@ export class ExpensesController {
 
 	@Post()
 	@Roles(Role.MANAGER)
-	create(@Body() createExpenseDto: CreateExpenseDto) {
-		return this.expensesService.create(createExpenseDto);
+	@UseInterceptors(FilesInterceptor('files'))
+	create(
+		@Body() createExpenseDto: CreateExpenseDto,
+		@UploadedFiles() files: Array<Express.Multer.File>,
+	) {
+		return this.expensesService.create({
+			...createExpenseDto,
+			files,
+		});
 	}
 
 	// TODO add pagination to this method
