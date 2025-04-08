@@ -76,10 +76,8 @@ export class ExpenseFilesService {
 				const url = this._saveFile(file);
 				uploadedUrls.push(url);
 				await queryRunner.manager.save(ExpenseFile, {
+					name: file.originalname,
 					expense,
-					mimetype: file.mimetype,
-					name: file.filename,
-					size: file.size,
 					url,
 				});
 			}
