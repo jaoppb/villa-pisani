@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { ExpensesController } from './expenses.controller';
+import { ExpenseFileController } from './files/files.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Expense } from './entities/expense.entity';
 import { Tag } from './tags/entities/tag.entity';
@@ -12,7 +13,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 
 @Module({
-	controllers: [TagsController, ExpensesController],
+	controllers: [TagsController, ExpenseFileController, ExpensesController],
 	providers: [ExpensesService, ExpenseFilesService, TagsService],
 	imports: [
 		TypeOrmModule.forFeature([Expense, Tag, ExpenseFile]),
