@@ -23,7 +23,10 @@ export class ExpenseFilesService {
 		// TODO implement file deleting (cloud or disk?)
 	}
 
-	async upload(expenseId: string, incomeFile: Express.Multer.File) {
+	private async _uploadOne(
+		expenseId: string,
+		incomeFile: Express.Multer.File,
+	) {
 		const expense = await this.expensesRepository.findOneBy({
 			id: expenseId,
 		});
@@ -49,7 +52,7 @@ export class ExpenseFilesService {
 		return file;
 	}
 
-	async uploadAll(
+	private async _uploadMultiple(
 		expenseId: string,
 		incomeFiles: Array<Express.Multer.File>,
 	) {
@@ -92,12 +95,23 @@ export class ExpenseFilesService {
 			await queryRunner.release();
 		}
 
-		const savedFiles = this.filesRepository
+		const savedFiles = await this.filesRepository
 			.createQueryBuilder('files')
 			.where('files.url IN (:...urls)', { urls: uploadedUrls })
 			.getMany();
 		this.logger.log('Files create all', savedFiles);
 		return savedFiles;
+	}
+
+	async upload(
+		expenseId: string,
+		incomeFile: Express.Multer.File | Array<Express.Multer.File>,
+	): Promise<ExpenseFile | Array<ExpenseFile>> {
+		if (Array.isArray(incomeFile)) {
+			return this._uploadMultiple(expenseId, incomeFile);
+		}
+
+		return this._uploadOne(expenseId, incomeFile);
 	}
 
 	async remove(id: string) {
