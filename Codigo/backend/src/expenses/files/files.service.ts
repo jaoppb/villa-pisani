@@ -43,13 +43,16 @@ export class ExpenseFilesService {
 			throw new BadRequestException('File upload error');
 		}
 
-		const file = this.filesRepository.save({
+		const file = await this.filesRepository.save({
 			name: incomeFile.originalname,
 			expense,
 			url,
 		});
 		this.logger.log('File create', file);
-		return file;
+		return await this.filesRepository.findOne({
+			where: { id: file.id },
+			relations: [],
+		});
 	}
 
 	private async _uploadMultiple(
@@ -95,6 +98,7 @@ export class ExpenseFilesService {
 
 		const savedFiles = await this.filesRepository
 			.createQueryBuilder('files')
+			.select(['files.id', 'files.name', 'files.url'])
 			.where('files.url IN (:...urls)', { urls: uploadedUrls })
 			.getMany();
 		this.logger.log('Files create all', savedFiles);
@@ -115,8 +119,15 @@ export class ExpenseFilesService {
 	}
 
 	async remove(id: string) {
-		const file = await this.filesRepository.delete({ id });
+		const file = await this.filesRepository.findOneBy({ id });
+
+		if (!file) {
+			this.logger.error('File not found', id);
+			throw new BadRequestException('File not found');
+		}
+
+		const result = await this.filesRepository.remove(file);
 		this.logger.log('File remove', file);
-		return file;
+		return result;
 	}
 }
