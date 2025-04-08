@@ -5,8 +5,8 @@ import { ExpenseFile } from './entities/file.entity';
 import { Expense } from '../entities/expense.entity';
 
 @Injectable()
-export class FilesService {
-	private readonly logger = new Logger(FilesService.name);
+export class ExpenseFilesService {
+	private readonly logger = new Logger(ExpenseFilesService.name);
 	constructor(
 		@InjectRepository(ExpenseFile)
 		private readonly filesRepository: Repository<ExpenseFile>,
