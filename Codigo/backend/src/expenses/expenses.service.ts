@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import { Expense } from './entities/expense.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tag } from './tags/entities/tag.entity';
+import { ExpenseFilesService } from './files/files.service';
 
 @Injectable()
 export class ExpensesService {
@@ -19,6 +20,7 @@ export class ExpensesService {
 		private readonly expensesRepository: Repository<Expense>,
 		@InjectRepository(Tag)
 		private readonly tagsRepository: Repository<Tag>,
+		private readonly filesService: ExpenseFilesService,
 	) {}
 
 	async create(createExpenseDto: CreateExpenseDto) {
@@ -31,12 +33,28 @@ export class ExpensesService {
 			throw new BadRequestException('Tags not found');
 		}
 
-		const expense = this.expensesRepository.save({
+		const expense: Expense = await this.expensesRepository.save({
 			title: createExpenseDto.title,
 			description: createExpenseDto.description,
 			files: [],
 			tags,
 		});
+
+		if (createExpenseDto.files.length > 0) {
+			try {
+				const files = await this.filesService.upload(
+					expense.id,
+					createExpenseDto.files,
+				);
+				expense.files = Array.isArray(files) ? files : [files];
+			} catch (err) {
+				this.logger.error('Files upload error', err);
+
+				await this.remove(expense.id);
+
+				throw new BadRequestException('Files upload error');
+			}
+		}
 
 		this.logger.log('Expense create', expense);
 		return expense;
