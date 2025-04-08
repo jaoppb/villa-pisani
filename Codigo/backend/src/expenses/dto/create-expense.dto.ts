@@ -2,7 +2,7 @@ import { IsString, IsUUID } from 'class-validator';
 
 export class CreateExpenseDto {
 	@IsUUID(undefined, { each: true })
-	tagIDs: string[];
+	tagIDs?: string[];
 
 	@IsString()
 	title: string;
@@ -10,5 +10,5 @@ export class CreateExpenseDto {
 	@IsString()
 	description: string;
 
-	files: Express.Multer.File[];
+	files?: Express.Multer.File[];
 }
