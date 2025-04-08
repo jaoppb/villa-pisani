@@ -51,11 +51,13 @@ export class ExpensesController {
 
 	@Patch(':id')
 	@Roles(Role.MANAGER)
+	@UseInterceptors(FilesInterceptor('files'))
 	update(
 		@Param('id') id: string,
 		@Body() updateExpenseDto: UpdateExpenseDto,
+		@UploadedFiles() files: Array<Express.Multer.File>,
 	) {
-		return this.expensesService.update(id, updateExpenseDto);
+		return this.expensesService.update(id, updateExpenseDto, files);
 	}
 
 	@Delete(':id')

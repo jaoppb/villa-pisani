@@ -98,11 +98,45 @@ export class ExpensesService {
 		return expense;
 	}
 
-	async update(id: string, updateExpenseDto: UpdateExpenseDto) {
-		const expense = await this.expensesRepository.update(
-			{ id },
-			updateExpenseDto,
-		);
+	async update(
+		id: string,
+		updateExpenseDto: UpdateExpenseDto,
+		files?: Array<Express.Multer.File>,
+	) {
+		const expense = await this.expensesRepository.findOneBy({ id });
+
+		if (!expense) {
+			this.logger.error('Expense not found', id);
+			throw new NotFoundException('Expense not found');
+		}
+
+		if (files && files.length > 0) {
+			// TODO avaliate if it should replace all files or just add new ones
+			try {
+				const savedFiles = await this.filesService.upload(id, files);
+				if (Array.isArray(savedFiles))
+					expense.files.push(...savedFiles);
+				else expense.files.push(savedFiles);
+			} catch (err) {
+				this.logger.error('Files upload error', err);
+				throw new BadRequestException('Files upload error');
+			}
+		}
+
+		if (updateExpenseDto.tagIDs) {
+			const tags: Tag[] = await this.tagsRepository.find({
+				where: updateExpenseDto.tagIDs.map((id) => ({ id })),
+			});
+
+			if (tags.length !== updateExpenseDto.tagIDs?.length) {
+				this.logger.error('Tags not found', updateExpenseDto.tagIDs);
+				throw new BadRequestException('Tags not found');
+			}
+
+			expense.tags = tags;
+		}
+
+		await this.expensesRepository.save({ ...updateExpenseDto, ...expense });
 		this.logger.log('Expense update', expense);
 		return expense;
 	}
