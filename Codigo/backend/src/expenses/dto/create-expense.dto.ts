@@ -9,4 +9,6 @@ export class CreateExpenseDto {
 
 	@IsString()
 	description: string;
+
+	files: Express.Multer.File[];
 }
