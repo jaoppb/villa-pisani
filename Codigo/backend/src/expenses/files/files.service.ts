@@ -1,15 +1,15 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { File } from './entities/file.entity';
+import { ExpenseFile } from './entities/file.entity';
 import { Expense } from '../entities/expense.entity';
 
 @Injectable()
 export class FilesService {
 	private readonly logger = new Logger(FilesService.name);
 	constructor(
-		@InjectRepository(File)
-		private readonly filesRepository: Repository<File>,
+		@InjectRepository(ExpenseFile)
+		private readonly filesRepository: Repository<ExpenseFile>,
 		@InjectRepository(Expense)
 		private readonly expensesRepository: Repository<Expense>,
 		private readonly dataSource: DataSource,
@@ -72,7 +72,7 @@ export class FilesService {
 			for (const file of incomeFiles) {
 				const url = this._saveFile(file);
 				uploadedUrls.push(url);
-				await queryRunner.manager.save(File, {
+				await queryRunner.manager.save(ExpenseFile, {
 					expense,
 					mimetype: file.mimetype,
 					name: file.filename,
