@@ -106,7 +106,9 @@ export class ExpenseFilesService {
 		incomeFile: Express.Multer.File | Array<Express.Multer.File>,
 	): Promise<ExpenseFile | Array<ExpenseFile>> {
 		if (Array.isArray(incomeFile)) {
-			return this._uploadMultiple(expenseId, incomeFile);
+			return incomeFile.length > 1
+				? this._uploadMultiple(expenseId, incomeFile)
+				: this._uploadOne(expenseId, incomeFile[0]);
 		}
 
 		return this._uploadOne(expenseId, incomeFile);
