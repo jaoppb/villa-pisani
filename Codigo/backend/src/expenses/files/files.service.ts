@@ -41,9 +41,7 @@ export class FilesService {
 		}
 
 		const file = this.filesRepository.save({
-			mimetype: incomeFile.mimetype,
-			name: incomeFile.filename,
-			size: incomeFile.size,
+			name: incomeFile.originalname,
 			expense,
 			url,
 		});

@@ -16,13 +16,7 @@ export class File {
 	name: string;
 
 	@Column()
-	size: number;
-
-	@Column()
 	url: string;
-
-	@Column()
-	mimetype: string;
 
 	@ManyToOne(() => Expense, (expense) => expense.files)
 	expense: Relation<Expense>;
