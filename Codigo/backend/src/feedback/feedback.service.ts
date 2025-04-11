@@ -36,6 +36,13 @@ export class FeedbackService {
 		);
 	}
 
+	async findAllFromUser(user: User): Promise<ReadFeedbackDto[]> {
+		const feedbacks = await this.feedbackRepository.find({
+			where: { user: { id: user.id } },
+		});
+		return feedbacks.map((feedback) => new ReadFeedbackDto(feedback));
+	}
+
 	async findOne(id: string): Promise<ReadFeedbackDto> {
 		const feedback = await this.feedbackRepository.findOne({
 			where: { id },

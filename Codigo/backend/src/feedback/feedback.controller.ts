@@ -33,6 +33,13 @@ export class FeedbackController {
 	}
 
 	@Get()
+	async findAllFromUser(@Request() request: IRequest) {
+		return await this.feedbackService.findAllFromUser(request.user);
+	}
+
+	// TODO add pagination
+	@Get('all')
+	@Roles(Role.MANAGER)
 	async findAll() {
 		return await this.feedbackService.findAll();
 	}

@@ -21,7 +21,7 @@ export class Feedback {
 	@ManyToOne(() => User, (user) => user.id, {
 		cascade: true,
 		nullable: true,
-		eager: false,
+		eager: true,
 	})
 	user?: User;
 
