@@ -1,20 +1,26 @@
-// src/feedback/feedback.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import { IsUUID } from 'class-validator';
+import {
+	Entity,
+	PrimaryGeneratedColumn,
+	Column,
+	CreateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Feedback {
-  @PrimaryGeneratedColumn()
-  id: number;
+	@PrimaryGeneratedColumn('uuid')
+	id: string;
 
-  @Column('text')
-  body: string;
+	@Column('text')
+	body: string;
 
-  @CreateDateColumn()
-  sentAt: Date;
+	@CreateDateColumn()
+	sentAt: Date;
 
-  @Column({ nullable: true })
-  senderId: number;  
+	@Column({ nullable: true })
+	@IsUUID()
+	senderId?: string;
 
-  @Column({ default: false })
-  status: boolean;
+	@Column({ default: false })
+	status: boolean;
 }

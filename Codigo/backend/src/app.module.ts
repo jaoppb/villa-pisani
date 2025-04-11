@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CustomLogger } from './custom.logger';
@@ -14,42 +13,38 @@ import { AuthGuard } from './auth/auth.guard';
 import { RoleGuard } from './auth/roles/role.guard';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true, // Torna as configurações acessíveis globalmente
-      envFilePath: '.env', // Caminho para o arquivo .env
-    }),
-    AppConfigModule,
-    DatabaseModule,
-    LoggerModule.forRoot({
-      pinoHttp: {
-        level: 'trace',
-        transport: {
-          target: 'pino-pretty',
-          options: {
-            colorize: true,
-            colorizeObjects: true,
-          },
-        },
-      },
-    }),
-    UserModule,
-    AuthModule,
-    FeedbackModule, 
-  ],
-  controllers: [AppController],
-  providers: [
-    AppService,
-    CustomLogger,
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RoleGuard,
-    },
-  ],
-  exports: [CustomLogger],
+	imports: [
+		AppConfigModule,
+		DatabaseModule,
+		LoggerModule.forRoot({
+			pinoHttp: {
+				level: 'trace',
+				transport: {
+					target: 'pino-pretty',
+					options: {
+						colorize: true,
+						colorizeObjects: true,
+					},
+				},
+			},
+		}),
+		UserModule,
+		AuthModule,
+		FeedbackModule,
+	],
+	controllers: [AppController],
+	providers: [
+		AppService,
+		CustomLogger,
+		{
+			provide: APP_GUARD,
+			useClass: AuthGuard,
+		},
+		{
+			provide: APP_GUARD,
+			useClass: RoleGuard,
+		},
+	],
+	exports: [CustomLogger],
 })
 export class AppModule {}
