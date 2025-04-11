@@ -1,4 +1,4 @@
-import { Component, forwardRef, Input } from '@angular/core';
+import { Component, forwardRef, Input, ViewChild, ElementRef } from '@angular/core';
 import { InputTextInterface } from '../interface/input-text.interface';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { IconsComponent } from '../../icons/iconBase/icons.component';
@@ -25,7 +25,13 @@ export class CustomInputComponent implements InputTextInterface{
   @Input() touched: boolean = false;
   @Input() leftIcon: string = '';
   @Input() rightIcon: string = '';
+  @ViewChild('input') inputRef!: ElementRef<HTMLInputElement>;
+  showPassword: boolean = false;
 
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+    this.inputRef.nativeElement.type = this.showPassword ? 'text' : 'password';
+  }
   writeValue(value: string): void {
     this.value = value || '';
   }
@@ -51,7 +57,8 @@ export class CustomInputComponent implements InputTextInterface{
     const target = event.target as HTMLInputElement;
     this.value = target.value;
     this.onChange(this.value);
-    console.log(this.errors);
   }
-
+  getInputElement(): HTMLInputElement | null {
+    return this.inputRef?.nativeElement || null;
+  }
 }

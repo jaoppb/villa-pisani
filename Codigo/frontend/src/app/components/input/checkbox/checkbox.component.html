@@ -1,0 +1,11 @@
+<div class="input-container">
+  <input
+    #input
+    [id]="id"
+    [type]="type"
+    [value]="value"
+    [name]="name"
+  />
+  <label [for]="id" class="checke" (click)=onClick()></label>
+  <label [for]="id" class="text" (click)=onClick()>{{ label }}</label>
+</div>

@@ -1,7 +1,6 @@
 import { ControlValueAccessor } from '@angular/forms';
 
 export interface InputInterface extends ControlValueAccessor{
-	placeholder: string;
 	type: string;
 	value: string;
 	id: string;

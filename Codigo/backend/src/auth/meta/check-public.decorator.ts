@@ -12,7 +12,9 @@ export function CheckPublic(
 	const original = descriptor.value as (
 		context: ExecutionContext,
 	) => Promise<boolean>;
-	descriptor.value = async function (context: ExecutionContext): Promise<boolean> {
+	descriptor.value = async function (
+		context: ExecutionContext,
+	): Promise<boolean> {
 		logger.debug('CheckPublic');
 
 		const isPublic = reflector.get<boolean>(

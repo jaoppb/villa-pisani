@@ -47,7 +47,6 @@ services:
       - ./backend/src:/app/src
     depends_on:
       - db
-    command: "npm run start:debug"
   app:
     container_name: vp-app
     build: ./frontend
