@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Feedback } from './entity/feedback.entity';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class FeedbackService {
@@ -12,8 +13,17 @@ export class FeedbackService {
 		private feedbackRepository: Repository<Feedback>,
 	) {}
 
-	async create(createFeedbackDto: CreateFeedbackDto): Promise<Feedback> {
+	async create(
+		createFeedbackDto: CreateFeedbackDto,
+		user?: User,
+	): Promise<Feedback> {
 		const feedback = this.feedbackRepository.create(createFeedbackDto);
+
+		if (!createFeedbackDto.anonymous) {
+			if (!user) throw new NotFoundException('User not found');
+			feedback.user = user;
+		}
+
 		return this.feedbackRepository.save(feedback);
 	}
 
