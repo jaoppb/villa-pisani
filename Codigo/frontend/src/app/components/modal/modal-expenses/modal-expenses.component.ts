@@ -68,19 +68,19 @@ export class ModalExpensesComponent {
 
   submit(): void {
     if (this.form.valid) {
-      this.expenseService.createExpense(this.form.value as expenseRequest, this.selectedFiles).subscribe({
-        next: (response: HttpResponse<expense>) => {
-          const body: expense = response.body!;
-          this.newExpense.emit(body);
-          this.form.reset();
-          this.selectedFiles = [];
-          this.handleIsOpenChange(false);
-        },
-        error: (err: any) => {
-          console.error('Erro ao criar despesa:', err);
-          this.form.setErrors({ uploadFailed: true });
-        },
-      });
+      // this.expenseService.createExpense(this.form.value as expenseRequest, this.selectedFiles).subscribe({
+      //   next: (response: HttpResponse<expense>) => {
+      //     const body: expense = response.body!;
+      //     this.newExpense.emit(body);
+      //     this.form.reset();
+      //     this.selectedFiles = [];
+      //     this.handleIsOpenChange(false);
+      //   },
+      //   error: (err: any) => {
+      //     console.error('Erro ao criar despesa:', err);
+      //     this.form.setErrors({ uploadFailed: true });
+      //   },
+      // });
     } else {
       console.log('Formulário inválido:', this.form.errors);
     }
