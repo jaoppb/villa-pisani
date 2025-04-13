@@ -68,7 +68,11 @@ export class ExpensesService {
 
 	findAll() {
 		this.logger.log('Expense find all');
-		return this.expensesRepository.find();
+		return this.expensesRepository.find({
+			order: {
+				createdAt: 'DESC',
+			},
+		});
 	}
 
 	async findByTags(ids: string[]) {

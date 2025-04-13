@@ -1,0 +1,29 @@
+<app-modal-base
+[isOpen]="isOpen"
+(isOpenChange)="handleIsOpenChange($event)"
+>
+	<h1>Nova Reclamação</h1>
+	<form [formGroup]="form" (ngSubmit)="submit()">
+		<app-input
+		formControlName="description"
+		placeholder="Descrição"
+		id="description"
+		type="textarea" 
+		[touched]="this.form.get('description')?.touched ?? false"
+		[errors]="this.form.get('description')?.errors"
+		/>
+		<app-input 
+		formControlName="anonymous"
+		id="anonymous"
+		type="checkbox" 
+		label="Messagem anonima"
+		[touched]="this.form.get('anonymous')?.touched ?? false"
+		[errors]="this.form.get('anonymous')?.errors"
+		/>
+		<button 
+		type="submit" 
+		[disabled]="form.invalid"
+		>Enviar</button>
+	</form>
+
+</app-modal-base>

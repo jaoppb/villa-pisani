@@ -1,0 +1,32 @@
+<form [formGroup]="this.form">
+	<div></div>
+</form>
+<button (click)="openExpenceModal()">Novas Contas</button>
+<div class="expense-list">
+	@for (expense of this.expensesList; track expense.id) {
+		<div class="expense-card" key={expense.id}>
+			<div>
+				<h1>{{ expense.title }}</h1>
+				<h4>{{ expense.createdAt }}</h4>
+			</div>
+			<p>{{ expense.description }}</p>
+			<div class="file-list">
+				@for(file of expense.files; track file.id) {
+					<a [href]="file.url" target="_blank" class="file-card" key={file.id}>
+						<app-icons name="file" size="16" />
+						<span>{{ file.name }}</span>
+					</a>
+				}
+			</div>
+		</div>
+	} @empty{
+		<p>Nenhuma despesa encontrada.</p>
+	}
+</div>
+@if(this.openModal && this.isAdmin){
+	<app-modal-expenses 
+	[isOpen]="openModal" 
+	(isOpenChange)="handleIsOpenChange($event)"
+	(newExpense)="handleNewExpense($event)"
+	/>
+}

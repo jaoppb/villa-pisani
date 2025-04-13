@@ -19,3 +19,18 @@ export interface registerErrorResponse {
 	error: string;
 	statusCode: number;
 }
+
+export enum Role {
+	MANAGER = 'manager',
+	INHABITANT = 'inhabitant',
+	EMPLOYEE = 'employee',
+}
+
+export interface payloadToken {
+	email: string;
+	sub: string;
+	roles: Role[];
+	iss: string;
+	iat: number;
+	exp: number;
+}

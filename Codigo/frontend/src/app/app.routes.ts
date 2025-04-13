@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Error404Component } from './pages/error404/error404.component';
 import { OutletComponent as OutletAuht} from './pages/auth/outlet/outlet.component';
 import { OutletComponent as OutletCondominium } from './pages/condominium/outlet/outlet.component';
+import { OutletComponent as OutletHome } from './pages/home/outlet/outlet.component';
 import { AuthenticateGuard } from './guards/authenticate.guard';
 import { inject } from '@angular/core';
 
@@ -13,6 +14,7 @@ export const routes: Routes = [
 	},
 	{
 		path: '',
+		component: OutletHome,
 		loadChildren: () => 
 		import('./pages/home/home.routes').then(
 			(module_) => module_.routes,
