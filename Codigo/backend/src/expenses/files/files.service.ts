@@ -1,15 +1,15 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { File } from './entities/file.entity';
+import { ExpenseFile } from './entities/file.entity';
 import { Expense } from '../entities/expense.entity';
 
 @Injectable()
-export class FilesService {
-	private readonly logger = new Logger(FilesService.name);
+export class ExpenseFilesService {
+	private readonly logger = new Logger(ExpenseFilesService.name);
 	constructor(
-		@InjectRepository(File)
-		private readonly filesRepository: Repository<File>,
+		@InjectRepository(ExpenseFile)
+		private readonly filesRepository: Repository<ExpenseFile>,
 		@InjectRepository(Expense)
 		private readonly expensesRepository: Repository<Expense>,
 		private readonly dataSource: DataSource,
@@ -23,7 +23,10 @@ export class FilesService {
 		// TODO implement file deleting (cloud or disk?)
 	}
 
-	async upload(expenseId: string, incomeFile: Express.Multer.File) {
+	private async _uploadOne(
+		expenseId: string,
+		incomeFile: Express.Multer.File,
+	) {
 		const expense = await this.expensesRepository.findOneBy({
 			id: expenseId,
 		});
@@ -40,18 +43,19 @@ export class FilesService {
 			throw new BadRequestException('File upload error');
 		}
 
-		const file = this.filesRepository.save({
-			mimetype: incomeFile.mimetype,
-			name: incomeFile.filename,
-			size: incomeFile.size,
+		const file = await this.filesRepository.save({
+			name: incomeFile.originalname,
 			expense,
 			url,
 		});
 		this.logger.log('File create', file);
-		return file;
+		return await this.filesRepository.findOne({
+			where: { id: file.id },
+			relations: [],
+		});
 	}
 
-	async uploadAll(
+	private async _uploadMultiple(
 		expenseId: string,
 		incomeFiles: Array<Express.Multer.File>,
 	) {
@@ -74,11 +78,9 @@ export class FilesService {
 			for (const file of incomeFiles) {
 				const url = this._saveFile(file);
 				uploadedUrls.push(url);
-				await queryRunner.manager.save(File, {
+				await queryRunner.manager.save(ExpenseFile, {
+					name: file.originalname,
 					expense,
-					mimetype: file.mimetype,
-					name: file.filename,
-					size: file.size,
 					url,
 				});
 			}
@@ -94,8 +96,9 @@ export class FilesService {
 			await queryRunner.release();
 		}
 
-		const savedFiles = this.filesRepository
+		const savedFiles = await this.filesRepository
 			.createQueryBuilder('files')
+			.select(['files.id', 'files.name', 'files.url'])
 			.where('files.url IN (:...urls)', { urls: uploadedUrls })
 			.getMany();
 		this.logger.log('Files create all', savedFiles);
@@ -105,9 +108,29 @@ export class FilesService {
 		});
 	}
 
+	async upload(
+		expenseId: string,
+		incomeFile: Express.Multer.File | Array<Express.Multer.File>,
+	): Promise<ExpenseFile | Array<ExpenseFile>> {
+		if (Array.isArray(incomeFile)) {
+			return incomeFile.length > 1
+				? this._uploadMultiple(expenseId, incomeFile)
+				: this._uploadOne(expenseId, incomeFile[0]);
+		}
+
+		return this._uploadOne(expenseId, incomeFile);
+	}
+
 	async remove(id: string) {
-		const file = await this.filesRepository.delete({ id });
+		const file = await this.filesRepository.findOneBy({ id });
+
+		if (!file) {
+			this.logger.error('File not found', id);
+			throw new BadRequestException('File not found');
+		}
+
+		const result = await this.filesRepository.remove(file);
 		this.logger.log('File remove', file);
-		return file;
+		return result;
 	}
 }

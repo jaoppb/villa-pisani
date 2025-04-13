@@ -6,21 +6,51 @@ import {
 	Patch,
 	Param,
 	Delete,
+	UseInterceptors,
+	UploadedFiles,
+	ParseFilePipe,
+	MaxFileSizeValidator,
+	FileTypeValidator,
 } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { AppConfigService } from 'src/app-config/app-config.service';
 
 @Controller('expenses')
 export class ExpensesController {
-	constructor(private readonly expensesService: ExpensesService) {}
+	// TODO avaliate the pros and cons of that:
+	// WARN tried to use maxSize from AppConfigService,
+	// but the decorator cannot use `this`, so it would be necessary
+	// to workaround it with a direct import of the AppConfigService
+	// and a static method, but it would be a bad practice
+	private static readonly filePipe = new ParseFilePipe({
+		validators: [
+			new MaxFileSizeValidator({ maxSize: 200 * 1024 * 1024 }),
+			new FileTypeValidator({ fileType: 'application/pdf' }),
+		],
+	});
+
+	constructor(
+		private readonly expensesService: ExpensesService,
+		private readonly appConfigService: AppConfigService,
+	) {}
 
 	@Post()
 	@Roles(Role.MANAGER)
-	create(@Body() createExpenseDto: CreateExpenseDto) {
-		return this.expensesService.create(createExpenseDto);
+	@UseInterceptors(FilesInterceptor('files'))
+	create(
+		@Body() createExpenseDto: CreateExpenseDto,
+		@UploadedFiles(ExpensesController.filePipe)
+		files: Array<Express.Multer.File>,
+	) {
+		return this.expensesService.create({
+			...createExpenseDto,
+			files,
+		});
 	}
 
 	// TODO add pagination to this method
@@ -41,11 +71,14 @@ export class ExpensesController {
 
 	@Patch(':id')
 	@Roles(Role.MANAGER)
+	@UseInterceptors(FilesInterceptor('files'))
 	update(
 		@Param('id') id: string,
 		@Body() updateExpenseDto: UpdateExpenseDto,
+		@UploadedFiles(ExpensesController.filePipe)
+		files: Array<Express.Multer.File>,
 	) {
-		return this.expensesService.update(id, updateExpenseDto);
+		return this.expensesService.update(id, updateExpenseDto, files);
 	}
 
 	@Delete(':id')

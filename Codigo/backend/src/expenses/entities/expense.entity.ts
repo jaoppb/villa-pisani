@@ -11,7 +11,7 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 import { Tag } from '../tags/entities/tag.entity';
-import { File } from '../files/entities/file.entity';
+import { ExpenseFile } from '../files/entities/file.entity';
 
 @Entity('expenses')
 export class Expense {
@@ -35,11 +35,11 @@ export class Expense {
 	@UpdateDateColumn()
 	updatedAt: Date;
 
-	@OneToMany(() => File, (file) => file.expense, {
+	@OneToMany(() => ExpenseFile, (file) => file.expense, {
 		cascade: true,
 		eager: true,
 	})
-	files: Relation<File[]>;
+	files: Relation<ExpenseFile[]>;
 
 	@BeforeUpdate()
 	updateDate() {
