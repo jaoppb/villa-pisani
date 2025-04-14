@@ -5,6 +5,7 @@ import {
 	Column,
 	CreateDateColumn,
 	ManyToOne,
+	Relation,
 } from 'typeorm';
 
 @Entity()
@@ -23,7 +24,7 @@ export class Feedback {
 		nullable: true,
 		eager: true,
 	})
-	user?: User;
+	user?: Relation<User>;
 
 	@Column({ default: false })
 	status: boolean;
