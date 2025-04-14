@@ -18,7 +18,6 @@ import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { AppConfigService } from 'src/app-config/app-config.service';
 
 @Controller('expenses')
 export class ExpensesController {
@@ -34,10 +33,7 @@ export class ExpensesController {
 		],
 	});
 
-	constructor(
-		private readonly expensesService: ExpensesService,
-		private readonly appConfigService: AppConfigService,
-	) {}
+	constructor(private readonly expensesService: ExpensesService) {}
 
 	@Post()
 	@Roles(Role.MANAGER)
