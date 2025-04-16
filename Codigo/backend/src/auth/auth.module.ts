@@ -12,6 +12,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { User } from 'src/user/entities/user.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PublicGuard } from './guards/public.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 @Module({
 	imports: [
@@ -30,8 +31,14 @@ import { PublicGuard } from './guards/public.guard';
 		}),
 	],
 	controllers: [AuthController],
-	providers: [AuthService, PasswordEncryption, JwtStrategy, PublicGuard],
-	exports: [AuthService, JwtModule, JwtStrategy, PublicGuard],
+	providers: [
+		AuthService,
+		PasswordEncryption,
+		JwtStrategy,
+		PublicGuard,
+		AuthGuard,
+	],
+	exports: [AuthService, JwtModule, JwtStrategy, PublicGuard, AuthGuard],
 })
 export class AuthModule {
 	constructor() {}
