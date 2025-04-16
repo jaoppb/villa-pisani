@@ -11,6 +11,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { User } from 'src/user/entities/user.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { PublicGuard } from './guards/public.guard';
 
 @Module({
 	imports: [
@@ -29,8 +30,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 		}),
 	],
 	controllers: [AuthController],
-	providers: [AuthService, PasswordEncryption, JwtStrategy],
-	exports: [AuthService, JwtModule, JwtStrategy],
+	providers: [AuthService, PasswordEncryption, JwtStrategy, PublicGuard],
+	exports: [AuthService, JwtModule, JwtStrategy, PublicGuard],
 })
 export class AuthModule {
 	constructor() {}
