@@ -14,6 +14,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PublicGuard } from './guards/public.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
+import { GlobalGuard } from './guards/global.guard';
 
 @Module({
 	imports: [
@@ -36,6 +37,7 @@ import { RoleGuard } from './guards/role.guard';
 		AuthService,
 		PasswordEncryption,
 		JwtStrategy,
+		GlobalGuard,
 		PublicGuard,
 		AuthGuard,
 		RoleGuard,
@@ -44,6 +46,7 @@ import { RoleGuard } from './guards/role.guard';
 		AuthService,
 		JwtModule,
 		JwtStrategy,
+		GlobalGuard,
 		PublicGuard,
 		AuthGuard,
 		RoleGuard,
