@@ -49,10 +49,10 @@ export class ExpenseFilesService {
 			url,
 		});
 		this.logger.log('File create', file);
-		return await this.filesRepository.findOne({
+		return (await this.filesRepository.findOne({
 			where: { id: file.id },
-			relations: [],
-		});
+			select: ['id', 'name', 'url'],
+		}))!;
 	}
 
 	private async _uploadMultiple(
@@ -102,10 +102,7 @@ export class ExpenseFilesService {
 			.where('files.url IN (:...urls)', { urls: uploadedUrls })
 			.getMany();
 		this.logger.log('Files create all', savedFiles);
-		return this.expensesRepository.findOne({
-			where: { id: expenseId },
-			relations: { files: true },
-		});
+		return savedFiles;
 	}
 
 	async upload(
