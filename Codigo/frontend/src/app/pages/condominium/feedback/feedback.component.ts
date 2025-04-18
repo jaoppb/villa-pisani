@@ -27,22 +27,23 @@ export class FeedbackComponent {
     });
     this.isAdmin = this.tokenService.hasManager;
     this.getFeedbackList();
-    console.log(this.isAdmin);
-    console.log(this.openModal);
   }
 
-  getFeedbackList() {
-    const feedbacks = this.isAdmin 
-      ? this.feedbackService.getAllFeedback() 
-      : this.feedbackService.getUserFeedback();
+  async getFeedbackList() {
+    const response = this.isAdmin
+      ? await this.feedbackService.getAllFeedback().toPromise()
+      : await this.feedbackService.getUserFeedback().toPromise();
+
+    const feedbacks = response?.body as feedbackResponse[] || [];
 
     this.feedbackList = feedbacks.map((feedback) => ({
       ...feedback,
-      date: new Date(feedback.date).toLocaleDateString('pt-BR', {
+      userName: feedback.userName === 'anonymous' ? 'Anônimo' : feedback.userName,
+      sentAt: new Date(feedback.sentAt).toLocaleDateString('pt-BR', {
         year: 'numeric',
         month: '2-digit',
-        day: '2-digit', 
-        hour: '2-digit', 
+        day: '2-digit',
+        hour: '2-digit',
         minute: '2-digit'
       })
     }));
@@ -58,11 +59,11 @@ export class FeedbackComponent {
   handleNewFeedback(feedback: feedbackResponse) {
     this.feedbackList.unshift({
       ...feedback,
-      date: new Date(feedback.date).toLocaleDateString('pt-BR', {
+      sentAt: new Date(feedback.sentAt).toLocaleDateString('pt-BR', {
         year: 'numeric',
         month: '2-digit',
-        day: '2-digit', 
-        hour: '2-digit', 
+        day: '2-digit',
+        hour: '2-digit',
         minute: '2-digit'
       })
     });
