@@ -7,13 +7,14 @@ import { CustomInputComponent } from '../../../components/input/custom-input/cus
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { expense } from '../../../model/expense.model';
 import { IconsComponent } from '../../../components/icons/iconBase/icons.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-expenses',
   imports: [
     ModalExpensesComponent,
     ReactiveFormsModule,
-    IconsComponent
+    IconsComponent,
   ],
   templateUrl: './expenses.component.html',
   styleUrl: './expenses.component.scss'
@@ -44,13 +45,36 @@ export class ExpensesComponent {
 
   getExpensesList() {
     this.expenseService.getAllExpenses().subscribe((res: any) => {
-      this.expensesList = res;
-      console.log(this.expensesList);
+      this.expensesList = res.map((expense: expense) => ({
+        ...expense,
+        createdAt: new Date(expense.createdAt).toLocaleDateString('pt-BR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      }));
     });
   }
 
   openExpenceModal() {
     this.openModal = true;
+  }
+
+  openFile(urlFile: string) {
+    console.log(urlFile);
+    this.expenseService.downloadFIle(urlFile).subscribe((res: Blob) => {
+      const blob = new Blob([res], { type: res.type });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url + "";
+      a.target = '_blank';
+      a.title = 'Download';
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    });
   }
 
   handleIsOpenChange(isOpen: boolean) {
