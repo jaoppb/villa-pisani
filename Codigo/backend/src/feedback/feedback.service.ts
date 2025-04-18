@@ -18,6 +18,8 @@ export class FeedbackService {
 		createFeedbackDto: CreateFeedbackDto,
 		user?: User,
 	): Promise<ReadFeedbackDto> {
+		console.log('createFeedbackDto', createFeedbackDto);
+		console.log('user', user);
 		const feedback = this.feedbackRepository.create(createFeedbackDto);
 
 		if (!createFeedbackDto.anonymous) {
