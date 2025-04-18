@@ -1,9 +1,9 @@
-export interface tag{
+export interface tag {
 	id: string;
 	labe: string;
 }
 
-export interface fileResponse{
+export interface fileResponse {
 	id: string;
 	name: string;
 	url: string;
@@ -13,7 +13,7 @@ export interface fileResponse{
 }
 
 
-export interface expense{
+export interface expense {
 	id: string;
 	title: string;
 	description: string;
@@ -23,8 +23,9 @@ export interface expense{
 	files: fileResponse[];
 }
 
-export interface expenseRequest{
+export interface expenseRequest {
 	title: string;
 	description: string;
 	tagIDs: string[];
+	files: File[];
 }

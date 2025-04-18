@@ -21,11 +21,11 @@ export class ModalExpensesComponent {
   selectedFiles: File[] = [];
   acceptedMimeTypes = ['application/pdf'];
   maxFileSize = 200 * 1024 * 1024; // 200MB
-  
+
   constructor(
     private fb: FormBuilder,
     private expenseService: ExpenseService,
-  ){
+  ) {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
       description: ['', [Validators.maxLength(500)]],
@@ -42,45 +42,50 @@ export class ModalExpensesComponent {
   fileValidator(): Validators {
     return () => {
       if (!this.selectedFiles || this.selectedFiles.length === 0) {
-        return { required: true }; // Nenhum arquivo selecionado
+        return { required: true };
       }
-  
+
       for (const file of this.selectedFiles) {
         if (file.size > this.maxFileSize) {
-          return { maxSize: true }; // Arquivo excede o tamanho máximo
+          return { maxSize: true };
         }
         if (!this.acceptedMimeTypes.includes(file.type)) {
-          return { invalidType: true }; // Tipo de arquivo inválido
+          return { invalidType: true };
         }
       }
-  
-      return null; // Validação passou
+      return null;
     };
   }
 
   handleFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files) {
-      this.selectedFiles = Array.from(input.files); // Armazena os arquivos selecionados
-      this.form.get('files')?.updateValueAndValidity(); // Apenas revalida o campo
+      this.selectedFiles = Array.from(input.files);
+      this.form.get('files')?.updateValueAndValidity();
     }
   }
 
   submit(): void {
     if (this.form.valid) {
-      // this.expenseService.createExpense(this.form.value as expenseRequest, this.selectedFiles).subscribe({
-      //   next: (response: HttpResponse<expense>) => {
-      //     const body: expense = response.body!;
-      //     this.newExpense.emit(body);
-      //     this.form.reset();
-      //     this.selectedFiles = [];
-      //     this.handleIsOpenChange(false);
-      //   },
-      //   error: (err: any) => {
-      //     console.error('Erro ao criar despesa:', err);
-      //     this.form.setErrors({ uploadFailed: true });
-      //   },
-      // });
+      this.form.disable();
+      const expenseData: expenseRequest = {
+        title: this.form.get('title')?.value,
+        description: this.form.get('description')?.value,
+        tagIDs: this.form.get('tagIDs')?.value,
+        files: this.selectedFiles,
+      };
+      this.expenseService.createExpense(expenseData).then((response: HttpResponse<expense> | undefined) => {
+        if (response && response.status === 201) {
+          this.newExpense.emit(response.body);
+          this.form.reset();
+          this.selectedFiles = [];
+          this.handleIsOpenChange(false);
+        } else if (response) {
+          console.error('Erro ao criar despesa:', response.statusText);
+        } else {
+          console.error('Erro ao criar despesa: resposta indefinida');
+        }
+      })
     } else {
       console.log('Formulário inválido:', this.form.errors);
     }

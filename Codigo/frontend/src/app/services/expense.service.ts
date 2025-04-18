@@ -18,33 +18,23 @@ export class ExpenseService {
 		return this.http.get<tag[]>('expenses/tags');
 	}
 
-	async createExpense(data: expenseRequest, files: File[]) {
-		const expenseResponse = await this.http
-			.post<expense>(
-				'expenses',
-				data,
-				{ observe: 'response' }
-			)
-			.toPromise();
-
-		if (!expenseResponse || !expenseResponse.body) {
-			throw new Error('Error creating expense');
-		}
-
-		const expense = expenseResponse.body;
-
-		if (!files || files.length === 0) {
-			return expense;
-		}
-
+	createExpense(data: expenseRequest) {
+		console.log(data);
 		const formData = new FormData();
-		files.forEach(file => formData.append('files', file));
-
+		formData.append('title', data.title);
+		formData.append('description', data.description);
+		if (data.tagIDs.length !== 0)
+			formData.append('tagIDs', JSON.stringify(data.tagIDs));
+		for (const file of data.files) {
+			console.log(file);
+			formData.append('files', file, file.name);
+		}
 		return this.http
 			.post<expense>(
-				`expenses/files/${expense.id}`,
+				'expenses',
 				formData,
 				{ observe: 'response' }
 			)
+			.toPromise();
 	}
 }

@@ -11,8 +11,7 @@ import { IconsComponent } from '../../../components/icons/iconBase/icons.compone
 @Component({
   selector: 'app-expenses',
   imports: [
-    ModalExpensesComponent, 
-    CustomInputComponent, 
+    ModalExpensesComponent,
     ReactiveFormsModule,
     IconsComponent
   ],
@@ -21,10 +20,10 @@ import { IconsComponent } from '../../../components/icons/iconBase/icons.compone
 })
 export class ExpensesComponent {
   form: FormGroup;
-  expensesList: expense[] = [];  
+  expensesList: expense[] = [];
   openModal: boolean = false;
   isAdmin: boolean = false;
-  
+
   constructor(
     private meta: MetaData,
     private expenseService: ExpenseService,
@@ -36,8 +35,8 @@ export class ExpensesComponent {
       description: 'Contas do comdominio',
     });
     this.form = this.fb.group({
-      startDate: [null, ],
-      endDate: [null, ],
+      startDate: [null,],
+      endDate: [null,],
     });
     this.isAdmin = this.tokenService.hasManager;
     this.getExpensesList();
