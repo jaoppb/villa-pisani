@@ -2,7 +2,7 @@ import { OmitType } from '@nestjs/swagger';
 import { Feedback } from '../entity/feedback.entity';
 
 export class ReadFeedbackDto extends OmitType(Feedback, ['user'] as const) {
-	userId?: string;
+	userName: string = 'anonymous';
 
 	constructor(feedback: Feedback) {
 		super();
@@ -12,7 +12,7 @@ export class ReadFeedbackDto extends OmitType(Feedback, ['user'] as const) {
 		this.status = feedback.status;
 
 		if (feedback.user) {
-			this.userId = feedback.user.id;
+			this.userName = feedback.user.name;
 		}
 	}
 }
