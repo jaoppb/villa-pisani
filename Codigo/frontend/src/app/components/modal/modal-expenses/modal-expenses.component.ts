@@ -56,6 +56,7 @@ export class ModalExpensesComponent {
       return null;
     };
   }
+  // Criar um input propio para o upload de arquivos, com drag and drop e preview
 
   handleFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -65,6 +66,7 @@ export class ModalExpensesComponent {
     }
   }
 
+  // TODO: retorna erros de validação para o template
   submit(): void {
     if (this.form.valid) {
       this.form.disable();

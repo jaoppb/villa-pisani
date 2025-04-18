@@ -24,23 +24,26 @@ export class ModalFeedbackComponent {
     private feedbackService: FeedbackService,
   ) {
     this.form = this.fb.group({
-      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
-      anonymous: [false,[]],
+      body: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
+      anonymous: [false, []],
     });
   }
+  // TODO: retorna erros de validação para o template
 
-	// TODO: Tira os mocks e faz a chamada real
   submit(): void {
-    // this.feedbackService.createFeedback(this.form.value).subscribe({
-    //   next: (body:feedbackResponse) => {
-    //     this.newFeedBack.emit(body);
-    //     this.form.reset();
-    //     this.handleIsOpenChange(false);
-    //   },
-    //   error: (err) => {
-    //     this.form.setErrors({ loginFailed: true });
-    //   },
-    // });
+    this.feedbackService.createFeedback(this.form.value).subscribe({
+      next: (response) => {
+        const body: feedbackResponse | null = response.body;
+        if (body) {
+          this.newFeedBack.emit(body);
+          this.form.reset();
+          this.handleIsOpenChange(false);
+        }
+      },
+      error: (err) => {
+        this.form.setErrors({ loginFailed: true });
+      },
+    });
   }
 
   handleIsOpenChange(isOpen: boolean): void {
