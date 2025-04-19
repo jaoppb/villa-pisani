@@ -31,14 +31,17 @@ export class FeedbackService {
 	}
 
 	async findAll(): Promise<ReadFeedbackDto[]> {
-		return (await this.feedbackRepository.find()).map(
-			(feedback) => new ReadFeedbackDto(feedback),
-		);
+		return (
+			await this.feedbackRepository.find({
+				order: { sentAt: 'DESC' },
+			})
+		).map((feedback) => new ReadFeedbackDto(feedback));
 	}
 
 	async findAllFromUser(user: User): Promise<ReadFeedbackDto[]> {
 		const feedbacks = await this.feedbackRepository.find({
 			where: { user: { id: user.id } },
+			order: { sentAt: 'DESC' },
 		});
 		return feedbacks.map((feedback) => new ReadFeedbackDto(feedback));
 	}
