@@ -1,18 +1,20 @@
 import { Injectable, OnInit, Renderer2 } from '@angular/core';
 import { Theme } from '../enums/themes.enum';
+import { CookieService } from './cookie.service';
 
 @Injectable({
 	providedIn: 'root',
 })
-export class ThemeManagerService implements OnInit{
+export class ThemeManagerService implements OnInit {
 	themalight = true;
-	constructor(private renderer: Renderer2) {
+
+	constructor(private renderer: Renderer2, private cookieService: CookieService) {
 		this.ngOnInit();
 	}
 
 	ngOnInit(): void {
 		if (typeof window !== 'undefined') {
-			const savedTheme = localStorage.getItem('user-theme');
+			const savedTheme = this.cookieService.get('user-theme');
 			if (savedTheme) {
 				this.themalight = savedTheme === 'light';
 			} else {
@@ -20,22 +22,22 @@ export class ThemeManagerService implements OnInit{
 			}
 			this.updateBodyClass();
 		} else {
-			console.warn('localStorage não está disponível no lado do servidor.');
+			console.warn('Cookies não estão disponíveis no lado do servidor.');
 		}
 	}
 
 	public switchTheme(): boolean {
 		this.themalight = !this.themalight;
-		localStorage.setItem('user-theme', this.themalight ? 'light' : 'dark');
+		this.cookieService.set('user-theme', this.themalight ? 'light' : 'dark');
 		this.updateBodyClass();
-		return this.themalight
+		return this.themalight;
 	}
 
 	private detectSystemTheme(): void {
 		if (typeof window !== 'undefined') {
 			const prefersLight = window.matchMedia('(prefers-color-scheme: light)');
 			this.themalight = prefersLight.matches;
-	
+
 			prefersLight.addEventListener('change', (event) => {
 				this.themalight = event.matches;
 				this.updateBodyClass();

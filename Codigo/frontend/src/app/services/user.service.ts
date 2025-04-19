@@ -21,15 +21,15 @@ export class UserService {
 
 	login(data: loginRequest) {
 		return this.http
-		.post<loginResponse>('auth/signin', 
-			data,
-			{ observe: 'response' })
-		.pipe(
-			tap(({ body }) => {
-				if (body) {
-					this.tokenService.AccessToken = body.accessToken;
-				}
-			})
-		);
+			.post<loginResponse>('auth/signin',
+				data,
+				{ observe: 'response' })
+			.pipe(
+				tap(({ body }) => {
+					if (body) {
+						this.tokenService.AccessToken = body.accessToken;
+					}
+				})
+			);
 	}
 }

@@ -31,6 +31,7 @@ export class ModalFeedbackComponent {
   // TODO: retorna erros de validação para o template
 
   submit(): void {
+    console.log(this.form.value);
     this.feedbackService.createFeedback(this.form.value).subscribe({
       next: (response) => {
         const body: feedbackResponse | null = response.body;
