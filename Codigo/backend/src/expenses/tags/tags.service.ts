@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,8 +13,19 @@ export class TagsService {
 		private readonly tagsRepository: Repository<Tag>,
 	) {}
 
-	create(createTagDto: CreateTagDto) {
-		const tag = this.tagsRepository.save(createTagDto);
+	async create(createTagDto: CreateTagDto) {
+		const existingTag = await this.tagsRepository.findOneBy({
+			label: createTagDto.label,
+		});
+
+		console.log('existingTag', existingTag);
+
+		if (existingTag) {
+			this.logger.error('Tag already exists', createTagDto.label);
+			throw new BadRequestException('Tag with this label already exists');
+		}
+
+		const tag = await this.tagsRepository.save(createTagDto);
 		this.logger.log('Tag create', tag);
 		return tag;
 	}

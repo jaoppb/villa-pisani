@@ -6,7 +6,7 @@ export class Tag {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
-	@Column()
+	@Column({ unique: true })
 	label: string;
 
 	@ManyToMany(() => Expense)
