@@ -18,8 +18,6 @@ export class TagsService {
 			label: createTagDto.label,
 		});
 
-		console.log('existingTag', existingTag);
-
 		if (existingTag) {
 			this.logger.error('Tag already exists', createTagDto.label);
 			throw new BadRequestException('Tag with this label already exists');
