@@ -80,9 +80,16 @@ export class ExpensesService {
 		const expenses = await this.expensesRepository
 			.createQueryBuilder('expense')
 			.leftJoinAndSelect('expense.tags', 'tags')
+			.leftJoinAndSelect('expense.files', 'files')
 			.where(
-				'expense.id IN (SELECT expensesId FROM expenses_tags_expense_tags WHERE expenseTagsId IN (:...ids))',
-				{ ids },
+				`expense.id IN (
+					SELECT expensesId
+					FROM expenses_tags_expense_tags
+					WHERE expenseTagsId IN (:...ids)
+					GROUP BY expensesId
+					HAVING COUNT(DISTINCT expenseTagsId) = :tagCount
+				)`,
+				{ ids, tagCount: ids.length },
 			)
 			.getMany();
 

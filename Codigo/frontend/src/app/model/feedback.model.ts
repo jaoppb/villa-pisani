@@ -1,11 +1,12 @@
 export interface feedbackRequest {
-	description: string;
+	body: string;
 	anonymous: boolean;
 }
 
 export interface feedbackResponse {
 	id: number;
-	name: string;
-	date: string;
+	userName: string;
 	body: string;
+	sentAt: string;
+	status: string;
 }

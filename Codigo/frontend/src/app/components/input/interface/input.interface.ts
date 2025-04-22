@@ -1,15 +1,15 @@
 import { ControlValueAccessor } from '@angular/forms';
 
-export interface InputInterface extends ControlValueAccessor{
+export interface InputInterface<T = string> extends ControlValueAccessor {
 	type: string;
-	value: string;
+	value: T;
 	id: string;
 
-	writeValue(value: string): void;
-	registerOnChange(fn: (value: string) => void): void;
+	writeValue(value: T): void;
+	registerOnChange(fn: (value: T) => void): void;
 	registerOnTouched(fn: () => void): void;
 	setDisabledState?(isDisabled: boolean): void;
 
-	onChange(value: string): void;
-	onBlur(value: string): void;
+	onChange(value: T): void;
+	onBlur(value: T): void;
 }

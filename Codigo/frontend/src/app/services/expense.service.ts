@@ -10,7 +10,13 @@ export class ExpenseService {
 		private http: HttpClient,
 	) {}
 
-	getAllExpenses() {
+	getAllExpenses(tags: string[] = []) {
+		if (tags.length !== 0) {
+			let tagsUrl = tags.map((tag) => tag.toLowerCase());
+			tagsUrl = tagsUrl.filter((tag) => tag !== '');
+
+			return this.http.get<expense[]>(`expenses/by-tags/${tagsUrl.join(',')}`);
+		}
 		return this.http.get<expense[]>('expenses');
 	}
 
@@ -18,33 +24,28 @@ export class ExpenseService {
 		return this.http.get<tag[]>('expenses/tags');
 	}
 
-	async createExpense(data: expenseRequest, files: File[]) {
-		const expenseResponse = await this.http
-			.post<expense>(
-				'expenses',
-				data,
-				{ observe: 'response' }
-			)
-			.toPromise();
+	createTag(label: string) {
+		return this.http.post<tag>('expenses/tags', { label });
+	}
 
-		if (!expenseResponse || !expenseResponse.body) {
-			throw new Error('Error creating expense');
-		}
-
-		const expense = expenseResponse.body;
-
-		if (!files || files.length === 0) {
-			return expense;
-		}
-
+	createExpense(data: expenseRequest) {
 		const formData = new FormData();
-		files.forEach(file => formData.append('files', file));
+		formData.append('title', data.title);
+		formData.append('description', data.description);
+		for (const tagId of data.tagIDs) formData.append('tagIDs[]', tagId);
+		for (const file of data.files) formData.append('files', file, file.name);
 
 		return this.http
 			.post<expense>(
-				`expenses/files/${expense.id}`,
+				'expenses',
 				formData,
 				{ observe: 'response' }
-			)
+			).toPromise()
+	}
+
+	downloadFIle(url: string) {
+		return this.http.get(url, {
+			responseType: 'blob',
+		})
 	}
 }

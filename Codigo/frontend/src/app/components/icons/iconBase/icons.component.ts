@@ -13,6 +13,8 @@ export class IconsComponent implements OnChanges{
   @Input() name!: string;
   @Input() size: string = '24';
   @Input() color: string = 'currentColor';
+  @Input() background: string = 'none';
+  @Input() stroke: string = '2';
 
   svgContent: SafeHtml = '';
 
@@ -35,6 +37,8 @@ export class IconsComponent implements OnChanges{
           svg.replace(/width=".*?"/, `width="${this.size}"`)
             .replace(/height=".*?"/, `height="${this.size}"`)
             .replace(/stroke=".*?"/, `stroke="${this.color}"`)
+            .replace(/fill=".*?"/, `fill="${this.background}"`)
+            .replace(/stroke-width=".*?"/, `stroke-width="${this.stroke}"`)
         );
       })
       .catch((error) => {

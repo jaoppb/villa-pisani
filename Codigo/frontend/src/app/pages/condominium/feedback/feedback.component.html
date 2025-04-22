@@ -1,24 +1,23 @@
 @if(this.isAdmin){
-	<h1>Reclamações do comdominio</h1>
-}
-@else{
-	<h1>Minhas Reclamações</h1>
-	<button (click)="openFeedbackModal()">Novas Reclamanções</button>
+<h1>Reclamações do comdominio</h1>
+} @else{
+<h1>Minhas Reclamações</h1>
+<button (click)="openFeedbackModal()">Novas Reclamanções</button>
 }
 <div class="feedback-list">
 	@for (feedback of this.feedbackList; track feedback.id) {
-		<div class="feedback-card" key={feedback.id}>
-			<strong>{{feedback.name}} - {{feedback.date}}</strong>
-			<p>{{feedback.body}}</p>
-		</div>
+	<div class="feedback-card" key="{feedback.id}">
+		<strong>{{ feedback.userName }} - {{ feedback.sentAt }}</strong>
+		<p>{{ feedback.body }}</p>
+	</div>
 	} @empty {
-		<p>Nem uma Reclamanções feita no momento</p>
+	<p>Nem uma Reclamanções feita no momento</p>
 	}
 </div>
 @if(this.openModal && !this.isAdmin){
-	<app-modal-feedback 
-	[isOpen]="openModal" 
+<app-modal-feedback
+	[isOpen]="openModal"
 	(isOpenChange)="handleIsOpenChange($event)"
 	(newFeedBack)="handleNewFeedback($event)"
-	/>
+/>
 }

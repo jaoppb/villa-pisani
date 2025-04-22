@@ -1,60 +1,53 @@
 <div class="input-container">
 	<div class="input">
 		@if (type === 'date'){
-            <app-icons 
-                name="calendar" 
-                size="24" 
-                (click)="openCalendar()" 
-            />
-		}
-		@else if (leftIcon){
-			<app-icons [name]="leftIcon" size="24" />
+		<app-icons name="calendar" size="24" (click)="openCalendar()" />
+		} @else if (leftIcon){
+		<app-icons [name]="leftIcon" size="24" />
 		}
 		<input
-		#input
-		[id]="id"
-		[type]="type"
-		[placeholder]="placeholder"
-		[value]="value"
-		(input)="onInput($event)"
-		(blur)="onBlur(value)"
+			#input
+			[id]="id"
+			[type]="type"
+			[placeholder]="placeholder"
+			[value]="value"
+			(input)="onInput($event)"
+			(blur)="onBlur(value)"
 		/>
-        @if (type === 'password'){
-            <app-icons 
-                [name]="showPassword ? 'eye' : 'eye-close'" 
-                size="24" 
-                (click)="togglePasswordVisibility()" 
-            />
-        }
-        @else if (rightIcon){
-            <app-icons [name]="rightIcon" size="24" />
-        }
+		@if (type === 'password'){
+		<app-icons
+			[name]="showPassword ? 'eye' : 'eye-close'"
+			size="24"
+			(click)="togglePasswordVisibility()"
+		/>
+		} @else if (rightIcon){
+		<app-icons [name]="rightIcon" size="24" />
+		}
 	</div>
 	<div class="error-messages">
-		@if (errors){
-			@if (this.errors.required){
-				<small>Este campo é obrigatório.</small>
-			}
-			@if (this.errors.email){
-				<small>O email não é válido.</small>
-			}
-			@if (this.errors.minlength){
-				<small>O campo deve ter pelo menos {{ errors['minlength'].requiredLength }} caracteres.</small>
-			}
-			@if (this.errors.pattern){
-				@if (this.type == 'password'){
-					<small>A senha deve ter uma letra maiúscula, um número e um caractere especial</small>
-				}
-				@else{
-					<small>O campo não atende ao padrão requerido.</small>
-				}
-			}
-			@if (this.errors.maxlength){
-				<small>O campo deve ter no máximo {{ errors['maxlength'].requiredLength }} caracteres.</small>
-			}
-			@if (this.errors.customError){
-				<small>{{ errors['customError'] }}</small>
-			}
-		}
+		@if (errors){ @if (this.errors.required){
+		<small>Este campo é obrigatório.</small>
+		} @if (this.errors.email){
+		<small>O email não é válido.</small>
+		} @if (this.errors.minlength){
+		<small
+			>O campo deve ter pelo menos
+			{{ errors['minlength'].requiredLength }} caracteres.</small
+		>
+		} @if (this.errors.pattern){ @if (this.type == 'password'){
+		<small
+			>A senha deve ter uma letra maiúscula, um número e um caractere
+			especial</small
+		>
+		} @else{
+		<small>O campo não atende ao padrão requerido.</small>
+		} } @if (this.errors.maxlength){
+		<small
+			>O campo deve ter no máximo
+			{{ errors['maxlength'].requiredLength }} caracteres.</small
+		>
+		} @if (this.errors.customError){
+		<small>{{ errors['customError'] }}</small>
+		} }
 	</div>
 </div>

@@ -22,6 +22,7 @@ export class FeedbackController {
 	constructor(private readonly feedbackService: FeedbackService) {}
 
 	@Post()
+	@Roles(Role.INHABITANT, Role.EMPLOYEE)
 	async create(
 		@Request() request: IRequest,
 		@Body() createFeedbackDto: CreateFeedbackDto,

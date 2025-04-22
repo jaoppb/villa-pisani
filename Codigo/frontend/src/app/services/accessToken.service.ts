@@ -1,32 +1,40 @@
 import { Injectable } from "@angular/core";
 import { jwtDecode } from 'jwt-decode';
 import { payloadToken, Role } from "../model/user.model";
+import { CookieService } from "./cookie.service";
 
 @Injectable({
 	providedIn: 'root',
 })
 export class AccessTokenService {
-	KEY = 'vila-pisane/token';
+	KEY = 'accessToken';
+	constructor(private cookieService: CookieService) {}
 
 	get AccessToken(): string {
-		return localStorage.getItem(this.KEY) ?? '';
+		const token = this.cookieService.get(this.KEY);
+		this.isTokenValid(token);
+		if (!this.isTokenValid(token)) {
+			this.removeAccessToken();
+			return '';
+		}
+		return this.cookieService.get(this.KEY) || '';
 	}
 
 	set AccessToken(token: string) {
-		localStorage.setItem(this.KEY, token);
+		this.cookieService.set(this.KEY, token);
 	}
 
 	removeAccessToken(): void {
-		localStorage.removeItem(this.KEY);
+		this.cookieService.delete(this.KEY);
 	}
 
 	isTokenValid(token: string): boolean {
 		try {
-			const { exp } = jwtDecode<payloadToken>(token);
+			const { exp, iss } = jwtDecode<payloadToken>(token);
 			if (!exp) return false;
 
 			const currentTime = Math.floor(Date.now() / 1000);
-			return exp > currentTime;
+			return exp > currentTime && iss === 'login';
 		} catch (error) {
 			return false;
 		}
@@ -41,6 +49,14 @@ export class AccessTokenService {
 			return false;
 		}
 		return true;
+	}
+
+	get timeToExpire() {
+		const token = this.AccessToken;
+		if (!token) return 0;
+		const { exp } = jwtDecode<payloadToken>(token);
+		if (!exp) return 0;
+		return exp;
 	}
 
 	private hasRole(role: Role): boolean {
