@@ -1,7 +1,15 @@
-<form [formGroup]="this.form">
-	<div></div>
+<form [formGroup]="form">
+	<app-input
+		type="tags"
+		formControlName="tags"
+		name="tags"
+		id="tags"
+		[data]="this.tags"
+		[addable]="true"
+		(tagAdded)="openTagModal()"
+	/>
 </form>
-<button (click)="openExpenceModal()">Novas Contas</button>
+<button (click)="openExpenseModal()">Novas Contas</button>
 <div class="expense-list">
 	@for (expense of this.expensesList; track expense.id) {
 	<div class="expense-card" key="{expense.id}">
@@ -9,10 +17,19 @@
 			<h1>{{ expense.title }}</h1>
 			<h4>{{ expense.createdAt }}</h4>
 		</div>
+		<div class="tag-list">
+			@for(tag of expense.tags; track tag.id) {
+			<span class="tag" key="{tag.id}">{{ tag.label }}</span>
+			}
+		</div>
 		<p>{{ expense.description }}</p>
 		<div class="file-list">
 			@for(file of expense.files; track file.id) {
-			<a (click)="openFile(file.url)" class="file-card" key="{file.id}">
+			<a
+				(click)="openFile(file.url)"
+				class="file-card"
+				[attr.data-key]="file.id"
+			>
 				<app-icons name="file" size="16" />
 				<span>{{ file.name }}</span>
 			</a>
@@ -23,10 +40,16 @@
 	<p>Nenhuma despesa encontrada.</p>
 	}
 </div>
-@if(this.openModal && this.isAdmin){
+@if(this.openModalCreateExpenses && this.isAdmin){
 <app-modal-expenses
-	[isOpen]="openModal"
-	(isOpenChange)="handleIsOpenChange($event)"
+	[isOpen]="openModalCreateExpenses"
+	(isOpenChange)="handleIsOpenModalExpensesChange($event)"
 	(newExpense)="handleNewExpense($event)"
+/>
+} @if(this.openModalCreateTag && this.isAdmin){
+<app-modal-tag-expenses
+	[isOpen]="openModalCreateTag"
+	(isOpenChange)="handleIsOpenModalTagChange($event)"
+	(newExpense)="handleNewTag($event)"
 />
 }
