@@ -7,6 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Request } from 'src/http/request';
 import { Role } from '../roles/role.entity';
+import { NO_ROLES_KEY } from '../roles/no-role.decorator';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -21,6 +22,14 @@ export class RoleGuard implements CanActivate {
 		if (!user) {
 			this.logger.debug('User not found');
 			return false;
+		}
+
+		const noRole = this.reflector.getAllAndOverride<boolean>(NO_ROLES_KEY, [
+			context.getHandler(),
+		]);
+		if (noRole) {
+			this.logger.debug('No role required');
+			return true;
 		}
 
 		if (user.roles.length === 0) {
