@@ -1,6 +1,6 @@
 export interface tag {
 	id: string;
-	labe: string;
+	label: string;
 }
 
 export interface fileResponse {
