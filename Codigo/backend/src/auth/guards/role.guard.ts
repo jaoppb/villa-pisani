@@ -17,20 +17,24 @@ export class RoleGuard implements CanActivate {
 		this.logger.debug('RoleGuard');
 		const request = context.switchToHttp().getRequest<Request>();
 
-		const roles = this.reflector.getAllAndOverride<Role[]>('roles', [
-			context.getHandler(),
-			context.getClass(),
-		]);
-
-		if (!roles) {
-			this.logger.debug('No roles found');
-			return true;
-		}
-
 		const user = request.user;
 		if (!user) {
 			this.logger.debug('User not found');
 			return false;
+		}
+
+		if (user.roles.length === 0) {
+			this.logger.debug('User has no roles');
+			return false;
+		}
+
+		const roles = this.reflector.getAllAndOverride<Role[]>('roles', [
+			context.getHandler(),
+			context.getClass(),
+		]);
+		if (!roles) {
+			this.logger.debug('Method not role protected');
+			return true;
 		}
 
 		return roles.some((role) => user.roles.includes(role));
