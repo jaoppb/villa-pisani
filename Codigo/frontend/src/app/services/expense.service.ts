@@ -10,7 +10,13 @@ export class ExpenseService {
 		private http: HttpClient,
 	) {}
 
-	getAllExpenses() {
+	getAllExpenses(tags: string[] = []) {
+		if (tags.length !== 0) {
+			let tagsUrl = tags.map((tag) => tag.toLowerCase());
+			tagsUrl = tagsUrl.filter((tag) => tag !== '');
+
+			return this.http.get<expense[]>(`expenses/by-tags/${tagsUrl.join(',')}`);
+		}
 		return this.http.get<expense[]>('expenses');
 	}
 
@@ -18,24 +24,23 @@ export class ExpenseService {
 		return this.http.get<tag[]>('expenses/tags');
 	}
 
+	createTag(label: string) {
+		return this.http.post<tag>('expenses/tags', { label });
+	}
+
 	createExpense(data: expenseRequest) {
-		console.log(data);
 		const formData = new FormData();
 		formData.append('title', data.title);
 		formData.append('description', data.description);
-		if (data.tagIDs.length !== 0)
-			formData.append('tagIDs', JSON.stringify(data.tagIDs));
-		for (const file of data.files) {
-			console.log(file);
-			formData.append('files', file, file.name);
-		}
+		for (const tagId of data.tagIDs) formData.append('tagIDs[]', tagId);
+		for (const file of data.files) formData.append('files', file, file.name);
+
 		return this.http
 			.post<expense>(
 				'expenses',
 				formData,
 				{ observe: 'response' }
-			)
-			.toPromise();
+			).toPromise()
 	}
 
 	downloadFIle(url: string) {
