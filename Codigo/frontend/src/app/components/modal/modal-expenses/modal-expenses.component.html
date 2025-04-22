@@ -1,33 +1,39 @@
 <app-modal-base [isOpen]="isOpen" (isOpenChange)="handleIsOpenChange($event)">
-  <h1>Nova conta</h1>
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <app-input
-      formControlName="title"
-      placeholder="titulo"
-      id="title"
-      type="text"
-      [touched]="this.form.get('title')?.touched ?? false"
-      [errors]="this.form.get('title')?.errors"
-    />
-    <app-input
-      formControlName="description"
-      placeholder="Descrição"
-      id="description"
-      type="textarea"
-      [touched]="this.form.get('description')?.touched ?? false"
-      [errors]="this.form.get('description')?.errors"
-    />
-    <label for="files">
-      <input
-        formControlName="files"
-        type="file"
-        id="files"
-        multiple
-        (change)="handleFileChange($event)"
-        [accept]="acceptedMimeTypes.join(',')"
-      />
-      Arquivos
-    </label>
-    <button type="submit" [disabled]="form.invalid">Enviar</button>
-  </form>
+	<h1>Nova conta</h1>
+	<form [formGroup]="form" (ngSubmit)="submit()">
+		<app-input
+			formControlName="title"
+			placeholder="titulo"
+			id="title"
+			type="text"
+			[touched]="this.form.get('title')?.touched ?? false"
+			[errors]="this.form.get('title')?.errors"
+		/>
+		<app-input
+			type="tags"
+			formControlName="tagIDs"
+			name="tags"
+			id="tags"
+			[data]="this.tags"
+		/>
+		<app-input
+			formControlName="description"
+			placeholder="Descrição"
+			id="description"
+			type="textarea"
+			[touched]="this.form.get('description')?.touched ?? false"
+			[errors]="this.form.get('description')?.errors"
+		/>
+		<app-input
+			label="Arquivos"
+			type="file"
+			formControlName="files"
+			id="files"
+			[multiple]="true"
+			[accept]="acceptedMimeTypes.join(',')"
+			[touched]="this.form.get('files')?.touched ?? false"
+			[errors]="this.form.get('files')?.errors"
+		/>
+		<button type="submit" [disabled]="this.form.invalid">Enviar</button>
+	</form>
 </app-modal-base>

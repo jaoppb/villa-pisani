@@ -3,13 +3,16 @@ import { HttpResponse } from '@angular/common/http';
 import { ModalBaseComponent } from '../modal-base/modal-base.component';
 import { TextAreaComponent } from '../../input/text-area/text-area.component';
 import { CustomInputComponent } from '../../input/custom-input/custom-input.component';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { ExpenseService } from '../../../services/expense.service';
-import { expense, expenseRequest } from '../../../model/expense.model';
+import { expense, expenseRequest, tag } from '../../../model/expense.model';
+import { FileComponent } from '../../input/file/file.component';
+import { CheckTag } from '../../input/types/check-tag.type';
+import { CheckTagsComponent } from '../../input/check-tags/check-tags.component';
 
 @Component({
   selector: 'app-modal-expenses',
-  imports: [ModalBaseComponent, TextAreaComponent, CustomInputComponent, ReactiveFormsModule],
+  imports: [ModalBaseComponent, TextAreaComponent, CustomInputComponent, ReactiveFormsModule, FileComponent, CheckTagsComponent],
   templateUrl: './modal-expenses.component.html',
   styleUrl: './modal-expenses.component.scss'
 })
@@ -18,9 +21,9 @@ export class ModalExpensesComponent {
   @Output() isOpenChange = new EventEmitter<boolean>();
   @Output() newExpense = new EventEmitter<any>();
   form: FormGroup;
-  selectedFiles: File[] = [];
   acceptedMimeTypes = ['application/pdf'];
   maxFileSize = 200 * 1024 * 1024; // 200MB
+  tags: CheckTag[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -30,7 +33,19 @@ export class ModalExpensesComponent {
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
       description: ['', [Validators.maxLength(500)]],
       tagIDs: [[], []],
-      files: [null, [this.fileValidator()]],
+      files: [null, []],
+    });
+    this.form.get('files')?.setValidators(this.fileValidator());
+    this.getTagsList();
+  }
+
+  getTagsList() {
+    this.expenseService.getAllTags().subscribe((res: any) => {
+      this.tags = res.map((tag: tag) => ({
+        key: tag.id,
+        label: tag.label,
+        checked: false
+      }));
     });
   }
 
@@ -39,13 +54,14 @@ export class ModalExpensesComponent {
     this.isOpenChange.emit(this.isOpen);
   }
 
-  fileValidator(): Validators {
+  fileValidator(): ValidatorFn {
     return () => {
-      if (!this.selectedFiles || this.selectedFiles.length === 0) {
+      const selectedFiles = this.form.get('files')?.value as File[];
+      if (!selectedFiles || selectedFiles.length === 0) {
         return { required: true };
       }
 
-      for (const file of this.selectedFiles) {
+      for (const file of selectedFiles) {
         if (file.size > this.maxFileSize) {
           return { maxSize: true };
         }
@@ -56,15 +72,6 @@ export class ModalExpensesComponent {
       return null;
     };
   }
-  // Criar um input propio para o upload de arquivos, com drag and drop e preview
-
-  handleFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.selectedFiles = Array.from(input.files);
-      this.form.get('files')?.updateValueAndValidity();
-    }
-  }
 
   // TODO: retorna erros de validação para o template
   submit(): void {
@@ -74,13 +81,12 @@ export class ModalExpensesComponent {
         title: this.form.get('title')?.value,
         description: this.form.get('description')?.value,
         tagIDs: this.form.get('tagIDs')?.value,
-        files: this.selectedFiles,
+        files: this.form.get('files')?.value,
       };
       this.expenseService.createExpense(expenseData).then((response: HttpResponse<expense> | undefined) => {
         if (response && response.status === 201) {
           this.newExpense.emit(response.body);
           this.form.reset();
-          this.selectedFiles = [];
           this.handleIsOpenChange(false);
         } else if (response) {
           console.error('Erro ao criar despesa:', response.statusText);

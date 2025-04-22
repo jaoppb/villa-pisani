@@ -1,0 +1,14 @@
+<app-modal-base [isOpen]="isOpen" (isOpenChange)="handleIsOpenChange($event)">
+	<h1>Nova tag</h1>
+	<form [formGroup]="form" (ngSubmit)="submit()">
+		<app-input
+			formControlName="label"
+			placeholder="Nome da tag"
+			id="label"
+			type="text"
+			[touched]="this.form.get('label')?.touched ?? false"
+			[errors]="this.form.get('label')?.errors"
+		/>
+		<button type="submit" [disabled]="this.form.invalid">Criar</button>
+	</form>
+</app-modal-base>
