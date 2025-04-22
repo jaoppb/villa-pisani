@@ -1,0 +1,29 @@
+<div
+	class="file-zone"
+	[class.dragging]="isDragging"
+	(dragover)="onDragOver($event)"
+	(dragleave)="onDragLeave($event)"
+	(drop)="onDrop($event)"
+>
+	<label [for]="id" (click)="triggerFileInput()">
+		{{ label }}
+		<app-icons name="upload" size="24" stroke="1.5" />
+	</label>
+	<input
+		type="file"
+		[id]="id"
+		[name]="name"
+		[accept]="accept"
+		[multiple]="multiple"
+		(change)="onFileChange($event)"
+		#fileInput
+	/>
+	<div class="file-preview">
+		@for (file of this.value; track file.name){
+		<span>
+			{{ file.name }}
+			<app-icons name="close" size="12" (click)="removeFile(file.name)" />
+		</span>
+		}
+	</div>
+</div>
