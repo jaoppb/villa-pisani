@@ -43,4 +43,8 @@ export class UserService {
 			updateAt: updated.updateAt,
 		};
 	}
+
+	async findOneByEmail(email: string) {
+		return await this.userRepository.findOneBy({ email });
+	}
 }
