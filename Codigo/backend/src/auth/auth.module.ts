@@ -15,12 +15,14 @@ import { PublicGuard } from './guards/public.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 import { GlobalGuard } from './guards/global.guard';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
 	imports: [
 		EncryptionModule,
 		AppConfigModule,
 		PassportModule,
+		UserModule,
 		TypeOrmModule.forFeature([User]),
 		EventEmitterModule.forRoot(),
 		JwtModule.registerAsync({
