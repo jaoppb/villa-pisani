@@ -13,6 +13,7 @@ import { Role } from 'src/auth/roles/role.entity';
 import { Request } from 'src/http/request';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SelfUpdateUserDto } from './dto/self-update-user.dto';
+import { SafeUserDto } from './dto/safe-user.dto';
 
 @Controller('users')
 export class UserController {
@@ -45,9 +46,12 @@ export class UserController {
 		return await this.userService.update(id, body);
 	}
 
+	// TODO: Add pagination
 	@Get()
 	@Roles(Role.MANAGER)
 	async findAll() {
-		return await this.userService.findAll();
+		return (await this.userService.findAll()).map(
+			(user) => new SafeUserDto(user),
+		);
 	}
 }
