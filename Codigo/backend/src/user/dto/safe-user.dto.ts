@@ -7,7 +7,7 @@ import {
 import { UpdateUserDto } from './update-user.dto';
 import { User } from '../entities/user.entity';
 
-export class UpdatedUserDto extends IntersectionType(
+export class SafeUserDto extends IntersectionType(
 	OmitType(UpdateUserDto, ['password'] as const),
 	PartialType(PickType(User, ['id', 'createAt', 'updateAt'])),
 ) {}

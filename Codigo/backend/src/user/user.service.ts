@@ -4,7 +4,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PasswordEncryption } from 'src/encryption/password-encryption.provider';
-import { UpdatedUserDto } from './dto/updated-user.dto';
+import { SafeUserDto } from './dto/safe-user.dto';
 
 @Injectable()
 export class UserService {
@@ -15,7 +15,7 @@ export class UserService {
 		private readonly passwordEncryption: PasswordEncryption,
 	) {}
 
-	async update(id: string, update: UpdateUserDto): Promise<UpdatedUserDto> {
+	async update(id: string, update: UpdateUserDto): Promise<SafeUserDto> {
 		if (!(await this.userRepository.existsBy({ id }))) {
 			this.logger.error('User not found', id);
 			throw new BadRequestException('User not found');
