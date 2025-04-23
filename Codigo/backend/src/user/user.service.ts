@@ -1,8 +1,10 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Role } from 'src/auth/roles/role.entity';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { PasswordEncryption } from 'src/encryption/password-encryption.provider';
+import { UpdatedUserDto } from './dto/updated-user.dto';
 
 @Injectable()
 export class UserService {
@@ -10,22 +12,35 @@ export class UserService {
 	constructor(
 		@InjectRepository(User)
 		private readonly userRepository: Repository<User>,
+		private readonly passwordEncryption: PasswordEncryption,
 	) {}
 
-	async updateRoles(userId: string, roles: Role[]) {
-		const user = await this.userRepository.findOneBy({ id: userId });
-		if (!user) {
-			this.logger.error('User not exists', userId);
-			throw new BadRequestException('User not exists');
+	async update(id: string, update: UpdateUserDto): Promise<UpdatedUserDto> {
+		if (!(await this.userRepository.existsBy({ id }))) {
+			this.logger.error('User not found', id);
+			throw new Error('User not found');
 		}
 
-		this.logger.log('Updating user roles', userId, roles);
-		const updated = await this.userRepository.save({ id: userId, roles });
-		this.logger.log('User roles updated', userId, roles);
+		const encryptedPassword = update.password
+			? await this.passwordEncryption.encrypt(update.password)
+			: undefined;
+		const final = {
+			id,
+			password: encryptedPassword,
+			...update,
+		};
+		this.logger.log('Updating user', final);
+		const updated = await this.userRepository.save(final);
+		this.logger.log('Updated user', updated);
 
 		return {
 			id: updated.id,
+			birthDate: updated.birthDate,
+			email: updated.email,
+			name: updated.name,
 			roles: updated.roles,
+			createAt: updated.createAt,
+			updateAt: updated.updateAt,
 		};
 	}
 }
