@@ -11,10 +11,17 @@ import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
 import { Request } from 'src/http/request';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SelfUpdateUserDto } from './dto/self-update-user.dto';
 
 @Controller('users')
 export class UserController {
 	constructor(private readonly userService: UserService) {}
+
+	@Patch('me')
+	async updateMe(@Req() req: Request, @Body() body: SelfUpdateUserDto) {
+		const { user } = req;
+		return await this.userService.update(user.id, body);
+	}
 
 	@Patch(':id')
 	@Roles(Role.MANAGER)
