@@ -3,4 +3,7 @@ export class PayloadAuthDto {
 	sub: string;
 	roles: string[];
 	permissions: string[];
+	exp: number;
+	iat: number;
+	iss: string;
 }
