@@ -1,6 +1,7 @@
 import { Role } from 'src/auth/roles/role.entity';
 import { Feedback } from 'src/feedback/entity/feedback.entity';
 import {
+	AfterLoad,
 	BeforeUpdate,
 	Column,
 	CreateDateColumn,
@@ -35,6 +36,9 @@ export class User {
 	})
 	feedbacks: Feedback[];
 
+	@Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+	lastPasswordChange: Date;
+
 	@CreateDateColumn()
 	createAt: Date;
 
@@ -44,5 +48,19 @@ export class User {
 	@BeforeUpdate()
 	updateDate() {
 		this.updateAt = new Date();
+	}
+
+	private _cachedPassword?: string;
+
+	@AfterLoad()
+	private _cachePassword() {
+		this._cachedPassword = this.password;
+	}
+
+	@BeforeUpdate()
+	private _checkPasswordChange() {
+		if (this._cachedPassword !== this.password) {
+			this.lastPasswordChange = new Date();
+		}
 	}
 }
