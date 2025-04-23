@@ -2,6 +2,7 @@ import {
 	BadRequestException,
 	Body,
 	Controller,
+	Get,
 	Param,
 	Patch,
 	Req,
@@ -42,5 +43,11 @@ export class UserController {
 		}
 
 		return await this.userService.update(id, body);
+	}
+
+	@Get()
+	@Roles(Role.MANAGER)
+	async findAll() {
+		return await this.userService.findAll();
 	}
 }
