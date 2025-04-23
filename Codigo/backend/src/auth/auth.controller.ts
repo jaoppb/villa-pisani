@@ -65,16 +65,6 @@ export class AuthController {
 	profile(@RequestDecorator() req: Request): CurrentUserDto {
 		const { user } = req;
 
-		const result: CurrentUserDto = {
-			id: user.id,
-			name: user.name,
-			email: user.email,
-			createAt: user.createAt,
-			updateAt: user.updateAt,
-			birthDate: user.birthDate,
-			roles: user.roles,
-		};
-
-		return result;
+		return new CurrentUserDto(user);
 	}
 }
