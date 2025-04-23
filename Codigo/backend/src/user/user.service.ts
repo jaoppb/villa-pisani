@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -18,16 +18,16 @@ export class UserService {
 	async update(id: string, update: UpdateUserDto): Promise<UpdatedUserDto> {
 		if (!(await this.userRepository.existsBy({ id }))) {
 			this.logger.error('User not found', id);
-			throw new Error('User not found');
+			throw new BadRequestException('User not found');
 		}
 
 		const encryptedPassword = update.password
 			? await this.passwordEncryption.encrypt(update.password)
 			: undefined;
 		const final = {
+			...update,
 			id,
 			password: encryptedPassword,
-			...update,
 		};
 		this.logger.log('Updating user', final);
 		const updated = await this.userRepository.save(final);
@@ -35,7 +35,8 @@ export class UserService {
 
 		return {
 			id: updated.id,
-			birthDate: updated.birthDate,
+			birthDate:
+				updated.birthDate === null ? undefined : updated.birthDate,
 			email: updated.email,
 			name: updated.name,
 			roles: updated.roles,
