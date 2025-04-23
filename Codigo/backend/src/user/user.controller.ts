@@ -5,6 +5,7 @@ import {
 	Get,
 	Param,
 	Patch,
+	Query,
 	Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -49,8 +50,8 @@ export class UserController {
 	// TODO: Add pagination
 	@Get()
 	@Roles(Role.MANAGER)
-	async findAll() {
-		return (await this.userService.findAll()).map(
+	async findAll(@Query('name') name: string, @Query('email') email: string) {
+		return (await this.userService.findAllByEmailAndName(name, email)).map(
 			(user) => new SafeUserDto(user),
 		);
 	}

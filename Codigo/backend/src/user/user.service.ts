@@ -49,6 +49,17 @@ export class UserService {
 		return await this.userRepository.findOneBy({ email });
 	}
 
+	async findAllByEmailAndName(name?: string, email?: string) {
+		const query = this.userRepository.createQueryBuilder();
+		if (name)
+			query.andWhere('LOWER(name) LIKE :name', { name: `%${name}%` });
+		if (email)
+			query.andWhere('LOWER(email) LIKE :email', { email: `%${email}%` });
+		const users = await query.getMany();
+		this.logger.log('Found users', users);
+		return users;
+	}
+
 	async findAll() {
 		return await this.userRepository.find();
 	}
