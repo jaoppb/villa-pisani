@@ -9,5 +9,6 @@ import { EncryptionModule } from 'src/encryption/encryption.module';
 	imports: [EncryptionModule, TypeOrmModule.forFeature([User])],
 	controllers: [UserController],
 	providers: [UserService],
+	exports: [UserService],
 })
 export class UserModule {}
