@@ -15,34 +15,33 @@ export class UserService {
 		private readonly passwordEncryption: PasswordEncryption,
 	) {}
 
+	private async _parsePasswordUpdate(password: string | undefined) {
+		if (password === undefined) return undefined;
+
+		return await this.passwordEncryption.encrypt(password);
+	}
+
+	private async _parseUpdate(id: string, update: UpdateUserDto) {
+		const parsedPassword = await this._parsePasswordUpdate(update.password);
+		return {
+			...update,
+			id,
+			password: parsedPassword,
+		};
+	}
+
 	async update(id: string, update: UpdateUserDto): Promise<SafeUserDto> {
 		if (!(await this.userRepository.existsBy({ id }))) {
 			this.logger.error('User not found', id);
 			throw new BadRequestException('User not found');
 		}
 
-		const encryptedPassword = update.password
-			? await this.passwordEncryption.encrypt(update.password)
-			: undefined;
-		const final = {
-			...update,
-			id,
-			password: encryptedPassword,
-		};
+		const final = await this._parseUpdate(id, update);
 		this.logger.log('Updating user', final);
 		const updated = await this.userRepository.save(final);
 		this.logger.log('Updated user', updated);
 
-		return {
-			id: updated.id,
-			birthDate:
-				updated.birthDate === null ? undefined : updated.birthDate,
-			email: updated.email,
-			name: updated.name,
-			roles: updated.roles,
-			createAt: updated.createAt,
-			updateAt: updated.updateAt,
-		};
+		return new SafeUserDto(updated);
 	}
 
 	async findOneByEmail(email: string) {
