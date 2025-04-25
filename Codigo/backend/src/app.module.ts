@@ -13,6 +13,7 @@ import { ExpensesModule } from './expenses/expenses.module';
 import { FileServeController } from './files/files.controller';
 import { GlobalGuard } from './auth/guards/global.guard';
 import { ApartmentsModule } from './apartments/apartments.module';
+import { FloorsModule } from './floors/floors.module';
 
 @Module({
 	imports: [
@@ -35,6 +36,7 @@ import { ApartmentsModule } from './apartments/apartments.module';
 		FeedbackModule,
 		ExpensesModule,
 		ApartmentsModule,
+		FloorsModule,
 	],
 	controllers: [AppController, FileServeController],
 	providers: [
