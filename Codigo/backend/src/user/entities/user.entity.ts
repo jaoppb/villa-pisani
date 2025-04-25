@@ -1,3 +1,4 @@
+import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { Role } from 'src/auth/roles/role.entity';
 import { Feedback } from 'src/feedback/entity/feedback.entity';
 import {
@@ -6,6 +7,7 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	ManyToOne,
 	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
@@ -35,6 +37,11 @@ export class User {
 		eager: false,
 	})
 	feedbacks: Feedback[];
+
+	@ManyToOne(() => Apartment, (apartment) => apartment.inhabitants, {
+		nullable: true,
+	})
+	apartment?: Apartment;
 
 	@Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
 	lastPasswordChange: Date;
