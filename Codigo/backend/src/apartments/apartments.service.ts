@@ -27,15 +27,15 @@ export class ApartmentsService {
 		return await this.apartmentsRepository.find();
 	}
 
-	async findOne(number: number) {
-		return await this.apartmentsRepository.findOneBy({ number });
+	async findOne(id: number) {
+		return await this.apartmentsRepository.findOneBy({ id });
 	}
 
-	async update(number: number, updateApartmentDto: UpdateApartmentDto) {
-		this.logger.log('Updating apartment with id', number);
+	async update(id: number, updateApartmentDto: UpdateApartmentDto) {
+		this.logger.log('Updating apartment with id', id);
 		const updated = await this.apartmentsRepository.save({
 			...updateApartmentDto,
-			number,
+			id,
 		});
 		this.logger.log('Updated apartment number', updated);
 

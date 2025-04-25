@@ -21,17 +21,14 @@ export class FloorsController {
 		return this.floorsService.findAll();
 	}
 
-	@Get(':number')
-	findOne(@Param('number') number: number) {
-		return this.floorsService.findOne(number);
+	@Get(':id')
+	findOne(@Param('id') id: number) {
+		return this.floorsService.findOne(id);
 	}
 
-	@Patch(':number')
+	@Patch(':id')
 	@Roles(Role.MANAGER)
-	update(
-		@Param('number') number: number,
-		@Body() updateFloorDto: UpdateFloorDto,
-	) {
-		return this.floorsService.update(number, updateFloorDto);
+	update(@Param('id') id: number, @Body() updateFloorDto: UpdateFloorDto) {
+		return this.floorsService.update(id, updateFloorDto);
 	}
 }

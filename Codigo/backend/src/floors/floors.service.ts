@@ -22,15 +22,15 @@ export class FloorsService {
 		return this.floorsRepository.find();
 	}
 
-	async findOne(number: number) {
-		return await this.floorsRepository.findOneBy({ number });
+	async findOne(id: number) {
+		return await this.floorsRepository.findOneBy({ id });
 	}
 
-	async update(number: number, updateFloorDto: UpdateFloorDto) {
-		this.logger.log('Updating floor with id', number);
+	async update(id: number, updateFloorDto: UpdateFloorDto) {
+		this.logger.log('Updating floor with id', id);
 		const updated = await this.floorsRepository.save({
 			...updateFloorDto,
-			number,
+			id,
 		});
 		this.logger.log('Updated floor number', updated);
 
