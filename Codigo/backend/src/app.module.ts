@@ -12,6 +12,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ExpensesModule } from './expenses/expenses.module';
 import { FileServeController } from './files/files.controller';
 import { GlobalGuard } from './auth/guards/global.guard';
+import { ApartmentsModule } from './apartments/apartments.module';
 
 @Module({
 	imports: [
@@ -33,6 +34,7 @@ import { GlobalGuard } from './auth/guards/global.guard';
 		AuthModule,
 		FeedbackModule,
 		ExpensesModule,
+		ApartmentsModule,
 	],
 	controllers: [AppController, FileServeController],
 	providers: [
