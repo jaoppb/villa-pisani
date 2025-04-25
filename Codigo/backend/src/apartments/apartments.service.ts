@@ -4,23 +4,23 @@ import { UpdateApartmentDto } from './dto/update-apartment.dto';
 
 @Injectable()
 export class ApartmentsService {
-  create(createApartmentDto: CreateApartmentDto) {
-    return 'This action adds a new apartment';
-  }
+	create(createApartmentDto: CreateApartmentDto) {
+		return 'This action adds a new apartment';
+	}
 
-  findAll() {
-    return `This action returns all apartments`;
-  }
+	findAll() {
+		return `This action returns all apartments`;
+	}
 
-  findOne(id: number) {
-    return `This action returns a #${id} apartment`;
-  }
+	findOne(id: number) {
+		return `This action returns a #${id} apartment`;
+	}
 
-  update(id: number, updateApartmentDto: UpdateApartmentDto) {
-    return `This action updates a #${id} apartment`;
-  }
+	update(id: number, updateApartmentDto: UpdateApartmentDto) {
+		return `This action updates a #${id} apartment`;
+	}
 
-  remove(id: number) {
-    return `This action removes a #${id} apartment`;
-  }
+	remove(id: number) {
+		return `This action removes a #${id} apartment`;
+	}
 }
