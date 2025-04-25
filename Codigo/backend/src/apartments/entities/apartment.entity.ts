@@ -1,13 +1,22 @@
 import { Floor } from 'src/floors/entities/floor.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
+import {
+	Column,
+	Entity,
+	ManyToOne,
+	OneToMany,
+	PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('apartments')
 export class Apartment {
+	@PrimaryGeneratedColumn()
+	id: number;
+
 	@ManyToOne(() => Floor, (floor) => floor.apartments)
 	floor: Floor;
 
-	@PrimaryColumn({ unique: true })
+	@Column({ unique: true })
 	number: number;
 
 	@OneToMany(() => User, (user) => user.apartment)

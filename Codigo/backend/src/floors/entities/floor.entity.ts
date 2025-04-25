@@ -1,11 +1,14 @@
 import { Apartment } from 'src/apartments/entities/apartment.entity';
-import { Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('floors')
 export class Floor {
+	@PrimaryGeneratedColumn()
+	id: number;
+
 	@OneToMany(() => Apartment, (apartment) => apartment.floor)
 	apartments: Apartment[];
 
-	@PrimaryColumn({ unique: true })
+	@Column({ unique: true })
 	number: number;
 }
