@@ -1,6 +1,9 @@
-import { OmitType } from '@nestjs/swagger';
 import { UpdateUserDto } from './update-user.dto';
+import { PickType } from '@nestjs/mapped-types';
 
-export class SelfUpdateUserDto extends OmitType(UpdateUserDto, [
-	'roles',
+export class SelfUpdateUserDto extends PickType(UpdateUserDto, [
+	'birthDate',
+	'email',
+	'name',
+	'password',
 ] as const) {}
