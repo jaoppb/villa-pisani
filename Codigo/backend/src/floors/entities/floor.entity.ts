@@ -6,6 +6,6 @@ export class Floor {
 	@OneToMany(() => Apartment, (apartment) => apartment.floor)
 	apartments: Apartment[];
 
-	@PrimaryColumn({ type: 'number', unique: true })
+	@PrimaryColumn({ unique: true })
 	number: number;
 }

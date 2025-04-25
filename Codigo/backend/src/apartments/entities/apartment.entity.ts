@@ -7,7 +7,7 @@ export class Apartment {
 	@ManyToOne(() => Floor, (floor) => floor.apartments)
 	floor: Floor;
 
-	@PrimaryColumn({ type: 'number', unique: true })
+	@PrimaryColumn({ unique: true })
 	number: number;
 
 	@OneToMany(() => User, (user) => user.apartment)
