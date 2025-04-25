@@ -1,12 +1,4 @@
-import {
-	Controller,
-	Get,
-	Post,
-	Body,
-	Patch,
-	Param,
-	Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
 import { ApartmentsService } from './apartments.service';
 import { CreateApartmentDto } from './dto/create-apartment.dto';
 import { UpdateApartmentDto } from './dto/update-apartment.dto';
@@ -25,21 +17,16 @@ export class ApartmentsController {
 		return this.apartmentsService.findAll();
 	}
 
-	@Get(':id')
-	findOne(@Param('id') id: string) {
-		return this.apartmentsService.findOne(+id);
+	@Get(':number')
+	findOne(@Param('number') number: number) {
+		return this.apartmentsService.findOne(number);
 	}
 
-	@Patch(':id')
+	@Patch(':number')
 	update(
-		@Param('id') id: string,
+		@Param('number') number: number,
 		@Body() updateApartmentDto: UpdateApartmentDto,
 	) {
-		return this.apartmentsService.update(+id, updateApartmentDto);
-	}
-
-	@Delete(':id')
-	remove(@Param('id') id: string) {
-		return this.apartmentsService.remove(+id);
+		return this.apartmentsService.update(number, updateApartmentDto);
 	}
 }

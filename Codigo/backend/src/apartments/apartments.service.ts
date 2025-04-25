@@ -1,26 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateApartmentDto } from './dto/create-apartment.dto';
 import { UpdateApartmentDto } from './dto/update-apartment.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Apartment } from './entities/apartment.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ApartmentsService {
-	create(createApartmentDto: CreateApartmentDto) {
-		return 'This action adds a new apartment';
+	private readonly logger = new Logger(ApartmentsService.name);
+
+	constructor(
+		@InjectRepository(Apartment)
+		private readonly apartmentsRepository: Repository<Apartment>,
+	) {}
+
+	async create(createApartmentDto: CreateApartmentDto) {
+		this.logger.log('Creating apartment', createApartmentDto);
+		const created =
+			await this.apartmentsRepository.save(createApartmentDto);
+		this.logger.log('Created apartment', created);
+
+		return created;
 	}
 
-	findAll() {
-		return `This action returns all apartments`;
+	async findAll() {
+		return await this.apartmentsRepository.find();
 	}
 
-	findOne(id: number) {
-		return `This action returns a #${id} apartment`;
+	async findOne(number: number) {
+		return await this.apartmentsRepository.findOneBy({ number });
 	}
 
-	update(id: number, updateApartmentDto: UpdateApartmentDto) {
-		return `This action updates a #${id} apartment`;
+	async update(number: number, updateApartmentDto: UpdateApartmentDto) {
+		this.logger.log('Updating apartment with id', number);
+		const updated = await this.apartmentsRepository.save({
+			...updateApartmentDto,
+			number,
+		});
+		this.logger.log('Updated apartment number', updated);
+
+		return updated;
 	}
 
-	remove(id: number) {
-		return `This action removes a #${id} apartment`;
+	async remove(number: number) {
+		this.logger.log('Removing apartment with id', number);
+		const apartment = await this.apartmentsRepository.findOneBy({
+			number,
+		});
+		if (!apartment) {
+			this.logger.warn('Apartment not found', number);
+			return null;
+		}
+
+		const removed = await this.apartmentsRepository.remove(apartment);
+		this.logger.log('Removed apartment number', removed);
+
+		return removed;
 	}
 }
