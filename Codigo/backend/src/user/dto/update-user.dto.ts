@@ -7,4 +7,7 @@ export class UpdateUserDto extends PartialType(SignUpAuthDto) {
 	@IsEnum(Role, { each: true })
 	@IsOptional()
 	roles?: Role[];
+
+	@IsOptional()
+	apartmentNumber?: number;
 }
