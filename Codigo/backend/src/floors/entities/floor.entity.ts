@@ -6,7 +6,9 @@ export class Floor {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToMany(() => Apartment, (apartment) => apartment.floor)
+	@OneToMany(() => Apartment, (apartment) => apartment.floor, {
+		eager: true,
+	})
 	apartments: Apartment[];
 
 	@Column({ unique: true })
