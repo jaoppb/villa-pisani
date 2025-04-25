@@ -3,7 +3,7 @@ import { FloorsService } from './floors.service';
 import { FloorsController } from './floors.controller';
 
 @Module({
-  controllers: [FloorsController],
-  providers: [FloorsService],
+	controllers: [FloorsController],
+	providers: [FloorsService],
 })
 export class FloorsModule {}
