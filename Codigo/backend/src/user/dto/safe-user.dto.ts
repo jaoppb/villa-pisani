@@ -10,7 +10,13 @@ import { User } from '../entities/user.entity';
 export class SafeUserDto extends IntersectionType(
 	OmitType(UpdateUserDto, ['password'] as const),
 	PartialType(
-		PickType(User, ['id', 'createAt', 'updateAt', 'lastPasswordChange']),
+		PickType(User, [
+			'id',
+			'createAt',
+			'updateAt',
+			'lastPasswordChange',
+			'apartment',
+		]),
 	),
 ) {
 	constructor(user: User) {
@@ -23,5 +29,6 @@ export class SafeUserDto extends IntersectionType(
 		this.updateAt = user.updateAt;
 		this.roles = user.roles;
 		this.lastPasswordChange = user.lastPasswordChange;
+		this.apartment = user.apartment;
 	}
 }
