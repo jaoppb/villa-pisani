@@ -11,6 +11,7 @@ import { Apartment } from './entities/apartment.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
+import { InviteApartmentDto } from './dto/invite-apartment.dto';
 
 @Injectable()
 export class ApartmentsService {
@@ -83,7 +84,7 @@ export class ApartmentsService {
 			throw new BadRequestException('Apartment not found');
 		}
 
-		const payload = {
+		const payload: InviteApartmentDto = {
 			apartmentNumber: number,
 		};
 
