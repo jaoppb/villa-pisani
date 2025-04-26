@@ -5,16 +5,16 @@ import {
 	Body,
 	Patch,
 	Param,
-	Request,
 	NotFoundException,
 	Delete,
+	Req,
 } from '@nestjs/common';
 import { ApartmentsService } from './apartments.service';
 import { CreateApartmentDto } from './dto/create-apartment.dto';
 import { UpdateApartmentDto } from './dto/update-apartment.dto';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
-import { Request as IRequest } from 'src/http/request';
+import { Request } from 'src/http/request';
 
 @Controller('apartments')
 export class ApartmentsController {
@@ -48,7 +48,7 @@ export class ApartmentsController {
 	}
 
 	@Get('self')
-	findSelf(@Request() req: IRequest) {
+	findSelf(@Req() req: Request) {
 		const { apartment } = req.user;
 
 		if (!apartment) {
