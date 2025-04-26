@@ -35,6 +35,12 @@ export class ApartmentsController {
 		return this.apartmentsService.addInhabitant(number, userId);
 	}
 
+	@Post(':number/invite')
+	@Roles(Role.MANAGER)
+	inviteInhabitant(@Param('number') number: number) {
+		return this.apartmentsService.inviteInhabitant(number);
+	}
+
 	@Get()
 	@Roles(Role.MANAGER)
 	findAll() {

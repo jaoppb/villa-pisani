@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Apartment } from './entities/apartment.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class ApartmentsService {
@@ -20,6 +21,7 @@ export class ApartmentsService {
 		private readonly apartmentsRepository: Repository<Apartment>,
 		@InjectRepository(User)
 		private readonly usersRepository: Repository<User>,
+		private readonly jwtService: JwtService,
 	) {}
 
 	async create(createApartmentDto: CreateApartmentDto) {
@@ -69,6 +71,26 @@ export class ApartmentsService {
 		this.logger.log('Added inhabitant to apartment', updated);
 
 		return updated;
+	}
+
+	async inviteInhabitant(number: number) {
+		this.logger.log('Inviting inhabitant to apartment', number);
+		const apartment = await this.apartmentsRepository.findOneBy({
+			number,
+		});
+		if (!apartment) {
+			this.logger.warn('Apartment not found', number);
+			throw new BadRequestException('Apartment not found');
+		}
+
+		const payload = {
+			apartmentNumber: number,
+		};
+
+		const token = this.jwtService.sign(payload, {});
+		this.logger.debug('Invite token', token);
+
+		return { inviteToken: token };
 	}
 
 	async findAll() {
