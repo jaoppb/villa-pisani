@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { CreateApartmentDto } from './dto/create-apartment.dto';
 import { UpdateApartmentDto } from './dto/update-apartment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,6 +15,14 @@ export class ApartmentsService {
 	) {}
 
 	async create(createApartmentDto: CreateApartmentDto) {
+		const apartment = await this.apartmentsRepository.findOneBy({
+			number: createApartmentDto.number,
+		});
+		if (apartment) {
+			this.logger.warn('Apartment already exists', apartment);
+			throw new BadRequestException('Apartment already exists');
+		}
+
 		this.logger.log('Creating apartment', createApartmentDto);
 		const created =
 			await this.apartmentsRepository.save(createApartmentDto);
