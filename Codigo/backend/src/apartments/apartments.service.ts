@@ -39,6 +39,20 @@ export class ApartmentsService {
 		return await this.apartmentsRepository.findOneBy({ number });
 	}
 
+	async findInhabitants(number: number) {
+		const apartment = await this.apartmentsRepository.findOne({
+			where: { number },
+			relations: ['inhabitants'],
+		});
+		if (!apartment) {
+			this.logger.warn('Apartment not found', number);
+			throw new BadRequestException('Apartment not found');
+		}
+
+		this.logger.log('Finding inhabitants for apartment', number);
+		return apartment.inhabitants;
+	}
+
 	async update(number: number, updateApartmentDto: UpdateApartmentDto) {
 		const apartment = await this.apartmentsRepository.findOneBy({ number });
 		if (!apartment) {

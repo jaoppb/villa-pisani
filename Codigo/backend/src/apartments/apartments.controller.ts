@@ -34,4 +34,10 @@ export class ApartmentsController {
 	) {
 		return this.apartmentsService.update(number, updateApartmentDto);
 	}
+
+	@Get(':number/inhabitants')
+	@Roles(Role.MANAGER)
+	findInhabitants(@Param('number') number: number) {
+		return this.apartmentsService.findInhabitants(number);
+	}
 }
