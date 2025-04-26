@@ -1,9 +1,15 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 import { CreateApartmentDto } from './dto/create-apartment.dto';
 import { UpdateApartmentDto } from './dto/update-apartment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Apartment } from './entities/apartment.entity';
 import { Repository } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class ApartmentsService {
@@ -12,6 +18,8 @@ export class ApartmentsService {
 	constructor(
 		@InjectRepository(Apartment)
 		private readonly apartmentsRepository: Repository<Apartment>,
+		@InjectRepository(User)
+		private readonly usersRepository: Repository<User>,
 	) {}
 
 	async create(createApartmentDto: CreateApartmentDto) {
@@ -29,6 +37,38 @@ export class ApartmentsService {
 		this.logger.log('Created apartment', created);
 
 		return created;
+	}
+
+	async addInhabitant(number: number, userId: string) {
+		this.logger.log('Adding inhabitant to apartment', number);
+		const apartment = await this.apartmentsRepository.findOne({
+			where: { number },
+			relations: ['inhabitants'],
+		});
+		if (!apartment) {
+			this.logger.warn('Apartment not found', number);
+			throw new BadRequestException('Apartment not found');
+		}
+
+		const user = await this.usersRepository.findOneBy({ id: userId });
+		if (!user) {
+			this.logger.warn('User not found', userId);
+			throw new BadRequestException('User not found');
+		}
+
+		const isInhabitant = apartment.inhabitants.find((inhabitant) => {
+			return inhabitant.id === userId;
+		});
+		if (isInhabitant) {
+			this.logger.warn('User already inhabitant', userId);
+			throw new BadRequestException('User already inhabitant');
+		}
+
+		apartment.inhabitants.push(user);
+		const updated = await this.apartmentsRepository.save(apartment);
+		this.logger.log('Added inhabitant to apartment', updated);
+
+		return updated;
 	}
 
 	async findAll() {

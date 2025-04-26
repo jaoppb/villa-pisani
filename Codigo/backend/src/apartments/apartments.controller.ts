@@ -26,6 +26,15 @@ export class ApartmentsController {
 		return this.apartmentsService.create(createApartmentDto);
 	}
 
+	@Post(':number/inhabitants/:user-id')
+	@Roles(Role.MANAGER)
+	addInhabitant(
+		@Param('number') number: number,
+		@Param('user-id') userId: string,
+	) {
+		return this.apartmentsService.addInhabitant(number, userId);
+	}
+
 	@Get()
 	@Roles(Role.MANAGER)
 	findAll() {
