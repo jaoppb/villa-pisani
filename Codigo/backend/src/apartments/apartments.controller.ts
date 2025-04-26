@@ -1,9 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
+import {
+	Controller,
+	Get,
+	Post,
+	Body,
+	Patch,
+	Param,
+	Request,
+	NotFoundException,
+} from '@nestjs/common';
 import { ApartmentsService } from './apartments.service';
 import { CreateApartmentDto } from './dto/create-apartment.dto';
 import { UpdateApartmentDto } from './dto/update-apartment.dto';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
+import { Request as IRequest } from 'src/http/request';
 
 @Controller('apartments')
 export class ApartmentsController {
@@ -21,7 +31,19 @@ export class ApartmentsController {
 		return this.apartmentsService.findAll();
 	}
 
+	@Get('self')
+	findSelf(@Request() req: IRequest) {
+		const { apartment } = req.user;
+
+		if (!apartment) {
+			throw new NotFoundException('Apartment not found');
+		}
+
+		return apartment;
+	}
+
 	@Get(':number')
+	@Roles(Role.MANAGER)
 	findOne(@Param('number') number: number) {
 		return this.apartmentsService.findOne(number);
 	}
