@@ -40,6 +40,7 @@ export class User {
 
 	@ManyToOne(() => Apartment, (apartment) => apartment.inhabitants, {
 		nullable: true,
+		eager: true,
 	})
 	apartment?: Apartment;
 
