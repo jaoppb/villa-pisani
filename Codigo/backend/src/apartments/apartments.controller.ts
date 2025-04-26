@@ -15,6 +15,7 @@ import { UpdateApartmentDto } from './dto/update-apartment.dto';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
 import { Request } from 'src/http/request';
+import { SafeUserDto } from 'src/user/dto/safe-user.dto';
 
 @Controller('apartments')
 export class ApartmentsController {
@@ -33,6 +34,24 @@ export class ApartmentsController {
 		@Param('user-id') userId: string,
 	) {
 		return this.apartmentsService.addInhabitant(number, userId);
+	}
+
+	@Post('invite')
+	async acceptInvite(
+		@Req() request: Request,
+		@Body('inviteToken') inviteToken: string,
+	) {
+		const apartment = await this.apartmentsService.acceptInvite(
+			request.user,
+			inviteToken,
+		);
+
+		return {
+			...apartment,
+			inhabitants: apartment.inhabitants.map(
+				(inhabitant) => new SafeUserDto(inhabitant),
+			),
+		};
 	}
 
 	@Post(':number/invite')

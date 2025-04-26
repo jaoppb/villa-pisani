@@ -94,6 +94,53 @@ export class ApartmentsService {
 		return { inviteToken: token };
 	}
 
+	private async _validateInviteToken(token: string) {
+		this.logger.log('Validating invite token', token);
+		try {
+			const decoded = this.jwtService.verify<InviteApartmentDto>(token);
+			if (!decoded) {
+				this.logger.warn('Invalid invite token', token);
+				throw new BadRequestException('Invalid invite token');
+			}
+
+			const apartment = await this.apartmentsRepository.findOne({
+				where: { number: decoded.apartmentNumber },
+				relations: ['inhabitants'],
+			});
+			if (!apartment) {
+				this.logger.warn(
+					'Apartment not found',
+					decoded.apartmentNumber,
+				);
+				throw new BadRequestException('Apartment not found');
+			}
+
+			return apartment;
+		} catch (error) {
+			this.logger.error('Error validating invite token', error);
+			throw new BadRequestException('Invalid invite token');
+		}
+	}
+
+	async acceptInvite(user: User, inviteToken: string) {
+		this.logger.log('Accepting invite', inviteToken);
+		const apartment = await this._validateInviteToken(inviteToken);
+
+		const isInhabitant = apartment.inhabitants.find((inhabitant) => {
+			return inhabitant.id === user.id;
+		});
+		if (isInhabitant) {
+			this.logger.warn('User already inhabitant', user.id);
+			throw new BadRequestException('User already inhabitant');
+		}
+
+		apartment.inhabitants.push(user);
+		const updated = await this.apartmentsRepository.save(apartment);
+		this.logger.log('Accepted invite and added inhabitant', updated);
+
+		return updated;
+	}
+
 	async findAll() {
 		return await this.apartmentsRepository.find();
 	}
