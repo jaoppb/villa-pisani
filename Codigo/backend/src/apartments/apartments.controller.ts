@@ -21,17 +21,17 @@ export class ApartmentsController {
 		return this.apartmentsService.findAll();
 	}
 
-	@Get(':id')
-	findOne(@Param('id') id: number) {
-		return this.apartmentsService.findOne(id);
+	@Get(':number')
+	findOne(@Param('number') number: number) {
+		return this.apartmentsService.findOne(number);
 	}
 
-	@Patch(':id')
+	@Patch(':number')
 	@Roles(Role.MANAGER)
 	update(
-		@Param('id') id: number,
+		@Param('number') number: number,
 		@Body() updateApartmentDto: UpdateApartmentDto,
 	) {
-		return this.apartmentsService.update(id, updateApartmentDto);
+		return this.apartmentsService.update(number, updateApartmentDto);
 	}
 }

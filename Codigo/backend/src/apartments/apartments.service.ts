@@ -27,18 +27,18 @@ export class ApartmentsService {
 		return await this.apartmentsRepository.find();
 	}
 
-	async findOne(id: number) {
-		return await this.apartmentsRepository.findOneBy({ id });
+	async findOne(number: number) {
+		return await this.apartmentsRepository.findOneBy({ number });
 	}
 
-	async update(id: number, updateApartmentDto: UpdateApartmentDto) {
-		const apartment = await this.apartmentsRepository.findOneBy({ id });
+	async update(number: number, updateApartmentDto: UpdateApartmentDto) {
+		const apartment = await this.apartmentsRepository.findOneBy({ number });
 		if (!apartment) {
-			this.logger.warn('Apartment not found', id);
+			this.logger.warn('Apartment not found', number);
 			return null;
 		}
 
-		this.logger.log('Updating apartment with id', id);
+		this.logger.log('Updating apartment with number', number);
 		const updated = await this.apartmentsRepository.save({
 			...apartment,
 			...updateApartmentDto,
@@ -49,7 +49,7 @@ export class ApartmentsService {
 	}
 
 	async remove(number: number) {
-		this.logger.log('Removing apartment with id', number);
+		this.logger.log('Removing apartment with number', number);
 		const apartment = await this.apartmentsRepository.findOneBy({
 			number,
 		});
