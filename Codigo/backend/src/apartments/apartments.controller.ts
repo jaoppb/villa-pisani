@@ -7,6 +7,7 @@ import {
 	Param,
 	Request,
 	NotFoundException,
+	Delete,
 } from '@nestjs/common';
 import { ApartmentsService } from './apartments.service';
 import { CreateApartmentDto } from './dto/create-apartment.dto';
@@ -61,5 +62,11 @@ export class ApartmentsController {
 	@Roles(Role.MANAGER)
 	findInhabitants(@Param('number') number: number) {
 		return this.apartmentsService.findInhabitants(number);
+	}
+
+	@Delete(':number')
+	@Roles(Role.MANAGER)
+	remove(@Param('number') number: number) {
+		return this.apartmentsService.remove(number);
 	}
 }
