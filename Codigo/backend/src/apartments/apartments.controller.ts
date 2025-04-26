@@ -69,4 +69,10 @@ export class ApartmentsController {
 	remove(@Param('number') number: number) {
 		return this.apartmentsService.remove(number);
 	}
+
+	@Delete(':number/inhabitants/:id')
+	@Roles(Role.MANAGER)
+	removeInhabitant(@Param('number') number: number, @Param('id') id: string) {
+		return this.apartmentsService.removeInhabitant(number, id);
+	}
 }

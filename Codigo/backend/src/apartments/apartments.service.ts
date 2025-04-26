@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateApartmentDto } from './dto/create-apartment.dto';
 import { UpdateApartmentDto } from './dto/update-apartment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -84,5 +84,34 @@ export class ApartmentsService {
 		this.logger.log('Removed apartment number', removed);
 
 		return removed;
+	}
+
+	async removeInhabitant(number: number, id: string) {
+		this.logger.log('Removing inhabitant with id', id);
+		const apartment = await this.apartmentsRepository.findOne({
+			where: { number },
+			relations: ['inhabitants'],
+		});
+		if (!apartment) {
+			this.logger.warn('Apartment not found', number);
+			return null;
+		}
+
+		const inhabitant = apartment.inhabitants.find((inhabitant) => {
+			return inhabitant.id === id;
+		});
+		if (!inhabitant) {
+			this.logger.warn('Inhabitant not found', id);
+			throw new NotFoundException('Inhabitant not found at apartment');
+		}
+
+		apartment.inhabitants = apartment.inhabitants.filter(
+			(inhabitant) => inhabitant.id !== id,
+		);
+
+		const updated = await this.apartmentsRepository.save(apartment);
+		this.logger.log('Removed inhabitant from apartment', updated);
+
+		return updated;
 	}
 }
