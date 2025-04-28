@@ -12,12 +12,13 @@ import { FeedbackModule } from './feedback/feedback.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { RoleGuard } from './auth/roles/role.guard';
+import { EntregasModule } from './entregas/entregas.module'; 
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // Torna as configurações acessíveis globalmente
-      envFilePath: '.env', // Caminho para o arquivo .env
+      isGlobal: true,
+      envFilePath: '.env',
     }),
     AppConfigModule,
     DatabaseModule,
@@ -35,7 +36,8 @@ import { RoleGuard } from './auth/roles/role.guard';
     }),
     UserModule,
     AuthModule,
-    FeedbackModule, 
+    FeedbackModule,
+    EntregasModule, // <-- Novo módulo adicionado aqui
   ],
   controllers: [AppController],
   providers: [
