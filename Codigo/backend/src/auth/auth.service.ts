@@ -6,7 +6,7 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { PasswordEncryption } from 'src/encryption/password-encryption.provider';
 import { User } from 'src/user/entities/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -26,24 +26,40 @@ export class AuthService implements OnModuleInit {
 		private eventEmitter: EventEmitter2,
 	) {}
 
-	async signUp(body: SignUpAuthDto) {
+	private async _signUpWithoutQueryRunner(user: User) {
+		return await this.userRepository.save(user);
+	}
+
+	private async _signUpWithQueryRunner(user: User, queryRunner: QueryRunner) {
+		return await queryRunner.manager.save(user);
+	}
+
+	async signUp(payload: SignUpAuthDto): Promise<User>;
+	async signUp(
+		payload: SignUpAuthDto,
+		queryRunner: QueryRunner,
+	): Promise<User>;
+	async signUp(payload: SignUpAuthDto, queryRunner?: QueryRunner) {
+		const { email, password, name, birthDate } = payload;
 		const userExist = await this.userRepository.findOneBy({
-			email: body.email,
+			email,
 		});
-		const { password } = body;
+
 		if (userExist) {
 			this.logger.error('User exists', userExist);
 			throw new BadRequestException('User already exists');
 		}
 
 		const result = await this.passwordEncryption.encrypt(password);
-		const user = await this.userRepository.save({
-			email: body.email,
-			name: body.name,
-			birthDate: body.birthDate,
-			password: result,
-			roles: [],
-		});
+		const userData = new User();
+		userData.email = email;
+		userData.name = name;
+		userData.birthDate = birthDate;
+		userData.password = result;
+		userData.roles = [];
+		const user = queryRunner
+			? await this._signUpWithQueryRunner(userData, queryRunner)
+			: await this._signUpWithoutQueryRunner(userData);
 
 		this.logger.log('User create', user);
 		return user;
@@ -77,6 +93,12 @@ export class AuthService implements OnModuleInit {
 
 		this.logger.log('User from payload', user);
 		return user;
+	}
+
+	async findUserByEmail(email: string) {
+		return await this.userRepository.findOneBy({
+			email,
+		});
 	}
 
 	private async _assertAdmin() {
