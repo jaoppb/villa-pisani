@@ -16,6 +16,7 @@ import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
 import { Request } from 'src/http/request';
 import { SafeUserDto } from 'src/user/dto/safe-user.dto';
+import { NoRole } from 'src/auth/roles/no-role.decorator';
 
 @Controller('apartments')
 export class ApartmentsController {
@@ -37,6 +38,7 @@ export class ApartmentsController {
 	}
 
 	@Post('invite')
+	@NoRole()
 	async acceptInvite(
 		@Req() request: Request,
 		@Body('inviteToken') inviteToken: string,
