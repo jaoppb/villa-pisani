@@ -16,4 +16,4 @@ Relacionamento com o layout seguinte da Prestação de Contas
 # Comandos
 | Numero  | Nome               | Ação                                    | Restrição        |
 |---------|--------------------|-----------------------------------------|------------------|
-|   01    |     Nova Conta     |  Redirecionar para segundo layout de Prestação de Contas   |                  |  
+|   01    |     Nova Conta     |  Redirecionar para segundo layout de Prestação de Contas   |      Nenhuma       |  
