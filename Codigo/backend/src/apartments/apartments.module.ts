@@ -7,9 +7,13 @@ import { User } from 'src/user/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { AppConfigModule } from 'src/app-config/app-config.module';
 import { AppConfigService } from 'src/app-config/app-config.service';
+import { AuthModule } from 'src/auth/auth.module';
+import { EncryptionModule } from 'src/encryption/encryption.module';
 
 @Module({
 	imports: [
+		AuthModule,
+		EncryptionModule,
 		TypeOrmModule.forFeature([Apartment, User]),
 		JwtModule.registerAsync({
 			imports: [AppConfigModule],

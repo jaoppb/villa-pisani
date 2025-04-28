@@ -13,6 +13,12 @@ export class GlobalGuard implements CanActivate {
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		if (await this.publicGuard.canActivate(context)) {
+			try {
+				await this.authGuard.canActivate(context);
+			} catch {
+				// Ignore Errors
+			}
+
 			return true;
 		}
 
