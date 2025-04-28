@@ -204,7 +204,7 @@ export class ApartmentsService {
 		});
 		if (!apartment) {
 			this.logger.warn('Apartment not found', number);
-			return null;
+			throw new NotFoundException('Apartment not found');
 		}
 
 		const inhabitant = apartment.inhabitants.find((inhabitant) => {

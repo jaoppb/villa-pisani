@@ -94,8 +94,10 @@ export class ApartmentsController {
 
 	@Get(':number/inhabitants')
 	@Roles(Role.MANAGER)
-	findInhabitants(@Param('number') number: number) {
-		return this.apartmentsService.findInhabitants(number);
+	async findInhabitants(@Param('number') number: number) {
+		return (await this.apartmentsService.findInhabitants(number)).map(
+			(user) => new SafeUserDto(user),
+		);
 	}
 
 	@Delete(':number')
@@ -106,7 +108,19 @@ export class ApartmentsController {
 
 	@Delete(':number/inhabitants/:id')
 	@Roles(Role.MANAGER)
-	removeInhabitant(@Param('number') number: number, @Param('id') id: string) {
-		return this.apartmentsService.removeInhabitant(number, id);
+	async removeInhabitant(
+		@Param('number') number: number,
+		@Param('id') id: string,
+	) {
+		const apartment = await this.apartmentsService.removeInhabitant(
+			number,
+			id,
+		);
+		return {
+			...apartment,
+			inhabitants: apartment.inhabitants.map(
+				(inhabitant) => new SafeUserDto(inhabitant),
+			),
+		};
 	}
 }
