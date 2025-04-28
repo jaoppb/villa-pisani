@@ -1,4 +1,5 @@
 import {
+	CanActivate,
 	ExecutionContext,
 	HttpException,
 	HttpStatus,
@@ -8,28 +9,25 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'src/http/request';
-import { PayloadAuthDto } from './dto/payload-auth.dto';
-import { AuthService } from './auth.service';
-import { CheckPublic } from './meta/check-public.decorator';
-import { BaseGuard } from './base.guard';
+import { PayloadAuthDto } from '../dto/payload-auth.dto';
+import { AuthService } from '../auth.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
-export class AuthGuard extends BaseGuard {
+export class AuthGuard implements CanActivate {
 	private readonly logger = new Logger(AuthGuard.name);
 	constructor(
 		private readonly jwtService: JwtService,
 		private readonly authService: AuthService,
+		private readonly userService: UserService,
 		protected readonly reflector: Reflector,
-	) {
-		super();
-	}
+	) {}
 
-	@CheckPublic
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		this.logger.debug('AuthGuard');
 		const request = context.switchToHttp().getRequest<Request>();
 		const token = this.extractToken(request);
-		const payload = this.validateToken(token);
+		const payload = await this.validateToken(token);
 		if (!payload) {
 			this.logger.debug('Invalid token');
 			throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -47,10 +45,14 @@ export class AuthGuard extends BaseGuard {
 		return true;
 	}
 
-	private validateToken(
+	private async validateToken(
 		token: string | null | undefined,
-	): PayloadAuthDto | false {
+	): Promise<PayloadAuthDto | false> {
 		if (!token) {
+			return false;
+		}
+
+		if (!(await this.checkPasswordChange(token))) {
 			return false;
 		}
 
@@ -59,6 +61,21 @@ export class AuthGuard extends BaseGuard {
 		} catch {
 			return false;
 		}
+	}
+
+	private async checkPasswordChange(token: string): Promise<boolean> {
+		const payload = this.jwtService.decode<PayloadAuthDto>(token);
+
+		const user = await this.userService.findOneByEmail(payload.email);
+		if (!user) {
+			return false;
+		}
+
+		if (payload.iat < user.lastPasswordChange.getTime() / 1000) {
+			return false;
+		}
+
+		return true;
 	}
 
 	private extractToken(request: Request): string | null {

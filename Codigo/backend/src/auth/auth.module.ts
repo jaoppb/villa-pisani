@@ -11,12 +11,18 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { User } from 'src/user/entities/user.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { PublicGuard } from './guards/public.guard';
+import { AuthGuard } from './guards/auth.guard';
+import { RoleGuard } from './guards/role.guard';
+import { GlobalGuard } from './guards/global.guard';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
 	imports: [
 		EncryptionModule,
 		AppConfigModule,
 		PassportModule,
+		UserModule,
 		TypeOrmModule.forFeature([User]),
 		EventEmitterModule.forRoot(),
 		JwtModule.registerAsync({
@@ -29,8 +35,24 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 		}),
 	],
 	controllers: [AuthController],
-	providers: [AuthService, PasswordEncryption, JwtStrategy],
-	exports: [AuthService, JwtModule, JwtStrategy],
+	providers: [
+		AuthService,
+		PasswordEncryption,
+		JwtStrategy,
+		GlobalGuard,
+		PublicGuard,
+		AuthGuard,
+		RoleGuard,
+	],
+	exports: [
+		AuthService,
+		JwtModule,
+		JwtStrategy,
+		GlobalGuard,
+		PublicGuard,
+		AuthGuard,
+		RoleGuard,
+	],
 })
 export class AuthModule {
 	constructor() {}

@@ -9,11 +9,10 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth/auth.guard';
-import { RoleGuard } from './auth/roles/role.guard';
 import { ExpensesModule } from './expenses/expenses.module';
 import { FileServeController } from './files/files.controller';
-
+import { GlobalGuard } from './auth/guards/global.guard';
+import { ApartmentsModule } from './apartments/apartments.module';
 @Module({
 	imports: [
 		AppConfigModule,
@@ -34,6 +33,7 @@ import { FileServeController } from './files/files.controller';
 		AuthModule,
 		FeedbackModule,
 		ExpensesModule,
+		ApartmentsModule,
 	],
 	controllers: [AppController, FileServeController],
 	providers: [
@@ -41,11 +41,7 @@ import { FileServeController } from './files/files.controller';
 		CustomLogger,
 		{
 			provide: APP_GUARD,
-			useClass: AuthGuard,
-		},
-		{
-			provide: APP_GUARD,
-			useClass: RoleGuard,
+			useClass: GlobalGuard,
 		},
 	],
 	exports: [CustomLogger],

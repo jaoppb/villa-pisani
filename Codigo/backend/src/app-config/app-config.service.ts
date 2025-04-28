@@ -37,6 +37,12 @@ export class AppConfigService {
 			this.logger.debug(
 				`jwt secret: ${this.config.get<string>('API_JWT_SECRET')}`,
 			);
+			this.logger.debug(
+				`admin email: ${this.config.get<string>('API_ADMIN_EMAIL')}`,
+			);
+			this.logger.debug(
+				`admin password: ${this.config.get<string>('API_ADMIN_PASSWORD')}`,
+			);
 			AppConfigService.log = true;
 		}
 	}
@@ -55,6 +61,14 @@ export class AppConfigService {
 
 	get JwtSecret(): string {
 		return this.config.get<string>('API_JWT_SECRET')!;
+	}
+
+	get AdminEmail(): string {
+		return this.config.get<string>('API_ADMIN_EMAIL')!;
+	}
+
+	get AdminPassword(): string {
+		return this.config.get<string>('API_ADMIN_PASSWORD')!;
 	}
 
 	get database() {

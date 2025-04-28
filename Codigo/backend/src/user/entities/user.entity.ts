@@ -1,10 +1,13 @@
+import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { Role } from 'src/auth/roles/role.entity';
 import { Feedback } from 'src/feedback/entity/feedback.entity';
 import {
+	AfterLoad,
 	BeforeUpdate,
 	Column,
 	CreateDateColumn,
 	Entity,
+	ManyToOne,
 	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
@@ -35,6 +38,15 @@ export class User {
 	})
 	feedbacks: Feedback[];
 
+	@ManyToOne(() => Apartment, (apartment) => apartment.inhabitants, {
+		nullable: true,
+		eager: true,
+	})
+	apartment?: Apartment;
+
+	@Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+	lastPasswordChange: Date;
+
 	@CreateDateColumn()
 	createAt: Date;
 
@@ -44,5 +56,19 @@ export class User {
 	@BeforeUpdate()
 	updateDate() {
 		this.updateAt = new Date();
+	}
+
+	private _cachedPassword?: string;
+
+	@AfterLoad()
+	private _cachePassword() {
+		this._cachedPassword = this.password;
+	}
+
+	@BeforeUpdate()
+	private _checkPasswordChange() {
+		if (this._cachedPassword !== this.password) {
+			this.lastPasswordChange = new Date();
+		}
 	}
 }

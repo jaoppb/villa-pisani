@@ -14,6 +14,7 @@ import { Public } from './meta/public.decorator';
 import { Request } from 'src/http/request';
 import { CurrentUserDto } from './dto/current-user.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { NoRole } from './roles/no-role.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -60,19 +61,10 @@ export class AuthController {
 
 	@ApiBearerAuth()
 	@Get('me')
+	@NoRole()
 	profile(@RequestDecorator() req: Request): CurrentUserDto {
 		const { user } = req;
 
-		const result: CurrentUserDto = {
-			id: user.id,
-			name: user.name,
-			email: user.email,
-			createAt: user.createAt,
-			updateAt: user.updateAt,
-			birthDate: user.birthDate,
-			roles: user.roles,
-		};
-
-		return result;
+		return new CurrentUserDto(user);
 	}
 }

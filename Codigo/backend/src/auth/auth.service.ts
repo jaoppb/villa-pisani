@@ -2,6 +2,7 @@ import {
 	BadRequestException,
 	Injectable,
 	Logger,
+	OnModuleInit,
 	UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,14 +13,16 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SignUpAuthDto } from './dto/signup-auth.dto';
 import { PayloadAuthDto } from './dto/payload-auth.dto';
 import { Role } from './roles/role.entity';
+import { AppConfigService } from 'src/app-config/app-config.service';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit {
 	private readonly logger = new Logger(AuthService.name);
 	constructor(
 		@InjectRepository(User)
 		private readonly userRepository: Repository<User>,
 		private readonly passwordEncryption: PasswordEncryption,
+		private readonly appConfigService: AppConfigService,
 		private eventEmitter: EventEmitter2,
 	) {}
 
@@ -39,7 +42,7 @@ export class AuthService {
 			name: body.name,
 			birthDate: body.birthDate,
 			password: result,
-			roles: [Role.INHABITANT],
+			roles: [],
 		});
 
 		this.logger.log('User create', user);
@@ -74,5 +77,32 @@ export class AuthService {
 
 		this.logger.log('User from payload', user);
 		return user;
+	}
+
+	private async _assertAdmin() {
+		this.logger.log('Asserting admin user');
+		const email = this.appConfigService.AdminEmail;
+		const admin = await this.userRepository.findOneBy({
+			email,
+		});
+		if (admin) {
+			this.logger.log('Admin user already exists');
+			return;
+		}
+		this.logger.log('Creating admin user');
+		const password = await this.passwordEncryption.encrypt(
+			this.appConfigService.AdminPassword,
+		);
+		const adminUser = await this.userRepository.save({
+			email,
+			name: 'Admin',
+			password,
+			roles: [Role.MANAGER],
+		});
+		this.logger.log('Admin user created', adminUser);
+	}
+
+	async onModuleInit() {
+		await this._assertAdmin();
 	}
 }
