@@ -8,7 +8,7 @@ import { CreateApartmentDto } from './dto/create-apartment.dto';
 import { UpdateApartmentDto } from './dto/update-apartment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Apartment } from './entities/apartment.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, QueryRunner, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { InviteApartmentDto } from './dto/invite-apartment.dto';
@@ -124,7 +124,11 @@ export class ApartmentsService {
 		}
 	}
 
-	async acceptInvite(user: User, inviteToken: string) {
+	async acceptInvite(
+		queryRunner: QueryRunner,
+		user: User,
+		inviteToken: string,
+	) {
 		this.logger.log('Accepting invite', inviteToken);
 		const apartment = await this._validateInviteToken(inviteToken);
 
@@ -136,31 +140,16 @@ export class ApartmentsService {
 			throw new BadRequestException('User already inhabitant');
 		}
 
-		const queryRunner = this.dataSource.createQueryRunner();
-
-		await queryRunner.connect();
-		await queryRunner.startTransaction();
-
-		try {
-			if (!user.roles.includes(Role.INHABITANT)) {
-				user.roles.push(Role.INHABITANT);
-				await queryRunner.manager.save(user);
-			}
-
-			apartment.inhabitants.push(user);
-			const updated = await queryRunner.manager.save(apartment);
-			this.logger.log('Accepted invite and added inhabitant', updated);
-
-			await queryRunner.commitTransaction();
-
-			return updated;
-		} catch (error) {
-			await queryRunner.rollbackTransaction();
-			this.logger.error('Error accepting invite', error);
-			throw new BadRequestException('Error accepting invite');
-		} finally {
-			await queryRunner.release();
+		if (!user.roles.includes(Role.INHABITANT)) {
+			user.roles.push(Role.INHABITANT);
+			await queryRunner.manager.save(user);
 		}
+
+		apartment.inhabitants.push(user);
+		const updated = await queryRunner.manager.save(apartment);
+		this.logger.log('Accepted invite and added inhabitant', updated);
+
+		return updated;
 	}
 
 	async findAll() {
