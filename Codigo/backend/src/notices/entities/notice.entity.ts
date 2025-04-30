@@ -2,6 +2,7 @@ import { User } from 'src/user/entities/user.entity';
 import {
 	Column,
 	CreateDateColumn,
+	Entity,
 	ManyToMany,
 	ManyToOne,
 	PrimaryGeneratedColumn,
@@ -11,6 +12,7 @@ import { NoticeTarget } from '../enum/notice-target.enum';
 import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { Role } from 'src/auth/roles/role.entity';
 
+@Entity('notices')
 export class Notice {
 	@PrimaryGeneratedColumn()
 	id: number;
