@@ -6,6 +6,7 @@ import {
 	ManyToMany,
 	ManyToOne,
 	PrimaryGeneratedColumn,
+	Relation,
 	UpdateDateColumn,
 } from 'typeorm';
 import { NoticeTarget } from '../enum/notice-target.enum';
@@ -24,7 +25,7 @@ export class Notice {
 	body: string;
 
 	@ManyToOne(() => User, (user) => user.notices)
-	author: User;
+	author: Relation<User>;
 
 	@CreateDateColumn()
 	createAt: Date;
@@ -32,7 +33,7 @@ export class Notice {
 	@UpdateDateColumn()
 	updateAt: Date;
 
-	@Column({ type: 'enum', nullable: true })
+	@Column({ type: 'enum', enum: NoticeTarget, nullable: true })
 	target?: NoticeTarget;
 
 	@ManyToMany(() => Apartment, (apartment) => apartment.notices, {
@@ -40,7 +41,7 @@ export class Notice {
 	})
 	apartments?: Apartment[];
 
-	@Column({ type: 'set', nullable: true })
+	@Column({ type: 'set', nullable: true, enum: Role })
 	roles?: Role[];
 
 	@Column()
