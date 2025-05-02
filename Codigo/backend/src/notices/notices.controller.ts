@@ -14,6 +14,7 @@ import { UpdateNoticeDto } from './dto/update-notice.dto';
 import { Role } from 'src/auth/roles/role.entity';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Request } from 'src/http/request';
+import { ViewNoticeDto } from './dto/view-notice.dto';
 
 @Controller('notices')
 export class NoticesController {
@@ -21,8 +22,13 @@ export class NoticesController {
 
 	@Post()
 	@Roles(Role.MANAGER)
-	create(@Req() request: Request, @Body() createNoticeDto: CreateNoticeDto) {
-		return this.noticesService.create(request.user, createNoticeDto);
+	async create(
+		@Req() request: Request,
+		@Body() createNoticeDto: CreateNoticeDto,
+	) {
+		return new ViewNoticeDto(
+			await this.noticesService.create(request.user, createNoticeDto),
+		);
 	}
 
 	@Get()
