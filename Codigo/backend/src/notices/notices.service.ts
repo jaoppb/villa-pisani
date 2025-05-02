@@ -77,8 +77,21 @@ export class NoticesService {
 		return `This action returns a #${id} notice`;
 	}
 
-	update(id: number, updateNoticeDto: UpdateNoticeDto) {
-		return `This action updates a #${id} notice`;
+	async update(id: number, updateNoticeDto: UpdateNoticeDto) {
+		const notice = await this.noticesRepositoy.findOneBy({ id });
+		if (!notice) {
+			this.logger.error('Notice not found', id);
+			throw new BadRequestException('Notice not found');
+		}
+
+		const parsedNotice = await this._parseNoticeDto(updateNoticeDto);
+
+		this.logger.log('Updating notice', parsedNotice);
+		const saved = await this.noticesRepositoy.save(parsedNotice);
+		this.eventEmitter.emit('notice.updated', saved);
+		this.logger.log('Notice updated', saved);
+
+		return saved;
 	}
 
 	remove(id: number) {
