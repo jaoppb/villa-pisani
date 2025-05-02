@@ -1,6 +1,13 @@
 import { Notice } from 'src/notices/entities/notice.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, ManyToMany, OneToMany, PrimaryColumn } from 'typeorm';
+import {
+	Column,
+	Entity,
+	JoinTable,
+	ManyToMany,
+	OneToMany,
+	PrimaryColumn,
+} from 'typeorm';
 
 @Entity('apartments')
 export class Apartment {
@@ -14,5 +21,6 @@ export class Apartment {
 	inhabitants: User[];
 
 	@ManyToMany(() => Notice, (notice) => notice.apartments)
+	@JoinTable()
 	notices: Notice[];
 }
