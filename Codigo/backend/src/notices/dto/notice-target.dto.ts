@@ -6,7 +6,7 @@ import { IsEnum, isEnum } from 'class-validator';
 
 export class NoticeTargetDto {
 	@IsEnum(NoticeTarget)
-	targetType: NoticeTarget;
+	type: NoticeTarget;
 
 	@OneOf({
 		matchers: [

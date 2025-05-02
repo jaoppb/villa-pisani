@@ -28,13 +28,13 @@ export class NoticesService {
 		const notice: PartialNotice = {
 			title: createNoticeDto.title,
 			body: createNoticeDto.body,
-			target: createNoticeDto.target?.targetType,
+			target: createNoticeDto.target?.type,
 			important: createNoticeDto.important,
 			author,
 		};
 
 		if (createNoticeDto.target)
-			switch (createNoticeDto.target.targetType) {
+			switch (createNoticeDto.target.type) {
 				case NoticeTarget.APARTMENTS:
 					{
 						const apartments =
