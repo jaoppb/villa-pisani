@@ -8,7 +8,6 @@ import { User } from 'src/user/entities/user.entity';
 import { PartialType } from '@nestjs/swagger';
 import { NoticeTarget } from './enum/notice-target.enum';
 import { Apartment } from 'src/apartments/entities/apartment.entity';
-import { Role } from 'src/auth/roles/role.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 class PartialNotice extends PartialType(Notice) {}
