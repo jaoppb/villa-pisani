@@ -23,37 +23,46 @@ export class NoticesService {
 		private readonly eventEmitter: EventEmitter2,
 	) {}
 
-	async create(author: User, createNoticeDto: CreateNoticeDto) {
+	private async _parseNoticeDto(
+		noticeDto: UpdateNoticeDto | CreateNoticeDto,
+		author?: User,
+	): Promise<PartialNotice> {
 		const notice: PartialNotice = {
-			title: createNoticeDto.title,
-			body: createNoticeDto.body,
-			target: createNoticeDto.target?.type,
-			important: createNoticeDto.important,
+			title: noticeDto.title,
+			body: noticeDto.body,
+			target: noticeDto.target?.type,
+			important: noticeDto.important,
 			author,
 		};
 
-		if (createNoticeDto.target)
-			switch (createNoticeDto.target.type) {
+		if (noticeDto.target)
+			switch (noticeDto.target.type) {
 				case NoticeTarget.APARTMENTS:
 					{
 						const apartments =
 							await this.apartmentsRepositoy.findBy({
-								number: In(createNoticeDto.target.apartments!),
+								number: In(noticeDto.target.apartments!),
 							});
 						notice.apartments = apartments;
 					}
 					break;
 				case NoticeTarget.ROLES:
-					notice.roles = Array.from(
-						new Set(createNoticeDto.target.roles),
-					);
+					notice.roles = Array.from(new Set(noticeDto.target.roles));
 					break;
 				default:
 					throw new BadRequestException('Invalid target type');
 			}
 
-		this.logger.log('Creating notice', notice);
-		const saved = await this.noticesRepositoy.save(notice);
+		return notice;
+	}
+
+	async create(author: User, createNoticeDto: CreateNoticeDto) {
+		const parsedNotice = await this._parseNoticeDto(
+			createNoticeDto,
+			author,
+		);
+		this.logger.log('Creating notice', parsedNotice);
+		const saved = await this.noticesRepositoy.save(parsedNotice);
 		this.eventEmitter.emit('notice.created', saved);
 		this.logger.log('Notice created', saved);
 
