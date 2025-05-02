@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { CreateNoticeDto } from './dto/create-notice.dto';
 import { UpdateNoticeDto } from './dto/update-notice.dto';
 import { In, Repository } from 'typeorm';
@@ -47,7 +47,7 @@ export class NoticesService {
 					notice.roles = createNoticeDto.target.roles!;
 					break;
 				default:
-					break;
+					throw new BadRequestException('Invalid target type');
 			}
 
 		this.logger.log('Creating notice', notice);
