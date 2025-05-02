@@ -39,16 +39,13 @@ export class NoticesService {
 					{
 						const apartments =
 							await this.apartmentsRepositoy.findBy({
-								number: In(
-									createNoticeDto.target
-										.targets as Apartment[],
-								),
+								number: In(createNoticeDto.target.apartments!),
 							});
 						notice.apartments = apartments;
 					}
 					break;
 				case NoticeTarget.ROLES:
-					notice.roles = createNoticeDto.target.targets as Role[];
+					notice.roles = createNoticeDto.target.roles!;
 					break;
 				default:
 					break;

@@ -1,28 +1,18 @@
 import { NoticeTarget } from '../enum/notice-target.enum';
-import { OneOf } from 'src/validators/one-of.validator';
 import { Role } from 'src/auth/roles/role.entity';
-import { Apartment } from 'src/apartments/entities/apartment.entity';
-import { IsEnum, isEnum } from 'class-validator';
+import { ArrayNotEmpty, IsEnum, IsPositive, ValidateIf } from 'class-validator';
 
 export class NoticeTargetDto {
 	@IsEnum(NoticeTarget)
 	type: NoticeTarget;
 
-	@OneOf({
-		matchers: [
-			(value: any) => {
-				return (
-					Array.isArray(value) &&
-					value.every((each) => isEnum(each, NoticeTarget))
-				);
-			},
-			(value: any) => {
-				return (
-					Array.isArray(value) &&
-					value.every((each) => each instanceof Apartment)
-				);
-			},
-		],
-	})
-	targets: Role[] | Apartment[];
+	@ValidateIf((o: NoticeTargetDto) => o.type === NoticeTarget.ROLES)
+	@IsEnum(NoticeTarget, { each: true })
+	@ArrayNotEmpty()
+	roles?: Role[];
+
+	@ValidateIf((o: NoticeTargetDto) => o.type === NoticeTarget.APARTMENTS)
+	@IsPositive({ each: true })
+	@ArrayNotEmpty()
+	apartments?: number[];
 }

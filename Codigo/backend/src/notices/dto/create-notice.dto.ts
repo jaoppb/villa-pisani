@@ -1,5 +1,11 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import {
+	IsBoolean,
+	IsOptional,
+	IsString,
+	ValidateNested,
+} from 'class-validator';
 import { NoticeTargetDto } from './notice-target.dto';
+import { Type } from 'class-transformer';
 
 export class CreateNoticeDto {
 	@IsString()
@@ -9,6 +15,8 @@ export class CreateNoticeDto {
 	body: string;
 
 	@IsOptional()
+	@ValidateNested()
+	@Type(() => NoticeTargetDto)
 	target?: NoticeTargetDto;
 
 	@IsBoolean()
