@@ -94,7 +94,18 @@ export class NoticesService {
 		return saved;
 	}
 
-	remove(id: number) {
-		return `This action removes a #${id} notice`;
+	async remove(id: number) {
+		const notice = await this.noticesRepositoy.findOneBy({ id });
+		if (!notice) {
+			this.logger.error('Notice not found', id);
+			throw new BadRequestException('Notice not found');
+		}
+
+		this.logger.log('Removing notice', id);
+		const removed = await this.noticesRepositoy.remove(notice);
+		this.eventEmitter.emit('notice.removed', id);
+		this.logger.log('Notice removed', id);
+
+		return removed;
 	}
 }
