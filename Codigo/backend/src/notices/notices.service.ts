@@ -44,7 +44,9 @@ export class NoticesService {
 					}
 					break;
 				case NoticeTarget.ROLES:
-					notice.roles = createNoticeDto.target.roles!;
+					notice.roles = Array.from(
+						new Set(createNoticeDto.target.roles),
+					);
 					break;
 				default:
 					throw new BadRequestException('Invalid target type');
