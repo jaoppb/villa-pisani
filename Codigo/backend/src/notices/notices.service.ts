@@ -69,8 +69,20 @@ export class NoticesService {
 		return saved;
 	}
 
-	findAll() {
-		return `This action returns all notices`;
+	async findAllByUserRoles(user: User) {
+		this.logger.log('Finding all notices for user', user);
+		const notices = await this.noticesRepositoy
+			.createQueryBuilder()
+			.andWhere('target = :target', {
+				target: NoticeTarget.ROLES,
+			})
+			.andWhere('roles IN (:...roles)', {
+				roles: user.roles,
+			})
+			.getMany();
+		this.logger.log('Notices found', notices);
+
+		return notices;
 	}
 
 	findOne(id: number) {

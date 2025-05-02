@@ -32,8 +32,8 @@ export class NoticesController {
 	}
 
 	@Get()
-	findAll() {
-		return this.noticesService.findAll();
+	findAll(@Req() request: Request) {
+		return this.noticesService.findAllByUserRoles(request.user);
 	}
 
 	@Get(':id')
