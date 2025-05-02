@@ -7,7 +7,7 @@ export class NoticeTargetDto {
 	type: NoticeTarget;
 
 	@ValidateIf((o: NoticeTargetDto) => o.type === NoticeTarget.ROLES)
-	@IsEnum(NoticeTarget, { each: true })
+	@IsEnum(Role, { each: true })
 	@ArrayNotEmpty()
 	roles?: Role[];
 
