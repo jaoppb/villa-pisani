@@ -1,4 +1,4 @@
 export enum NoticeTarget {
-	APARTMENTS,
-	ROLES,
+	APARTMENTS = 'apartments',
+	ROLES = 'roles',
 }
