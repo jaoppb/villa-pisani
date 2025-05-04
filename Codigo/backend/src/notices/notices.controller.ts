@@ -45,16 +45,16 @@ export class NoticesController {
 
 	@Get(':id')
 	findOne(@Param('id') id: string) {
-		return this.noticesService.findOne(+id);
+		return this.noticesService.findOne(id);
 	}
 
 	@Patch(':id')
 	update(@Param('id') id: string, @Body() updateNoticeDto: UpdateNoticeDto) {
-		return this.noticesService.update(+id, updateNoticeDto);
+		return this.noticesService.update(id, updateNoticeDto);
 	}
 
 	@Delete(':id')
 	remove(@Param('id') id: string) {
-		return this.noticesService.remove(+id);
+		return this.noticesService.remove(id);
 	}
 }

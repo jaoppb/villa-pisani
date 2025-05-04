@@ -123,11 +123,11 @@ export class NoticesService {
 		return notices;
 	}
 
-	findOne(id: number) {
+	findOne(id: string) {
 		return `This action returns a #${id} notice`;
 	}
 
-	async update(id: number, updateNoticeDto: UpdateNoticeDto) {
+	async update(id: string, updateNoticeDto: UpdateNoticeDto) {
 		const notice = await this.noticesRepositoy.findOneBy({ id });
 		if (!notice) {
 			this.logger.error('Notice not found', id);
@@ -144,7 +144,7 @@ export class NoticesService {
 		return saved;
 	}
 
-	async remove(id: number) {
+	async remove(id: string) {
 		const notice = await this.noticesRepositoy.findOneBy({ id });
 		if (!notice) {
 			this.logger.error('Notice not found', id);

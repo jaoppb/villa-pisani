@@ -15,8 +15,8 @@ import { Role } from 'src/auth/roles/role.entity';
 
 @Entity('notices')
 export class Notice {
-	@PrimaryGeneratedColumn()
-	id: number;
+	@PrimaryGeneratedColumn('uuid')
+	id: string;
 
 	@Column()
 	title: string;
