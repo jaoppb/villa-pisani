@@ -64,22 +64,24 @@ export class NoticesController {
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id: string) {
-		return this.noticesService.findOne(id);
+	async findOne(@Param('id') id: string) {
+		return new ViewNoticeDto(await this.noticesService.findOne(id));
 	}
 
 	@Patch(':id')
 	@Roles(Role.MANAGER)
-	update(
+	async update(
 		@Param('id', new ParseUUIDPipe()) id: string,
 		@Body() updateNoticeDto: UpdateNoticeDto,
 	) {
-		return this.noticesService.update(id, updateNoticeDto);
+		return new ViewNoticeDto(
+			await this.noticesService.update(id, updateNoticeDto),
+		);
 	}
 
 	@Delete(':id')
 	@Roles(Role.MANAGER)
-	remove(@Param('id', new ParseUUIDPipe()) id: string) {
-		return this.noticesService.remove(id);
+	async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+		return new ViewNoticeDto(await this.noticesService.remove(id));
 	}
 }
