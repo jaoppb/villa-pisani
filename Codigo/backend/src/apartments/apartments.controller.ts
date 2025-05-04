@@ -44,11 +44,11 @@ export class ApartmentsController {
 		return this.apartmentsService.create(createApartmentDto);
 	}
 
-	@Post(':number/inhabitants/:user-id')
+	@Post(':number/inhabitants/:user_id')
 	@Roles(Role.MANAGER)
 	addInhabitant(
 		@Param('number') number: number,
-		@Param('user-id') userId: string,
+		@Param('user_id') userId: string,
 	) {
 		return this.apartmentsService.addInhabitant(number, userId);
 	}
