@@ -155,8 +155,16 @@ export class NoticesService {
 		return notices;
 	}
 
-	findOne(id: string) {
-		return `This action returns a #${id} notice`;
+	async findOne(id: string) {
+		this.logger.log('Finding notice', id);
+		const notice = await this.noticesRepositoy.findOneBy({ id });
+		if (!notice) {
+			this.logger.error('Notice not found', id);
+			throw new BadRequestException('Notice not found');
+		}
+		this.logger.log('Notice found', notice);
+
+		return notice;
 	}
 
 	async update(id: string, updateNoticeDto: UpdateNoticeDto) {
