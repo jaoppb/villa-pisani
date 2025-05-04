@@ -69,12 +69,17 @@ export class NoticesController {
 	}
 
 	@Patch(':id')
-	update(@Param('id') id: string, @Body() updateNoticeDto: UpdateNoticeDto) {
+	@Roles(Role.MANAGER)
+	update(
+		@Param('id', new ParseUUIDPipe()) id: string,
+		@Body() updateNoticeDto: UpdateNoticeDto,
+	) {
 		return this.noticesService.update(id, updateNoticeDto);
 	}
 
 	@Delete(':id')
-	remove(@Param('id') id: string) {
+	@Roles(Role.MANAGER)
+	remove(@Param('id', new ParseUUIDPipe()) id: string) {
 		return this.noticesService.remove(id);
 	}
 }
