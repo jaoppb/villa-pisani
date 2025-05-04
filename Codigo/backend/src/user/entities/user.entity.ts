@@ -1,6 +1,7 @@
 import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { Role } from 'src/auth/roles/role.entity';
 import { Feedback } from 'src/feedback/entity/feedback.entity';
+import { Notice } from 'src/notices/entities/notice.entity';
 import {
 	AfterLoad,
 	BeforeUpdate,
@@ -37,6 +38,9 @@ export class User {
 		eager: false,
 	})
 	feedbacks: Feedback[];
+
+	@OneToMany(() => Notice, (notice) => notice.author)
+	notices: Notice[];
 
 	@ManyToOne(() => Apartment, (apartment) => apartment.inhabitants, {
 		nullable: true,
