@@ -13,7 +13,10 @@ export class ViewNoticeDto extends OmitType(Notice, ['author'] as const) {
 		this.author = new SafeUserDto(notice.author);
 
 		for (const [key, value] of Object.entries(this)) {
-			if (value === null) {
+			if (
+				value === null ||
+				(Array.isArray(value) && value.length === 0)
+			) {
 				delete this[key];
 			}
 		}
