@@ -89,6 +89,22 @@ export class NoticesService {
 		return notices;
 	}
 
+	async findAllByRole(role: string): Promise<Notice[]> {
+		this.logger.log('Finding all notices for role', role);
+		const notices = await this.noticesRepositoy
+			.createQueryBuilder()
+			.andWhere('target = :target', {
+				target: NoticeTarget.ROLES,
+			})
+			.andWhere('FIND_IN_SET(:role, roles)', {
+				role,
+			})
+			.getMany();
+		this.logger.log('Notices found', notices);
+
+		return notices;
+	}
+
 	async findAllByUser(user: User) {
 		this.logger.log('Finding all notices for user', user);
 		let query = this.noticesRepositoy

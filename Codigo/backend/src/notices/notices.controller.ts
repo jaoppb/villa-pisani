@@ -7,6 +7,7 @@ import {
 	Param,
 	Delete,
 	Req,
+	ParseEnumPipe,
 } from '@nestjs/common';
 import { NoticesService } from './notices.service';
 import { CreateNoticeDto } from './dto/create-notice.dto';
@@ -39,6 +40,14 @@ export class NoticesController {
 	@Get('private')
 	async findAllPrivate(@Req() request: Request) {
 		return (await this.noticesService.findAllByUser(request.user)).map(
+			(each) => new ViewNoticeDto(each),
+		);
+	}
+
+	@Get('role/:role')
+	@Roles(Role.MANAGER)
+	async findAllByRole(@Param('role', new ParseEnumPipe(Role)) role: Role) {
+		return (await this.noticesService.findAllByRole(role)).map(
 			(each) => new ViewNoticeDto(each),
 		);
 	}
