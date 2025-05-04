@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { CreateNoticeDto } from './dto/create-notice.dto';
 import { UpdateNoticeDto } from './dto/update-notice.dto';
-import { In, Repository } from 'typeorm';
+import { Brackets, In, Repository } from 'typeorm';
 import { Notice } from './entities/notice.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
@@ -79,6 +79,44 @@ export class NoticesService {
 			.andWhere('roles IN (:...roles)', {
 				roles: user.roles,
 			})
+			.getMany();
+		this.logger.log('Notices found', notices);
+
+		return notices;
+	}
+
+	async findAllByUser(user: User) {
+		this.logger.log('Finding all notices for user', user);
+		let query = this.noticesRepositoy
+			.createQueryBuilder('notice')
+			.where('target IS NULL')
+			.orWhere(
+				new Brackets((qb) => {
+					qb.where('target = :targetRoles', {
+						targetRoles: NoticeTarget.ROLES,
+					}).andWhere('notice.roles IN (:...roles)', {
+						roles: user.roles,
+					});
+				}),
+			);
+		if (user.apartment)
+			query = query
+				.leftJoinAndMapMany(
+					'notice.apartments',
+					'notice.apartments',
+					'apartment',
+				)
+				.orWhere(
+					new Brackets((qb) => {
+						qb.where('target = :targetApartment', {
+							targetApartment: NoticeTarget.APARTMENTS,
+						}).andWhere('apartment.number = :apartmentNumber', {
+							apartmentNumber: user.apartment!.number,
+						});
+					}),
+				);
+		const notices = await query
+			.leftJoinAndMapOne('notice.author', 'notice.author', 'author')
 			.getMany();
 		this.logger.log('Notices found', notices);
 

@@ -36,6 +36,13 @@ export class NoticesController {
 		return this.noticesService.findAllByUserRoles(request.user);
 	}
 
+	@Get('private')
+	async findAllPrivate(@Req() request: Request) {
+		return (await this.noticesService.findAllByUser(request.user)).map(
+			(each) => new ViewNoticeDto(each),
+		);
+	}
+
 	@Get(':id')
 	findOne(@Param('id') id: string) {
 		return this.noticesService.findOne(+id);
