@@ -20,6 +20,8 @@ export class NoticesService {
 		private readonly noticesRepositoy: Repository<Notice>,
 		@InjectRepository(Apartment)
 		private readonly apartmentsRepositoy: Repository<Apartment>,
+		@InjectRepository(User)
+		private readonly usersRepositoy: Repository<User>,
 		private readonly eventEmitter: EventEmitter2,
 	) {}
 
@@ -103,6 +105,16 @@ export class NoticesService {
 		this.logger.log('Notices found', notices);
 
 		return notices;
+	}
+
+	async findAllByUserId(userId: string) {
+		const user = await this.usersRepositoy.findOneBy({ id: userId });
+		if (!user) {
+			this.logger.error('User not found', userId);
+			throw new BadRequestException('User not found');
+		}
+
+		return await this.findAllByUser(user);
 	}
 
 	async findAllByUser(user: User) {
