@@ -1,0 +1,35 @@
+main {
+	max-width: 700px;
+	margin: 0 auto;
+
+	h1 {
+		font-size: 3.5rem;
+		text-align: center;
+		color: var(--blue-gray);
+		margin-bottom: 10px;
+		margin-top: 20px;
+	}
+}
+
+.apartment-card {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20px 10px;
+	border-bottom: 4px solid var(--primary-highlight-color);
+	border-radius: 5px;
+
+	&.card-add {
+		justify-content: center;
+	}
+
+	h2,
+	h3 {
+		font-family: 'Montserrat';
+	}
+
+	app-icons {
+		cursor: pointer;
+		color: var(--text-color-app);
+	}
+}

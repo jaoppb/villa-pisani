@@ -1,0 +1,37 @@
+<main>
+	<h1>AP {{ apartment.number }}</h1>
+	<div class="add-invite" (click)="invite()">Criar Convite</div>
+	<div class="inhabitant">
+		@for (user of this.users; track user.id) {
+		<div class="user-card" key="{user.id}">
+			<div class="user-info">
+				<h2>{{ user.name }}</h2>
+			</div>
+			<div class="options">
+				@if(this.isAdmin()){
+				<a [routerLink]="['/condominium/user', user.id]"
+					><app-icons name="pen"
+				/></a>
+				<app-icons name="trash" (click)="openModalRemoveUser(user)" />
+				}
+			</div>
+		</div>
+		}
+	</div>
+</main>
+
+@if(this.isOpenModalRemoveUser && this.isAdmin()){
+<app-modal-remove-user-apartment
+	[isOpen]="isOpenModalRemoveUser"
+	[user]="userToRemove"
+	[apartmentId]="apartment.number"
+	(isOpenChange)="handleIsOpenRemoveUserChange($event)"
+	(removeUser)="handleRemoveUser($event)"
+/>
+} @if(this.isOpenModalInvite && this.isAdmin()){
+<app-modal-apartment-invite
+	[isOpen]="isOpenModalInvite"
+	[apartmentId]="apartment.number"
+	(isOpenChange)="handleIsOpenInviteChange($event)"
+/>
+}
