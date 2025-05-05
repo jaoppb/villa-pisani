@@ -74,11 +74,13 @@ export class UserService {
 	}
 
 	async findAllByEmailAndName(name?: string, email?: string) {
-		const query = this.userRepository.createQueryBuilder();
+		const query = this.userRepository.createQueryBuilder('users');
 		if (name)
 			query.andWhere('LOWER(name) LIKE :name', { name: `%${name}%` });
 		if (email)
 			query.andWhere('LOWER(email) LIKE :email', { email: `%${email}%` });
+		query.leftJoinAndSelect('users.apartment', 'apartments');
+		query.orderBy('users.name');
 		const users = await query.getMany();
 		this.logger.log('Found users', users);
 		return users;

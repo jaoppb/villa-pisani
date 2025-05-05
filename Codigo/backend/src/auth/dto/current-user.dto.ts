@@ -15,5 +15,6 @@ export class CurrentUserDto extends OmitType(User, [
 		this.birthDate = user.birthDate;
 		this.roles = user.roles;
 		this.lastPasswordChange = user.lastPasswordChange;
+		this.apartment = user.apartment;
 	}
 }
