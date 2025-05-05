@@ -43,6 +43,9 @@ export class AppConfigService {
 			this.logger.debug(
 				`admin password: ${this.config.get<string>('API_ADMIN_PASSWORD')}`,
 			);
+			this.logger.debug(
+				`application environment: ${this.config.get<string>('NODE_ENV')}`,
+			);
 			AppConfigService.log = true;
 		}
 	}
@@ -69,6 +72,10 @@ export class AppConfigService {
 
 	get AdminPassword(): string {
 		return this.config.get<string>('API_ADMIN_PASSWORD')!;
+	}
+
+	get NodeEnv(): string {
+		return this.config.get<string>('NODE_ENV')!;
 	}
 
 	get database() {
