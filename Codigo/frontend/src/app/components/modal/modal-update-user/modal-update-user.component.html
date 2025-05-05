@@ -1,0 +1,42 @@
+<app-modal-base [isOpen]="isOpen" (isOpenChange)="handleIsOpenChange($event)">
+	<h1>Atualizar Usuário</h1>
+	<form [formGroup]="form" (ngSubmit)="submit()">
+		<app-input
+			formControlName="name"
+			placeholder="NOME COMPLETO"
+			id="full-name"
+			type="text"
+			leftIcon="pen"
+			[errors]="this.form.get('name')?.errors"
+			[touched]="this.form.get('name')?.touched ?? false"
+		/>
+
+		<app-input
+			formControlName="email"
+			placeholder="Email"
+			id="email"
+			type="email"
+			leftIcon="mail"
+			[errors]="this.form.get('email')?.errors"
+			[touched]="this.form.get('email')?.touched ?? false"
+		/>
+
+		<app-input
+			formControlName="birthDate"
+			placeholder="Data de Nascimento"
+			id="date-birth"
+			type="date"
+			leftIcon="calendar"
+			[errors]="this.form.get('birthDate')?.errors"
+			[touched]="this.form.get('birthDate')?.touched ?? false"
+		/>
+		<app-input
+			type="tags"
+			formControlName="roles"
+			name="roles"
+			id="roles"
+			[data]="this.roles"
+		/>
+		<button type="submit" [disabled]="form.invalid">Enviar</button>
+	</form>
+</app-modal-base>
