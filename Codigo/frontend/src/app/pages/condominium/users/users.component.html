@@ -2,8 +2,8 @@
 	<h1>Usuarios</h1>
 	<app-dropbox title="Sindicos">
 		@for (admin of this.admins; track admin.id) {
-		<a
-			[routerLink]="['/condominium/users', admin.id]"
+		<div
+			(click)="openModalUpdateUser(admin)"
 			class="user-card"
 			key="{admin.id}"
 		>
@@ -13,14 +13,14 @@
 			<div>
 				<app-icons name="pen" />
 			</div>
-		</a>
+		</div>
 		}
 	</app-dropbox>
 
 	<app-dropbox title="Funcionarios">
 		@for (employe of this.employees; track employe.id) {
-		<a
-			[routerLink]="['/condominium/users', employe.id]"
+		<div
+			(click)="openModalUpdateUser(employe)"
 			class="user-card"
 			key="{employe.id}"
 		>
@@ -30,14 +30,14 @@
 			<div>
 				<app-icons name="pen" />
 			</div>
-		</a>
+		</div>
 		}
 	</app-dropbox>
 
 	<app-dropbox title="Inquilinos">
 		@for (resident of this.residents; track resident.id) {
-		<a
-			[routerLink]="['/condominium/users', resident.id]"
+		<div
+			(click)="openModalUpdateUser(resident)"
 			class="user-card"
 			key="{resident.id}"
 		>
@@ -48,7 +48,16 @@
 			<div>
 				<app-icons name="pen" />
 			</div>
-		</a>
+		</div>
 		}
 	</app-dropbox>
 </main>
+
+@if(this.IsOpenModalUpdateUser && this.isAdmin()){
+<app-modal-update-user
+	[isOpen]="IsOpenModalUpdateUser"
+	(isOpenChange)="handleIsOpenUpdateUserChange($event)"
+	[user]="userSelected"
+	(userUpdated)="handleUpdateUser($event)"
+/>
+}
