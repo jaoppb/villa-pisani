@@ -32,4 +32,12 @@ export class UserService {
 				})
 			);
 	}
+
+	getUser() {
+		return this.http.get('users', { observe: 'response' });
+	}
+
+	getUserLogin() {
+		return this.http.get('auth/me', { observe: 'response' });
+	}
 }

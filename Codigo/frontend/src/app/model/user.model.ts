@@ -1,3 +1,5 @@
+import { Apartments } from "./apartment.model";
+
 export interface loginRequest {
 	email: string;
 	password: string;
@@ -33,4 +35,16 @@ export interface payloadToken {
 	iss: string;
 	iat: number;
 	exp: number;
+}
+
+export interface User {
+	id: string;
+	name: string;
+	email: string;
+	createAt: string;
+	updateAt: string;
+	birthDate: string | null;
+	roles: Role[];
+	lastPasswordChange: string;
+	apartment: Apartments | null;
 }

@@ -59,6 +59,14 @@ export class AccessTokenService {
 		return exp;
 	}
 
+	get userId() {
+		const token = this.AccessToken;
+		if (!token) return 0;
+		const { sub } = jwtDecode<payloadToken>(token);
+		if (!sub) return 0;
+		return sub;
+	}
+
 	private hasRole(role: Role): boolean {
 		const token = this.AccessToken;
 		if (!token) return false;
