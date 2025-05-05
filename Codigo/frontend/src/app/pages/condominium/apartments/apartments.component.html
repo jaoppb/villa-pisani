@@ -15,8 +15,19 @@
 			</div>
 		</a>
 		}
-		<div class="apartment-card card-add">
+		<div
+			class="apartment-card card-add"
+			(click)="openModalCreateApartment()"
+		>
 			<app-icons name="plus" />
 		</div>
 	</div>
 </main>
+
+@if(this.IsOpenModalCreateApartment && this.isAdmin()){
+<app-modal-create-apartament
+	[isOpen]="IsOpenModalCreateApartment"
+	(isOpenChange)="handleIsOpenCreateApartmentChange($event)"
+	(newApartment)="handleCreateApartment($event)"
+/>
+}

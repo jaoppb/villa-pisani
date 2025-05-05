@@ -23,8 +23,8 @@ export class ApartmentService {
         return this.http.get(`apartments/${id}/inhabitants`, { observe: 'response' });
     }
 
-    createApartment(data: any) {
-        return this.http.post('apartments', data, { observe: 'response' });
+    createApartment(data: Apartments) {
+        return this.http.post<Apartments>('apartments', data, { observe: 'response' });
     }
 
     createInvite(id: number) {

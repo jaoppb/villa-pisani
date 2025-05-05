@@ -64,7 +64,6 @@ export class ApartmentComponent {
     return this.tokenStorage.hasManager;
   }
 
-
   openModalRemoveUser(user: User): void {
     this.userToRemove = user;
     this.isOpenModalRemoveUser = true;
