@@ -1,0 +1,54 @@
+<main>
+	<h1>Usuarios</h1>
+	<app-dropbox title="Sindicos">
+		@for (admin of this.admins; track admin.id) {
+		<a
+			[routerLink]="['/condominium/users', admin.id]"
+			class="user-card"
+			key="{admin.id}"
+		>
+			<div>
+				<h2>{{ admin.name }}</h2>
+			</div>
+			<div>
+				<app-icons name="pen" />
+			</div>
+		</a>
+		}
+	</app-dropbox>
+
+	<app-dropbox title="Funcionarios">
+		@for (employe of this.employees; track employe.id) {
+		<a
+			[routerLink]="['/condominium/users', employe.id]"
+			class="user-card"
+			key="{employe.id}"
+		>
+			<div>
+				<h2>{{ employe.name }}</h2>
+			</div>
+			<div>
+				<app-icons name="pen" />
+			</div>
+		</a>
+		}
+	</app-dropbox>
+
+	<app-dropbox title="Inquilinos">
+		@for (resident of this.residents; track resident.id) {
+		<a
+			[routerLink]="['/condominium/users', resident.id]"
+			class="user-card"
+			key="{resident.id}"
+		>
+			<div>
+				<h2>{{ resident.name }}</h2>
+				<h3>AP-{{ resident.apartment?.number }}</h3>
+			</div>
+			<div>
+				<app-icons name="pen" />
+			</div>
+		</a>
+		}
+	</app-dropbox>
+</main>
