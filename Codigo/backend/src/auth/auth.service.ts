@@ -6,7 +6,7 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryRunner, Repository } from 'typeorm';
+import { DataSource, QueryRunner, Repository } from 'typeorm';
 import { PasswordEncryption } from 'src/encryption/password-encryption.provider';
 import { User } from 'src/user/entities/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -14,6 +14,9 @@ import { SignUpAuthDto } from './dto/signup-auth.dto';
 import { PayloadAuthDto } from './dto/payload-auth.dto';
 import { Role } from './roles/role.entity';
 import { AppConfigService } from 'src/app-config/app-config.service';
+import { JwtService } from '@nestjs/jwt';
+import { InviteApartmentDto } from 'src/apartments/dto/invite-apartment.dto';
+import { Apartment } from 'src/apartments/entities/apartment.entity';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -21,25 +24,62 @@ export class AuthService implements OnModuleInit {
 	constructor(
 		@InjectRepository(User)
 		private readonly userRepository: Repository<User>,
+		@InjectRepository(Apartment)
+		private readonly apartmentRepository: Repository<Apartment>,
 		private readonly passwordEncryption: PasswordEncryption,
 		private readonly appConfigService: AppConfigService,
+		private readonly jwtService: JwtService,
+		private readonly dataSource: DataSource,
 		private eventEmitter: EventEmitter2,
 	) {}
 
-	private async _signUpWithoutQueryRunner(user: User) {
-		return await this.userRepository.save(user);
+	private _validateInvite(invite: string) {
+		try {
+			const payload = this.jwtService.verify<InviteApartmentDto>(invite);
+			return payload;
+		} catch (err) {
+			this.logger.error('Invalid invite token', invite, err);
+			throw new BadRequestException('Invalid invite token');
+		}
 	}
 
-	private async _signUpWithQueryRunner(user: User, queryRunner: QueryRunner) {
-		return await queryRunner.manager.save(user);
-	}
-
-	async signUp(payload: SignUpAuthDto): Promise<User>;
-	async signUp(
-		payload: SignUpAuthDto,
+	async acceptInvite(invite: string, user: User): Promise<Apartment>;
+	async acceptInvite(
+		invite: string,
+		user: User,
 		queryRunner: QueryRunner,
-	): Promise<User>;
-	async signUp(payload: SignUpAuthDto, queryRunner?: QueryRunner) {
+	): Promise<Apartment>;
+	async acceptInvite(invite: string, user: User, queryRunner?: QueryRunner) {
+		const payload = this._validateInvite(invite);
+		this.logger.log('User invited to apartment', payload);
+
+		const apartmentEntity = await this.apartmentRepository.findOne({
+			where: { number: payload.apartmentNumber },
+			relations: ['inhabitants'],
+		});
+		if (!apartmentEntity) {
+			this.logger.error('Apartment not found', payload.apartmentNumber);
+			throw new BadRequestException('Apartment not found');
+		}
+
+		const isInhabitant = apartmentEntity.inhabitants.find((inhabitant) => {
+			return inhabitant.id === user.id;
+		});
+		if (isInhabitant) {
+			this.logger.error('User already inhabitant', user.id);
+			throw new BadRequestException('User already inhabitant');
+		}
+
+		apartmentEntity.inhabitants.push(user);
+		const apartment = queryRunner
+			? await queryRunner.manager.save(apartmentEntity)
+			: await this.apartmentRepository.save(apartmentEntity);
+		this.logger.log('User invited to apartment', user, apartmentEntity);
+
+		return apartment;
+	}
+
+	async signUp(payload: SignUpAuthDto) {
 		const { email, password, name, birthDate } = payload;
 		const userExist = await this.userRepository.findOneBy({
 			email,
@@ -57,12 +97,33 @@ export class AuthService implements OnModuleInit {
 		userData.birthDate = birthDate;
 		userData.password = result;
 		userData.roles = [];
-		const user = queryRunner
-			? await this._signUpWithQueryRunner(userData, queryRunner)
-			: await this._signUpWithoutQueryRunner(userData);
 
-		this.logger.log('User create', user);
-		return user;
+		const queryRunner = this.dataSource.createQueryRunner();
+
+		await queryRunner.connect();
+		await queryRunner.startTransaction();
+
+		try {
+			const user = await queryRunner.manager.save(userData);
+			this.logger.log('User create', user);
+
+			if (payload.invite)
+				user.apartment = await this.acceptInvite(
+					payload.invite,
+					user,
+					queryRunner,
+				);
+
+			await queryRunner.commitTransaction();
+
+			return user;
+		} catch (err) {
+			this.logger.error('Failed to sign-up user', err, userData);
+			await queryRunner.rollbackTransaction();
+			throw err;
+		} finally {
+			await queryRunner.release();
+		}
 	}
 
 	async signIn(email: string, password: string) {

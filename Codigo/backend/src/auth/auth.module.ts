@@ -16,6 +16,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 import { GlobalGuard } from './guards/global.guard';
 import { UserModule } from 'src/user/user.module';
+import { Apartment } from 'src/apartments/entities/apartment.entity';
 
 @Module({
 	imports: [
@@ -23,7 +24,7 @@ import { UserModule } from 'src/user/user.module';
 		AppConfigModule,
 		PassportModule,
 		UserModule,
-		TypeOrmModule.forFeature([User]),
+		TypeOrmModule.forFeature([User, Apartment]),
 		EventEmitterModule.forRoot(),
 		JwtModule.registerAsync({
 			imports: [AppConfigModule],
