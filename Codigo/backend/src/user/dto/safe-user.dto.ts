@@ -3,7 +3,7 @@ import {
 	OmitType,
 	PartialType,
 	PickType,
-} from '@nestjs/mapped-types';
+} from '@nestjs/swagger';
 import { UpdateUserDto } from './update-user.dto';
 import { User } from '../entities/user.entity';
 
