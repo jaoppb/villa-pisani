@@ -6,8 +6,6 @@ import {
 	Delete,
 	Body,
 	Param,
-	HttpCode,
-	HttpStatus,
 	Request,
 } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
@@ -16,10 +14,21 @@ import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
 import { Request as IRequest } from 'src/http/request';
+import { ReadFeedbackDto } from './dto/read-feedback.dto';
+import { Feedback } from './entity/feedback.entity';
 
 @Controller('feedbacks')
 export class FeedbackController {
 	constructor(private readonly feedbackService: FeedbackService) {}
+
+	// TODO try to use interceptors to map
+	private _mapOne(feedback: Feedback): ReadFeedbackDto {
+		return new ReadFeedbackDto(feedback);
+	}
+
+	private _mapAll(feedbacks: Feedback[]): ReadFeedbackDto[] {
+		return feedbacks.map((feedback) => this._mapOne(feedback));
+	}
 
 	@Post()
 	@Roles(Role.INHABITANT, Role.EMPLOYEE)
@@ -27,28 +36,29 @@ export class FeedbackController {
 		@Request() request: IRequest,
 		@Body() createFeedbackDto: CreateFeedbackDto,
 	) {
-		return await this.feedbackService.create(
-			createFeedbackDto,
-			request.user,
+		return this._mapOne(
+			await this.feedbackService.create(createFeedbackDto, request.user),
 		);
 	}
 
 	@Get()
 	async findAllFromUser(@Request() request: IRequest) {
-		return await this.feedbackService.findAllFromUser(request.user);
+		return this._mapAll(
+			await this.feedbackService.findAllFromUser(request.user),
+		);
 	}
 
 	// TODO add pagination
 	@Get('all')
 	@Roles(Role.MANAGER)
 	async findAll() {
-		return await this.feedbackService.findAll();
+		return this._mapAll(await this.feedbackService.findAll());
 	}
 
 	// TODO verify for the user
 	@Get(':id')
 	async findOne(@Param('id') id: string) {
-		return await this.feedbackService.findOne(id);
+		return this._mapOne(await this.feedbackService.findOne(id));
 	}
 
 	@Patch(':id')
@@ -57,14 +67,14 @@ export class FeedbackController {
 		@Param('id') id: string,
 		@Body() updateFeedbackDto: UpdateFeedbackDto,
 	) {
-		return await this.feedbackService.update(id, updateFeedbackDto);
+		return this._mapOne(
+			await this.feedbackService.update(id, updateFeedbackDto),
+		);
 	}
 
 	@Delete(':id')
-	@HttpCode(HttpStatus.NO_CONTENT)
 	@Roles(Role.MANAGER)
 	async remove(@Param('id') id: string) {
-		await this.feedbackService.remove(id);
-		return null;
+		return this._mapOne(await this.feedbackService.remove(id));
 	}
 }
