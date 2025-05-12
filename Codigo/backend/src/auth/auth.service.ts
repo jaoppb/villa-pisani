@@ -17,6 +17,7 @@ import { AppConfigService } from 'src/app-config/app-config.service';
 import { JwtService } from '@nestjs/jwt';
 import { InviteApartmentDto } from 'src/apartments/dto/invite-apartment.dto';
 import { Apartment } from 'src/apartments/entities/apartment.entity';
+import { SignInAuthDto } from './dto/signin-auth.dto';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -126,7 +127,8 @@ export class AuthService implements OnModuleInit {
 		}
 	}
 
-	async signIn(email: string, password: string) {
+	async signIn(dto: SignInAuthDto) {
+		const { email, password } = dto;
 		const user = await this.userRepository.findOneBy({ email });
 		if (!user) {
 			this.logger.error('User not exists', email);
@@ -138,8 +140,11 @@ export class AuthService implements OnModuleInit {
 			throw new UnauthorizedException('Invalid password');
 		}
 
-		this.logger.log('User sign in', user);
+		if (dto.invite) {
+			user.apartment = await this.acceptInvite(dto.invite, user);
+		}
 
+		this.logger.log('User sign in', user);
 		return user;
 	}
 
@@ -152,7 +157,6 @@ export class AuthService implements OnModuleInit {
 			this.logger.error('User not exists', payload.email);
 			throw new UnauthorizedException('User not exists');
 		}
-
 		this.logger.log('User from payload', user);
 		return user;
 	}
