@@ -80,18 +80,10 @@ export class RegisterComponent {
   }
 
   async submit() {
+    if (this.inviteParam)
+      this.form.value.invite = this.inviteParam;
     this.userService.register(this.form.value).subscribe({
       next: () => {
-        if (this.inviteParam) {
-          this.apartmentService.inviteUser(this.inviteParam).subscribe({
-            next: () => {
-              console.log('User invited successfully');
-            },
-            error: (err) => {
-              console.error('Failed to invite user:', err);
-            },
-          });
-        }
         window.location.href = '/auth/login';
       },
       error: (err: HttpErrorResponse) => {
