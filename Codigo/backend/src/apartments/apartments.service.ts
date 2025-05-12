@@ -8,7 +8,7 @@ import { CreateApartmentDto } from './dto/create-apartment.dto';
 import { UpdateApartmentDto } from './dto/update-apartment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Apartment } from './entities/apartment.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { InviteApartmentDto } from './dto/invite-apartment.dto';
@@ -23,6 +23,7 @@ export class ApartmentsService {
 		@InjectRepository(User)
 		private readonly usersRepository: Repository<User>,
 		private readonly jwtService: JwtService,
+		private readonly dataSource: DataSource,
 	) {}
 
 	async create(createApartmentDto: CreateApartmentDto) {
