@@ -177,4 +177,43 @@ export class ApartmentsService {
 
 		return updated;
 	}
+
+	async generateApartments() {
+		this.logger.log('Generating apartments');
+		const queryRunner = this.dataSource.createQueryRunner();
+		await queryRunner.connect();
+		await queryRunner.startTransaction();
+
+		try {
+			const existingApartments = await this.apartmentsRepository.find();
+			if (existingApartments.length > 0) {
+				this.logger.warn(
+					'Apartments already exist, skipping generation',
+				);
+				return;
+			}
+
+			const apartments: Apartment[] = [];
+			for (let i = 2; i <= 20; i++) {
+				for (let j = 1; j <= 2; j++) {
+					const apartment = new Apartment();
+					apartment.floor = i;
+					apartment.number = i * 100 + j;
+					apartment.inhabitants = [];
+					apartments.push(apartment);
+				}
+			}
+
+			await queryRunner.manager.save(apartments);
+			await queryRunner.commitTransaction();
+			this.logger.log('Apartments generated', apartments);
+			return apartments;
+		} catch (error) {
+			await queryRunner.rollbackTransaction();
+			this.logger.error('Error generating apartments', error);
+			throw new BadRequestException('Error generating apartments');
+		} finally {
+			await queryRunner.release();
+		}
+	}
 }

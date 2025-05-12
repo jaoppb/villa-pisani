@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { ApartmentsService } from './apartments.service';
 import { ApartmentsController } from './apartments.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -27,4 +27,9 @@ import { EncryptionModule } from 'src/encryption/encryption.module';
 	controllers: [ApartmentsController],
 	providers: [ApartmentsService],
 })
-export class ApartmentsModule {}
+export class ApartmentsModule implements OnModuleInit {
+	constructor(private readonly apartmentsService: ApartmentsService) {}
+	async onModuleInit() {
+		await this.apartmentsService.generateApartments();
+	}
+}

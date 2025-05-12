@@ -144,8 +144,9 @@ export class AuthService implements OnModuleInit {
 	}
 
 	async getUserFromAuthPayload(payload: PayloadAuthDto) {
-		const user = await this.userRepository.findOneBy({
-			email: payload.email,
+		const user = await this.userRepository.findOne({
+			where: { email: payload.email },
+			relations: ['apartment'],
 		});
 		if (!user) {
 			this.logger.error('User not exists', payload.email);

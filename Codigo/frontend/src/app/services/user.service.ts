@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { loginRequest, loginResponse, registerRequest } from "../model/user.model";
+import { loginRequest, loginResponse, registerRequest, updateUser } from "../model/user.model";
 import { tap } from "rxjs";
 import { AccessTokenService } from "./accessToken.service";
 
@@ -31,5 +31,17 @@ export class UserService {
 					}
 				})
 			);
+	}
+
+	getUser() {
+		return this.http.get('users', { observe: 'response' });
+	}
+
+	getUserLogin() {
+		return this.http.get('auth/me', { observe: 'response' });
+	}
+
+	updateUser(id: string, data: updateUser) {
+		return this.http.patch(`users/${id}`, data, { observe: 'response' });
 	}
 }

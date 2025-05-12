@@ -1,0 +1,55 @@
+main {
+	max-width: 700px;
+	margin: 0 auto;
+
+	h1 {
+		font-size: 3.5rem;
+		text-align: center;
+		margin: 15px 0;
+		font-family: 'montserrat', sans-serif;
+		background-color: var(--primary-highlight-color);
+		color: var(--white);
+		padding: 20px;
+		border-radius: 5px;
+	}
+
+	.add-invite {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 10px;
+		background-color: var(--primary-highlight-color);
+		color: var(--white);
+		border-radius: 5px;
+		margin: 10px 0;
+		cursor: pointer;
+	}
+}
+
+.user-card {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20px 10px;
+	border-bottom: 4px solid var(--primary-highlight-color);
+	border-radius: 5px;
+
+	h2,
+	h3 {
+		font-family: 'Montserrat';
+		color: var(--secondary-highlight-color);
+	}
+
+	.options {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	app-icons {
+		cursor: pointer;
+		color: var(--text-color-app);
+		cursor: pointer;
+	}
+}
