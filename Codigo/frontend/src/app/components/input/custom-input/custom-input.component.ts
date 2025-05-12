@@ -4,7 +4,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { IconsComponent } from '../../icons/iconBase/icons.component';
 
 @Component({
-  selector: 'app-input[type="text"],app-input[type="text"],app-input[type="password"],app-input[type="date"],app-input[type="email"]',
+  selector: 'app-input[type="text"],app-input[type="number"],app-input[type="password"],app-input[type="date"],app-input[type="email"]',
   imports: [IconsComponent],
   providers: [
     {
@@ -16,12 +16,12 @@ import { IconsComponent } from '../../icons/iconBase/icons.component';
   templateUrl: './custom-input.component.html',
   styleUrl: './custom-input.component.scss'
 })
-export class CustomInputComponent implements InputTextInterface{
+export class CustomInputComponent implements InputTextInterface {
   @Input() id!: string;
   @Input() type: string = 'text';
   @Input() placeholder: string = '';
   @Input() value: string = '';
-  @Input() errors: any = null; 
+  @Input() errors: any = null;
   @Input() touched: boolean = false;
   @Input() leftIcon: string = '';
   @Input() rightIcon: string = '';
@@ -48,13 +48,13 @@ export class CustomInputComponent implements InputTextInterface{
     this.onTouched = fn;
   }
   setDisabledState?(isDisabled: boolean): void {
-    
+
   }
   onChange(value: string): void {
-    
+
   }
   onBlur(value: string): void {
-    
+
   }
   onTouched(): void {
     this.touched = true;

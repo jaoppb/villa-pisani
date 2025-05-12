@@ -1,0 +1,31 @@
+.dropbox {
+	.dropbox-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		border-bottom: 4px solid var(--primary-highlight-color);
+		padding: 20px 10px;
+
+		h1 {
+			font-size: 1.5rem;
+			margin: 0;
+			font-family: 'Montserrat';
+		}
+
+		app-icons {
+			cursor: pointer;
+		}
+	}
+
+	.dropbox-content {
+		height: 0px;
+		overflow: hidden;
+
+		&.active {
+			height: auto;
+			border: 4px solid var(--primary-highlight-color);
+			border-top: none;
+			padding: 20px;
+		}
+	}
+}
