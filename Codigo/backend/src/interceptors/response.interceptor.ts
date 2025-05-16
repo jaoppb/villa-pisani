@@ -61,22 +61,57 @@ export class ResponseInterceptor<
 		);
 	}
 
-	private async _convert(context: ExecutionContext, data: T) {
-		if (data === undefined || data === null) return data;
-
+	private async _map(
+		context: ExecutionContext,
+		data: T,
+	): Promise<K | null | undefined> {
 		const normal = this._handleNormal(context, data);
 		if (await normal) return normal;
 
 		const lazy = this._handleLazy(context, data);
 		if (await lazy) return lazy;
 
-		return data;
+		return null;
+	}
+
+	private async _convert(
+		context: ExecutionContext,
+		data: T | T[],
+	): Promise<T | T[] | K | K[] | null | undefined> {
+		if (data === undefined || data === null) return data;
+
+		if (Array.isArray(data)) {
+			return Promise.all(
+				data.map((item) => this._convert(context, item)),
+			) as Promise<K[]>;
+		}
+
+		const mapped = await this._map(context, data);
+		if (!mapped) return data;
+
+		const promises: {
+			key: string;
+			promise: Promise<T | K | T[] | K[] | null | undefined>;
+		}[] = [];
+		Object.entries(mapped).forEach(([key, value]) => {
+			if (value === undefined || value === null) return;
+			if (!(value instanceof Object)) return;
+
+			const current = this._convert(context, value as T | T[]);
+			promises.push({ key, promise: current });
+		});
+		for (const { key, promise } of promises) {
+			const result = await promise;
+			mapped[key] = result;
+		}
+
+		return mapped;
 	}
 
 	intercept(
 		context: ExecutionContext,
 		next: CallHandler<T>,
-	): Observable<Promise<T | K | null | undefined>> {
+	): Observable<Promise<T | T[] | K | K[] | null | undefined>> {
 		return next.handle().pipe(map((data) => this._convert(context, data)));
 	}
 }
