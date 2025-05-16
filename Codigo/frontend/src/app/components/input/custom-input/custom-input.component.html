@@ -25,7 +25,7 @@
 		}
 	</div>
 	<div class="error-messages">
-		@if (errors){ @if (this.errors.required){
+		@if (errors && touched){ @if (this.errors.required){
 		<small>Este campo é obrigatório.</small>
 		} @if (this.errors.email){
 		<small>O email não é válido.</small>
