@@ -8,7 +8,6 @@ import {
 	NotFoundException,
 	Delete,
 	Req,
-	BadRequestException,
 	Logger,
 } from '@nestjs/common';
 import { ApartmentsService } from './apartments.service';
@@ -17,25 +16,14 @@ import { UpdateApartmentDto } from './dto/update-apartment.dto';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
 import { Request } from 'src/http/request';
-import { SafeUserDto } from 'src/user/dto/safe-user.dto';
-import { Public } from 'src/auth/meta/public.decorator';
-import { AcceptInviteDto } from './dto/accept-invite-apartment-dto';
 import { AuthService } from 'src/auth/auth.service';
-import { User } from 'src/user/entities/user.entity';
-import { DataSource, Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { PasswordEncryption } from 'src/encryption/password-encryption.provider';
 
 @Controller('apartments')
 export class ApartmentsController {
 	private readonly logger = new Logger(ApartmentsController.name);
 	constructor(
-		private readonly passwordEncryption: PasswordEncryption,
-		@InjectRepository(User)
-		private readonly userRepository: Repository<User>,
 		private readonly apartmentsService: ApartmentsService,
 		private readonly authService: AuthService,
-		private readonly dataSource: DataSource,
 	) {}
 
 	@Post()
@@ -54,46 +42,10 @@ export class ApartmentsController {
 	}
 
 	@Post('invite')
-	@Public()
-	async acceptInvite(@Req() request: Request, @Body() body: AcceptInviteDto) {
-		const queryRunner = this.dataSource.createQueryRunner();
-
-		await queryRunner.connect();
-		await queryRunner.startTransaction();
-
-		try {
-			if (request.user === undefined) {
-				if (!body.signUp) {
-					throw new BadRequestException('signUp field is required');
-				}
-
-				request.user = await this.authService.signUp(
-					body.signUp,
-					queryRunner,
-				);
-			}
-
-			const apartment = await this.apartmentsService.acceptInvite(
-				queryRunner,
-				request.user,
-				body.inviteToken,
-			);
-
-			await queryRunner.commitTransaction();
-
-			return {
-				...apartment,
-				inhabitants: apartment.inhabitants.map(
-					(inhabitant) => new SafeUserDto(inhabitant),
-				),
-			};
-		} catch (error) {
-			this.logger.error('Error accepting invite', error);
-			await queryRunner.rollbackTransaction();
-			throw error;
-		} finally {
-			await queryRunner.release();
-		}
+	acceptInvite(@Body('token') token: string, @Req() req: Request) {
+		const user = this.authService.acceptInvite(token, req.user);
+		this.logger.log('User accepted invite', token);
+		return user;
 	}
 
 	@Post(':number/invite')
@@ -119,6 +71,17 @@ export class ApartmentsController {
 		return apartment;
 	}
 
+	@Get('self/inhabitants')
+	async findSelfInhabitants(@Req() req: Request) {
+		const { apartment } = req.user;
+
+		if (!apartment) {
+			throw new NotFoundException('Apartment not found');
+		}
+
+		return await this.apartmentsService.findInhabitants(apartment.number);
+	}
+
 	@Get(':number')
 	@Roles(Role.MANAGER)
 	findOne(@Param('number') number: number) {
@@ -137,9 +100,7 @@ export class ApartmentsController {
 	@Get(':number/inhabitants')
 	@Roles(Role.MANAGER)
 	async findInhabitants(@Param('number') number: number) {
-		return (await this.apartmentsService.findInhabitants(number)).map(
-			(user) => new SafeUserDto(user),
-		);
+		return await this.apartmentsService.findInhabitants(number);
 	}
 
 	@Delete(':number')
@@ -154,15 +115,6 @@ export class ApartmentsController {
 		@Param('number') number: number,
 		@Param('id') id: string,
 	) {
-		const apartment = await this.apartmentsService.removeInhabitant(
-			number,
-			id,
-		);
-		return {
-			...apartment,
-			inhabitants: apartment.inhabitants.map(
-				(inhabitant) => new SafeUserDto(inhabitant),
-			),
-		};
+		return await this.apartmentsService.removeInhabitant(number, id);
 	}
 }

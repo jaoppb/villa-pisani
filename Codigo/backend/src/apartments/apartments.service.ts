@@ -8,11 +8,10 @@ import { CreateApartmentDto } from './dto/create-apartment.dto';
 import { UpdateApartmentDto } from './dto/update-apartment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Apartment } from './entities/apartment.entity';
-import { DataSource, QueryRunner, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { InviteApartmentDto } from './dto/invite-apartment.dto';
-import { Role } from 'src/auth/roles/role.entity';
 
 @Injectable()
 export class ApartmentsService {
@@ -94,62 +93,6 @@ export class ApartmentsService {
 		this.logger.debug('Invite token', token);
 
 		return { inviteToken: token };
-	}
-
-	private async _validateInviteToken(token: string) {
-		this.logger.log('Validating invite token', token);
-		try {
-			const decoded = this.jwtService.verify<InviteApartmentDto>(token);
-			if (!decoded) {
-				this.logger.warn('Invalid invite token', token);
-				throw new BadRequestException('Invalid invite token');
-			}
-
-			const apartment = await this.apartmentsRepository.findOne({
-				where: { number: decoded.apartmentNumber },
-				relations: ['inhabitants'],
-			});
-			if (!apartment) {
-				this.logger.warn(
-					'Apartment not found',
-					decoded.apartmentNumber,
-				);
-				throw new BadRequestException('Apartment not found');
-			}
-
-			return apartment;
-		} catch (error) {
-			this.logger.error('Error validating invite token', error);
-			throw new BadRequestException('Invalid invite token');
-		}
-	}
-
-	async acceptInvite(
-		queryRunner: QueryRunner,
-		user: User,
-		inviteToken: string,
-	) {
-		this.logger.log('Accepting invite', inviteToken);
-		const apartment = await this._validateInviteToken(inviteToken);
-
-		const isInhabitant = apartment.inhabitants.find((inhabitant) => {
-			return inhabitant.id === user.id;
-		});
-		if (isInhabitant) {
-			this.logger.warn('User already inhabitant', user.id);
-			throw new BadRequestException('User already inhabitant');
-		}
-
-		if (!user.roles.includes(Role.INHABITANT)) {
-			user.roles.push(Role.INHABITANT);
-			await queryRunner.manager.save(user);
-		}
-
-		apartment.inhabitants.push(user);
-		const updated = await queryRunner.manager.save(apartment);
-		this.logger.log('Accepted invite and added inhabitant', updated);
-
-		return updated;
 	}
 
 	async findAll() {

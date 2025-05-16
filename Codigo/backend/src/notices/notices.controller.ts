@@ -16,7 +16,6 @@ import { UpdateNoticeDto } from './dto/update-notice.dto';
 import { Role } from 'src/auth/roles/role.entity';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Request } from 'src/http/request';
-import { ViewNoticeDto } from './dto/view-notice.dto';
 
 @Controller('notices')
 export class NoticesController {
@@ -28,9 +27,7 @@ export class NoticesController {
 		@Req() request: Request,
 		@Body() createNoticeDto: CreateNoticeDto,
 	) {
-		return new ViewNoticeDto(
-			await this.noticesService.create(request.user, createNoticeDto),
-		);
+		return await this.noticesService.create(request.user, createNoticeDto);
 	}
 
 	@Get()
@@ -40,9 +37,7 @@ export class NoticesController {
 
 	@Get('private')
 	async findAllPrivate(@Req() request: Request) {
-		return (await this.noticesService.findAllByUser(request.user)).map(
-			(each) => new ViewNoticeDto(each),
-		);
+		return await this.noticesService.findAllByUser(request.user);
 	}
 
 	@Get('private/:user_id')
@@ -50,22 +45,18 @@ export class NoticesController {
 	async findAllPrivateByUserId(
 		@Param('user_id', new ParseUUIDPipe()) userId: string,
 	) {
-		return (await this.noticesService.findAllByUserId(userId)).map(
-			(each) => new ViewNoticeDto(each),
-		);
+		return await this.noticesService.findAllByUserId(userId);
 	}
 
 	@Get('role/:role')
 	@Roles(Role.MANAGER)
 	async findAllByRole(@Param('role', new ParseEnumPipe(Role)) role: Role) {
-		return (await this.noticesService.findAllByRole(role)).map(
-			(each) => new ViewNoticeDto(each),
-		);
+		return await this.noticesService.findAllByRole(role);
 	}
 
 	@Get(':id')
 	async findOne(@Param('id') id: string) {
-		return new ViewNoticeDto(await this.noticesService.findOne(id));
+		return await this.noticesService.findOne(id);
 	}
 
 	@Patch(':id')
@@ -74,14 +65,12 @@ export class NoticesController {
 		@Param('id', new ParseUUIDPipe()) id: string,
 		@Body() updateNoticeDto: UpdateNoticeDto,
 	) {
-		return new ViewNoticeDto(
-			await this.noticesService.update(id, updateNoticeDto),
-		);
+		return await this.noticesService.update(id, updateNoticeDto);
 	}
 
 	@Delete(':id')
 	@Roles(Role.MANAGER)
 	async remove(@Param('id', new ParseUUIDPipe()) id: string) {
-		return new ViewNoticeDto(await this.noticesService.remove(id));
+		return await this.noticesService.remove(id);
 	}
 }

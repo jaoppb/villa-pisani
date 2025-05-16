@@ -41,9 +41,8 @@ export class AuthController {
 
 	@Public()
 	@Post('signin')
-	async signIn(@Body() body: SignInAuthDto) {
-		const { email, password } = body;
-		const user = await this.authService.signIn(email, password);
+	async signIn(@Body() dto: SignInAuthDto) {
+		const user = await this.authService.signIn(dto);
 
 		const payload = {
 			email: user.email,
@@ -63,8 +62,6 @@ export class AuthController {
 	@Get('me')
 	@NoRole()
 	profile(@RequestDecorator() req: Request): CurrentUserDto {
-		const { user } = req;
-
-		return new CurrentUserDto(user);
+		return req.user;
 	}
 }

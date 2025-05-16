@@ -1,4 +1,4 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsJWT, IsOptional, IsString } from 'class-validator';
 
 export class SignInAuthDto {
 	@IsEmail()
@@ -6,4 +6,9 @@ export class SignInAuthDto {
 
 	@IsString()
 	password: string;
+
+	@IsString()
+	@IsOptional()
+	@IsJWT()
+	invite?: string;
 }

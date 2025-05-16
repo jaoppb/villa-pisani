@@ -12,11 +12,11 @@ export class ApartmentService {
     ) {}
 
     getApartments() {
-        return this.http.get('apartments', { observe: 'response' });
+        return this.http.get<Apartments[]>('apartments', { observe: 'response' });
     }
 
     getApartment(id: number) {
-        return this.http.get(`apartments/${id}`, { observe: 'response' });
+        return this.http.get<Apartments>(`apartments/${id}`, { observe: 'response' });
     }
 
     getInhabitants(id: number) {
@@ -42,14 +42,22 @@ export class ApartmentService {
     }
 
     updateApartment(id: number, data: Apartments) {
-        return this.http.put(`apartments/${id}`, data, { observe: 'response' });
+        return this.http.put<Apartments>(`apartments/${id}`, data, { observe: 'response' });
     }
 
     deleteApartment(id: number) {
-        return this.http.delete(`apartments/${id}`, { observe: 'response' });
+        return this.http.delete<Apartments>(`apartments/${id}`, { observe: 'response' });
     }
 
     deleteInhabitant(id: number, inhabitantId: string) {
         return this.http.delete(`apartments/${id}/inhabitants/${inhabitantId}`, { observe: 'response' });
+    }
+
+    getApartmentLoginUser() {
+        return this.http.get<Apartments>('apartments/self', { observe: 'response' });
+    }
+
+    getApartmentLoginUserInhabitants() {
+        return this.http.get<Apartments>('apartments/self/inhabitants', { observe: 'response' });
     }
 }

@@ -13,8 +13,11 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
+import { SafeUserDto } from '../dto/safe-user.dto';
+import { MapTo } from 'src/interceptors/meta/map-to.decorator';
 
 @Entity('users')
+@MapTo(SafeUserDto)
 export class User {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;

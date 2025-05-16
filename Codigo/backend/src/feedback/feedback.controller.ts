@@ -6,8 +6,6 @@ import {
 	Delete,
 	Body,
 	Param,
-	HttpCode,
-	HttpStatus,
 	Request,
 } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
@@ -61,10 +59,8 @@ export class FeedbackController {
 	}
 
 	@Delete(':id')
-	@HttpCode(HttpStatus.NO_CONTENT)
 	@Roles(Role.MANAGER)
 	async remove(@Param('id') id: string) {
-		await this.feedbackService.remove(id);
-		return null;
+		return await this.feedbackService.remove(id);
 	}
 }

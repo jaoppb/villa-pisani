@@ -1,3 +1,4 @@
+import { LazyMapTo } from 'src/interceptors/meta/lazy-map-to.decorator';
 import { User } from 'src/user/entities/user.entity';
 import {
 	Entity,
@@ -9,6 +10,10 @@ import {
 } from 'typeorm';
 
 @Entity()
+@LazyMapTo({
+	path: 'feedback/dto/read-feedback.dto',
+	className: 'ReadFeedbackDto',
+})
 export class Feedback {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;

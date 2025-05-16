@@ -51,7 +51,7 @@ export class CustomInputComponent implements InputTextInterface {
 
   }
   onChange(value: string): void {
-
+    this.touched = true;
   }
   onBlur(value: string): void {
 
@@ -61,6 +61,7 @@ export class CustomInputComponent implements InputTextInterface {
   }
 
   onInput(event: Event): void {
+    this.touched = true;
     const target = event.target as HTMLInputElement;
     this.value = target.value;
     this.onChange(this.value);

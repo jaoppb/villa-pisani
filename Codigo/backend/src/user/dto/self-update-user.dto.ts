@@ -1,5 +1,5 @@
 import { UpdateUserDto } from './update-user.dto';
-import { PickType } from '@nestjs/mapped-types';
+import { PickType } from '@nestjs/swagger';
 
 export class SelfUpdateUserDto extends PickType(UpdateUserDto, [
 	'birthDate',

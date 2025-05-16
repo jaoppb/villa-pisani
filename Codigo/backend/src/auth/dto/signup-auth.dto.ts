@@ -1,6 +1,7 @@
 import {
 	IsDateString,
 	IsEmail,
+	IsJWT,
 	IsOptional,
 	IsString,
 	IsStrongPassword,
@@ -22,6 +23,10 @@ export class SignUpAuthDto {
 		minUppercase: 1,
 	})
 	password: string;
+
+	@IsString()
+	@IsJWT()
+	invite: string;
 
 	@IsDateString()
 	@IsOptional()

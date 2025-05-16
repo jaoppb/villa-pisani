@@ -26,7 +26,7 @@ export class ExpensesComponent {
   form: FormGroup;
   expensesList: expense[] = [];
   openModalCreateExpenses: boolean = false;
-  openModalCreateTag: boolean = true;
+  openModalCreateTag: boolean = false;
   isAdmin: boolean = false;
   tags: CheckTag[] = [];
 

@@ -8,7 +8,7 @@
 			key="{apartment.number}"
 		>
 			<div>
-				<h2>AP-{{ apartment.number }}</h2>
+				<h2>AP-{{ apartment.number || 00 }}</h2>
 			</div>
 			<div>
 				<app-icons name="pen" />

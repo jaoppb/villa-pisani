@@ -7,56 +7,47 @@ import { RouterModule } from '@angular/router';
 import { ApartmentService } from '../../../services/apartment.service';
 
 @Component({
-  selector: 'app-login',
-  imports: [CustomInputComponent, ReactiveFormsModule, RouterModule],
-  standalone: true,
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+	selector: 'app-login',
+	imports: [CustomInputComponent, ReactiveFormsModule, RouterModule],
+	standalone: true,
+	templateUrl: './login.component.html',
+	styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-  form: FormGroup;
-  inviteParam: string | null = null;
+	form: FormGroup;
+	inviteParam: string | null = null;
 
 
-  constructor(
-    private fb: FormBuilder,
-    private userService: UserService,
-    private apartmentService: ApartmentService,
-    private meta: MetaData,
-  ) {
-    this.meta.setMetaData({
-      title: 'Login',
-      description: 'Entre na sua conta',
-      keywords: 'login, account, user, vila pisane',
-    });
-    this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
-    });
+	constructor(
+		private fb: FormBuilder,
+		private userService: UserService,
+		private apartmentService: ApartmentService,
+		private meta: MetaData,
+	) {
+		this.meta.setMetaData({
+			title: 'Login',
+			description: 'Entre na sua conta',
+			keywords: 'login, account, user, vila pisane',
+		});
+		this.form = this.fb.group({
+			email: ['', [Validators.required, Validators.email]],
+			password: ['', [Validators.required]],
+		});
 
-    const urlParams = new URLSearchParams(window.location.search);
-    this.inviteParam = urlParams.get('invite');
-  }
+		const urlParams = new URLSearchParams(window.location.search);
+		this.inviteParam = urlParams.get('invite');
+	}
 
-  async submit() {
-    this.userService.login(this.form.value).subscribe({
-      next: () => {
-        if (this.inviteParam) {
-          console.log(this.inviteParam);
-          this.apartmentService.inviteUser(this.inviteParam).subscribe({
-            next: () => {
-              console.log('User invited successfully');
-            },
-            error: (err) => {
-              console.error('Failed to invite user:', err);
-            },
-          });
-        }
-        window.location.href = '/condominium/home';
-      },
-      error: (err) => {
-        this.form.setErrors({ loginFailed: true });
-      },
-    });
-  }
+	async submit() {
+		if (this.inviteParam)
+			this.form.value.invite = this.inviteParam;
+		this.userService.login(this.form.value).subscribe({
+			next: () => {
+				window.location.href = '/condominium/home';
+			},
+			error: (err) => {
+				this.form.setErrors({ loginFailed: true });
+			},
+		});
+	}
 }

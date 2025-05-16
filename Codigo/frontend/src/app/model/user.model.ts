@@ -3,6 +3,7 @@ import { Apartments } from "./apartment.model";
 export interface loginRequest {
   email: string;
   password: string;
+  invite?: string;
 }
 
 export interface loginResponse {
@@ -14,6 +15,7 @@ export interface registerRequest {
   email: string;
   birthDate: string;
   password: string;
+  invite?: string;
 }
 
 export interface registerErrorResponse {

@@ -5,7 +5,6 @@ import { Feedback } from './entity/feedback.entity';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 import { User } from 'src/user/entities/user.entity';
-import { ReadFeedbackDto } from './dto/read-feedback.dto';
 
 @Injectable()
 export class FeedbackService {
@@ -17,7 +16,7 @@ export class FeedbackService {
 	async create(
 		createFeedbackDto: CreateFeedbackDto,
 		user?: User,
-	): Promise<ReadFeedbackDto> {
+	): Promise<Feedback> {
 		const feedback = this.feedbackRepository.create(createFeedbackDto);
 
 		if (!createFeedbackDto.anonymous) {
@@ -25,41 +24,37 @@ export class FeedbackService {
 			feedback.user = user;
 		}
 
-		return new ReadFeedbackDto(
-			await this.feedbackRepository.save(feedback),
-		);
+		return this.feedbackRepository.save(feedback);
 	}
 
-	async findAll(): Promise<ReadFeedbackDto[]> {
-		return (
-			await this.feedbackRepository.find({
-				order: { sentAt: 'DESC' },
-			})
-		).map((feedback) => new ReadFeedbackDto(feedback));
+	async findAll(): Promise<Feedback[]> {
+		return this.feedbackRepository.find({
+			order: { sentAt: 'DESC' },
+		});
 	}
 
-	async findAllFromUser(user: User): Promise<ReadFeedbackDto[]> {
+	async findAllFromUser(user: User): Promise<Feedback[]> {
 		const feedbacks = await this.feedbackRepository.find({
 			where: { user: { id: user.id } },
 			order: { sentAt: 'DESC' },
 		});
-		return feedbacks.map((feedback) => new ReadFeedbackDto(feedback));
+		return feedbacks;
 	}
 
-	async findOne(id: string): Promise<ReadFeedbackDto> {
+	async findOne(id: string): Promise<Feedback> {
 		const feedback = await this.feedbackRepository.findOne({
 			where: { id },
 		});
 		if (!feedback) {
 			throw new NotFoundException(`Feedback with ID ${id} not found.`);
 		}
-		return new ReadFeedbackDto(feedback);
+		return feedback;
 	}
 
 	async update(
 		id: string,
 		updateFeedbackDto: UpdateFeedbackDto,
-	): Promise<ReadFeedbackDto> {
+	): Promise<Feedback> {
 		const feedback = await this.feedbackRepository.preload({
 			id: id,
 			...updateFeedbackDto,
@@ -67,16 +62,14 @@ export class FeedbackService {
 		if (!feedback) {
 			throw new NotFoundException('Feedback not found');
 		}
-		return new ReadFeedbackDto(
-			await this.feedbackRepository.save(feedback),
-		);
+		return await this.feedbackRepository.save(feedback);
 	}
 
-	async remove(id: string): Promise<void> {
+	async remove(id: string): Promise<Feedback> {
 		const feedback = await this.findOne(id);
 		if (!feedback) {
 			throw new NotFoundException('Feedback not found');
 		}
-		await this.feedbackRepository.remove(feedback);
+		return await this.feedbackRepository.remove(feedback);
 	}
 }

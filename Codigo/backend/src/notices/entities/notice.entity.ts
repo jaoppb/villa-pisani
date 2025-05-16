@@ -12,8 +12,13 @@ import {
 import { NoticeTarget } from '../enum/notice-target.enum';
 import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { Role } from 'src/auth/roles/role.entity';
+import { LazyMapTo } from 'src/interceptors/meta/lazy-map-to.decorator';
 
 @Entity('notices')
+@LazyMapTo({
+	path: 'notices/dto/read-notice.dto',
+	className: 'ReadNoticeDto',
+})
 export class Notice {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;

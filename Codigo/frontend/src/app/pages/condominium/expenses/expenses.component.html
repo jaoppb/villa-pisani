@@ -9,7 +9,9 @@
 		(tagAdded)="openTagModal()"
 	/>
 </form>
+@if(this.isAdmin){
 <button (click)="openExpenseModal()">Novas Contas</button>
+}
 <div class="expense-list">
 	@for (expense of this.expensesList; track expense.id) {
 	<div class="expense-card" key="{expense.id}">
