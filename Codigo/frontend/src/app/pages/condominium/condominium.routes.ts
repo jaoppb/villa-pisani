@@ -5,6 +5,8 @@ import { ExpensesComponent } from "./expenses/expenses.component";
 import { UsersComponent } from "./users/users.component";
 import { ApartmentsComponent } from "./apartments/apartments.component";
 import { ApartmentComponent } from "./apartment/apartment.component";
+import { ApartmentGuard, IsAdminGuard, IsLoggedInGuard } from "../../guards/authenticate.guard";
+import { inject } from "@angular/core";
 
 export const routes: Routes = [
 	{
@@ -26,7 +28,8 @@ export const routes: Routes = [
 	},
 	{
 		path: 'users',
-		component: UsersComponent
+		component: UsersComponent,
+		canMatch: [IsAdminGuard],
 	},
 	{
 		path: 'users/:id',
@@ -40,6 +43,13 @@ export const routes: Routes = [
 	{
 		path: 'apartment/:number',
 		component: ApartmentComponent,
-		data: { isDetailView: true }
+		data: { isDetailView: true },
+		canMatch: [IsAdminGuard],
+	},
+	{
+		path: 'apartment',
+		pathMatch: 'full',
+		component: ApartmentComponent,
+		canMatch: [ApartmentGuard],
 	},
 ]
