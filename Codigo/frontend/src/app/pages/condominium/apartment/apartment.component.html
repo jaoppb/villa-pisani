@@ -1,6 +1,8 @@
 <main>
-	<h1>AP {{ apartment.number }}</h1>
+	<h1>AP {{ apartment.number || 00 }}</h1>
+	@if(this.isAdmin()){
 	<div class="add-invite" (click)="invite()">Criar Convite</div>
+	}
 	<div class="inhabitant">
 		@for (user of this.users; track user.id) {
 		<div class="user-card" key="{user.id}">
@@ -9,9 +11,9 @@
 			</div>
 			<div class="options">
 				@if(this.isAdmin()){
-				<a [routerLink]="['/condominium/user', user.id]"
-					><app-icons name="pen"
-				/></a>
+				<div (click)="openModalUpdateUser(user)">
+					<app-icons name="pen" />
+				</div>
 				<app-icons name="trash" (click)="openModalRemoveUser(user)" />
 				}
 			</div>
@@ -33,5 +35,12 @@
 	[isOpen]="isOpenModalInvite"
 	[apartmentId]="apartment.number"
 	(isOpenChange)="handleIsOpenInviteChange($event)"
+/>
+} @if(this.IsOpenModalUpdateUser && this.isAdmin()){
+<app-modal-update-user
+	[isOpen]="IsOpenModalUpdateUser"
+	(isOpenChange)="handleIsOpenUpdateUserChange($event)"
+	[user]="userUpdate"
+	(userUpdated)="handleUpdateUser($event)"
 />
 }
