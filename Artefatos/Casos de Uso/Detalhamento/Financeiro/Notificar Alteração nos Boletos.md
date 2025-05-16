@@ -2,8 +2,8 @@
 
 Nome do Caso de Uso: Notificar Alteração dos Boletos\
 ID: ?? \
-Ator Primário: Morador \
-Ator(es) Secundário(s): N/A \
+Ator Primário: Sindíco \
+Ator(es) Secundário(s): Morador \
 Sumário: Notificar ao morador caso alguma alteração tenha ocorrido sobre os boletos.
 
 ## Precondições
@@ -14,7 +14,3 @@ Sumário: Notificar ao morador caso alguma alteração tenha ocorrido sobre os b
 ## Fluxo Principal
 
 1. Notificar ao morador a operação realizada sobre o boleto
-
-## Póscondições
-
-1. Morador ciente da alteração realizada
