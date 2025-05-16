@@ -8,12 +8,14 @@ import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { FeedbackModule } from './feedback/feedback.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ExpensesModule } from './expenses/expenses.module';
 import { FileServeController } from './files/files.controller';
 import { GlobalGuard } from './auth/guards/global.guard';
 import { ApartmentsModule } from './apartments/apartments.module';
 import { NoticesModule } from './notices/notices.module';
+import { ResponseInterceptor } from './interceptors/response.interceptor';
+
 @Module({
 	imports: [
 		AppConfigModule,
@@ -44,6 +46,10 @@ import { NoticesModule } from './notices/notices.module';
 		{
 			provide: APP_GUARD,
 			useClass: GlobalGuard,
+		},
+		{
+			provide: APP_INTERCEPTOR,
+			useClass: ResponseInterceptor,
 		},
 	],
 	exports: [CustomLogger],
