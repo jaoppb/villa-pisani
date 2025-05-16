@@ -72,6 +72,19 @@ export class ApartmentsController {
 		return apartment;
 	}
 
+	@Get('self/inhabitants')
+	async findSelfInhabitants(@Req() req: Request) {
+		const { apartment } = req.user;
+
+		if (!apartment) {
+			throw new NotFoundException('Apartment not found');
+		}
+
+		return (
+			await this.apartmentsService.findInhabitants(apartment.number)
+		).map((user) => new SafeUserDto(user));
+	}
+
 	@Get(':number')
 	@Roles(Role.MANAGER)
 	findOne(@Param('number') number: number) {
