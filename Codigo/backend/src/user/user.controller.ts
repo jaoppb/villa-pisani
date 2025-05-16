@@ -14,7 +14,6 @@ import { Role } from 'src/auth/roles/role.entity';
 import { Request } from 'src/http/request';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SelfUpdateUserDto } from './dto/self-update-user.dto';
-import { SafeUserDto } from './dto/safe-user.dto';
 
 @Controller('users')
 export class UserController {
@@ -51,8 +50,6 @@ export class UserController {
 	@Get()
 	@Roles(Role.MANAGER)
 	async findAll(@Query('name') name: string, @Query('email') email: string) {
-		return (await this.userService.findAllByEmailAndName(name, email)).map(
-			(user) => new SafeUserDto(user),
-		);
+		return await this.userService.findAllByEmailAndName(name, email);
 	}
 }

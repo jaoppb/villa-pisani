@@ -66,7 +66,7 @@ export class UserService {
 		const updated = await this.userRepository.save(final);
 		this.logger.log('Updated user', updated);
 
-		return new SafeUserDto(updated);
+		return updated;
 	}
 
 	async findOneByEmail(email: string) {

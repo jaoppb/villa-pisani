@@ -16,7 +16,6 @@ import { UpdateApartmentDto } from './dto/update-apartment.dto';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
 import { Request } from 'src/http/request';
-import { SafeUserDto } from 'src/user/dto/safe-user.dto';
 import { AuthService } from 'src/auth/auth.service';
 
 @Controller('apartments')
@@ -80,9 +79,7 @@ export class ApartmentsController {
 			throw new NotFoundException('Apartment not found');
 		}
 
-		return (
-			await this.apartmentsService.findInhabitants(apartment.number)
-		).map((user) => new SafeUserDto(user));
+		return await this.apartmentsService.findInhabitants(apartment.number);
 	}
 
 	@Get(':number')
@@ -103,9 +100,7 @@ export class ApartmentsController {
 	@Get(':number/inhabitants')
 	@Roles(Role.MANAGER)
 	async findInhabitants(@Param('number') number: number) {
-		return (await this.apartmentsService.findInhabitants(number)).map(
-			(user) => new SafeUserDto(user),
-		);
+		return await this.apartmentsService.findInhabitants(number);
 	}
 
 	@Delete(':number')
@@ -120,15 +115,6 @@ export class ApartmentsController {
 		@Param('number') number: number,
 		@Param('id') id: string,
 	) {
-		const apartment = await this.apartmentsService.removeInhabitant(
-			number,
-			id,
-		);
-		return {
-			...apartment,
-			inhabitants: apartment.inhabitants.map(
-				(inhabitant) => new SafeUserDto(inhabitant),
-			),
-		};
+		return await this.apartmentsService.removeInhabitant(number, id);
 	}
 }
