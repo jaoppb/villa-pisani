@@ -38,6 +38,29 @@ Póscondições:
 2. Arquivo do boleto salvo no servidor
 3. Informações extras salvas no banco de dados
 
+### Fluxo Alternativo Erro (Requisição) Registrando Boleto
+
+Precondições:
+
+1. Erro no fluxo de registrar boleto
+2. Erro na requisição feita ao gateway de pagamento
+
+Passos:
+
+1. Mostrar na tela a mensagem do erro que ocorreu
+
+### Fluxo Alternativo Erro (Salvar Arquivo) Registrando Boleto
+
+Precondições:
+
+1. Erro no fluxo de registrar boleto
+2. Erro ao salvar o arquivo no servidor
+
+Passos:
+
+1. Mostrar na tela uma mensagem informando que houve uma falha ao salvar o arquivo recebido e que o sistema irá tentar apagar o boleto gerado no gateway automaticamente
+2. Enviar requisição de apagar ao gateway de pagamento
+
 ### Fluxo Alternativo Apagar Boleto
 
 Precondições:
@@ -57,3 +80,25 @@ Póscondições:
 1. Boleto deletado do gateway de pagamento
 2. Arquivo do boleto deletado do servidor
 3. Informações extras deletadas do banco de dados
+
+### Fluxo Alternativo Erro (Requisição) Apagando Boleto
+
+Precondições:
+
+1. Erro no fluxo de apagar boleto
+2. Erro na requisição de apagar o boleto
+
+Passos:
+
+1. Mostrar na tela a mensagem do erro que ocorreu
+
+### Fluxo Alternativo Erro (Apagar Arquivo) Apagando Boleto
+
+Precondições:
+
+1. Erro no fluxo de apagar boleto
+2. Erro ao apagar o arquivo do boleto no servidor
+
+Passos:
+
+1. Mostrar na tela uma mensagem informando que o boleto foi deletado com sucesso do gateway de pagamentos, porém o arquivo não foi possível de ser apagado do servidor
