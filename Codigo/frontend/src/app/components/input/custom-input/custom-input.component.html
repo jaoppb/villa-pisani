@@ -30,22 +30,26 @@
 		} @if (this.errors.email){
 		<small>O email não é válido.</small>
 		} @if (this.errors.minlength){
-		<small
-			>O campo deve ter pelo menos
-			{{ errors['minlength'].requiredLength }} caracteres.</small
-		>
+		<small>
+			O campo deve ter pelo menos
+			{{ errors['minlength'].requiredLength }} caracteres.
+		</small>
 		} @if (this.errors.pattern){ @if (this.type == 'password'){
-		<small
-			>A senha deve ter uma letra maiúscula, um número e um caractere
-			especial</small
-		>
+		<small>
+			A senha deve ter uma letra maiúscula, um número e um caractere
+			especial
+		</small>
 		} @else{
 		<small>O campo não atende ao padrão requerido.</small>
 		} } @if (this.errors.maxlength){
-		<small
-			>O campo deve ter no máximo
-			{{ errors['maxlength'].requiredLength }} caracteres.</small
-		>
+		<small>
+			O campo deve ter no máximo
+			{{ errors['maxlength'].requiredLength }} caracteres.
+		</small>
+		} @if (this.errors.min){
+		<small> O valor mínimo permitido é {{ errors['min'].min }}. </small>
+		} @if (this.errors.max){
+		<small> O valor máximo permitido é {{ errors['max'].max }}. </small>
 		} @if (this.errors.customError){
 		<small>{{ errors['customError'] }}</small>
 		} }
