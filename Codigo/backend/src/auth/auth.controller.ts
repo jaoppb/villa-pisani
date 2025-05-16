@@ -62,8 +62,6 @@ export class AuthController {
 	@Get('me')
 	@NoRole()
 	profile(@RequestDecorator() req: Request): CurrentUserDto {
-		const { user } = req;
-
-		return new CurrentUserDto(user);
+		return req.user;
 	}
 }
