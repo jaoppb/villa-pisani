@@ -1,34 +1,27 @@
-import {
-	IntersectionType,
-	OmitType,
-	PartialType,
-	PickType,
-} from '@nestjs/swagger';
-import { UpdateUserDto } from './update-user.dto';
 import { User } from '../entities/user.entity';
+import { Role } from 'src/auth/roles/role.entity';
+import { Apartment } from 'src/apartments/entities/apartment.entity';
 
-export class SafeUserDto extends IntersectionType(
-	OmitType(UpdateUserDto, ['password'] as const),
-	PartialType(
-		PickType(User, [
-			'id',
-			'createAt',
-			'updateAt',
-			'lastPasswordChange',
-			'apartment',
-		]),
-	),
-) {
+export class SafeUserDto {
+	id: string;
+	name: string;
+	email: string;
+	birthDate?: Date;
+	roles: Role[];
+	apartment?: Apartment;
+	createAt: Date;
+	updateAt: Date;
+	lastPasswordChange: Date;
+
 	constructor(user: User) {
-		super();
 		this.id = user.id;
 		this.name = user.name;
 		this.email = user.email;
 		this.birthDate = user.birthDate;
+		this.roles = user.roles;
+		this.apartment = user.apartment;
 		this.createAt = user.createAt;
 		this.updateAt = user.updateAt;
-		this.roles = user.roles;
 		this.lastPasswordChange = user.lastPasswordChange;
-		this.apartment = user.apartment;
 	}
 }
