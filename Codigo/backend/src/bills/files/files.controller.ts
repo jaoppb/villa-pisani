@@ -11,7 +11,7 @@ import { BillFilesService } from './files.service';
 import { CreateBillFileDto } from './dto/create-file.dto';
 import { UpdateBillFileDto } from './dto/update-file.dto';
 
-@Controller('files')
+@Controller('bills/files')
 export class BillFilesController {
 	constructor(private readonly filesService: BillFilesService) {}
 
