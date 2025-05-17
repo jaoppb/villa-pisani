@@ -27,16 +27,16 @@ export class BillFilesController {
 
 	@Get(':id')
 	findOne(@Param('id') id: string) {
-		return this.filesService.findOne(+id);
+		return this.filesService.findOne(id);
 	}
 
 	@Patch(':id')
 	update(@Param('id') id: string, @Body() updateFileDto: UpdateBillFileDto) {
-		return this.filesService.update(+id, updateFileDto);
+		return this.filesService.update(id, updateFileDto);
 	}
 
 	@Delete(':id')
 	remove(@Param('id') id: string) {
-		return this.filesService.remove(+id);
+		return this.filesService.remove(id);
 	}
 }
