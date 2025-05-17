@@ -15,6 +15,7 @@ import { GlobalGuard } from './auth/guards/global.guard';
 import { ApartmentsModule } from './apartments/apartments.module';
 import { NoticesModule } from './notices/notices.module';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { BillsModule } from './bills/bills.module';
 
 @Module({
 	imports: [
@@ -38,6 +39,7 @@ import { ResponseInterceptor } from './interceptors/response.interceptor';
 		ExpensesModule,
 		ApartmentsModule,
 		NoticesModule,
+		BillsModule,
 	],
 	controllers: [AppController, FileServeController],
 	providers: [
