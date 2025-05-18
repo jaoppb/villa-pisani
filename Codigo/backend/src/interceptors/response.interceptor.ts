@@ -86,8 +86,7 @@ export class ResponseInterceptor<
 			) as Promise<K[]>;
 		}
 
-		const mapped = await this._map(context, data);
-		if (!mapped) return data;
+		const mapped = (await this._map(context, data)) ?? data;
 
 		const promises: {
 			key: string;
