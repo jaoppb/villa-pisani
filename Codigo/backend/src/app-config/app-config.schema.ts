@@ -10,6 +10,7 @@ export const validationSchema = Joi.object({
 	API_JWT_SECRET: Joi.string().required(),
 	API_ADMIN_EMAIL: Joi.string().email().required(),
 	API_ADMIN_PASSWORD: Joi.string().required(),
+	API_ADMIN_CPF: Joi.string().required(),
 	API_STRIPE_SECRET_KEY: Joi.string().required(),
 	API_ADDRESS_COUNTRY: Joi.string().default('BR'),
 	API_ADDRESS_CITY: Joi.string().required(),

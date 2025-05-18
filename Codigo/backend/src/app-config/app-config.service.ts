@@ -45,6 +45,9 @@ export class AppConfigService {
 				`admin password: ${this.config.get<string>('API_ADMIN_PASSWORD')}`,
 			);
 			this.logger.debug(
+				`admin cpf: ${this.config.get<string>('API_ADMIN_CPF')}`,
+			);
+			this.logger.debug(
 				`stripe secret key: ${this.config.get<string>('API_STRIPE_SECRET_KEY')}`,
 			);
 			this.logger.debug(
@@ -88,6 +91,10 @@ export class AppConfigService {
 
 	get AdminPassword(): string {
 		return this.config.get<string>('API_ADMIN_PASSWORD')!;
+	}
+
+	get AdminCPF(): string {
+		return this.config.get<string>('API_ADMIN_CPF')!;
 	}
 
 	get StripeSecretKey(): string {
