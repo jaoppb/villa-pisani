@@ -2,12 +2,15 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+JoinColumn,
+	ManyToOne,
 	OneToOne,
 	PrimaryGeneratedColumn,
 	Relation,
 } from 'typeorm';
 import { BillFile } from '../files/entities/file.entity';
 import { Month } from './month.entity';
+import { Apartment } from 'src/apartments/entities/apartment.entity';
 
 @Entity()
 export class Bill {
@@ -28,6 +31,10 @@ export class Bill {
 
 	@OneToOne(() => BillFile, (file) => file.bill)
 	file: Relation<BillFile>;
+
+	@ManyToOne(() => Apartment, (apartment) => apartment.bills)
+	@JoinColumn({ referencedColumnName: 'number' })
+	apartment: Relation<Apartment>;
 
 	@Column({ type: 'set', enum: Month })
 	refer: Month;
