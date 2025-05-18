@@ -40,6 +40,6 @@ export class Bill {
 	@JoinColumn({ referencedColumnName: 'number' })
 	apartment: Relation<Apartment>;
 
-	@Column({ type: 'set', enum: Month })
+	@Column({ type: 'enum', enum: Month })
 	refer: Month;
 }
