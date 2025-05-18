@@ -2,7 +2,7 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
-JoinColumn,
+	JoinColumn,
 	ManyToOne,
 	OneToOne,
 	PrimaryGeneratedColumn,
