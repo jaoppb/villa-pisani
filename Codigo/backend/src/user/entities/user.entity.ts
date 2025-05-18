@@ -31,6 +31,9 @@ export class User {
 	@Column()
 	password: string;
 
+	@Column({ unique: true })
+	cpf: string;
+
 	@Column({ type: 'datetime', nullable: true })
 	birthDate?: Date;
 
