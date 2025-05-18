@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	Logger,
+	NotFoundException,
+} from '@nestjs/common';
 import { CreateBillDto } from './dto/create-bill.dto';
 import { DataSource, In, QueryRunner, Repository } from 'typeorm';
 import { Bill } from './entities/bill.entity';
@@ -217,8 +222,18 @@ export class BillsService {
 		return this.billRepository.find();
 	}
 
-	findOne(id: string) {
-		return `This action returns a #${id} bill`;
+	async findOne(id: string) {
+		const bill = await this.billRepository.findOne({
+			where: { id },
+			relations: ['apartment', 'file'],
+		});
+
+		if (!bill) {
+			this.logger.error('Bill not found', id);
+			throw new NotFoundException('Bill not found');
+		}
+
+		return bill;
 	}
 
 	remove(id: string) {
