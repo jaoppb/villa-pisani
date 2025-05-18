@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Address } from './address';
 
 @Injectable()
 export class AppConfigService {
@@ -44,7 +45,25 @@ export class AppConfigService {
 				`admin password: ${this.config.get<string>('API_ADMIN_PASSWORD')}`,
 			);
 			this.logger.debug(
+				`admin cpf: ${this.config.get<string>('API_ADMIN_CPF')}`,
+			);
+			this.logger.debug(
+				`stripe secret key: ${this.config.get<string>('API_STRIPE_SECRET_KEY')}`,
+			);
+			this.logger.debug(
 				`application environment: ${this.config.get<string>('NODE_ENV')}`,
+			);
+			this.logger.debug(
+				`condominium address: ${this.config.get<string>('API_ADDRESS_STREET')}, ${this.config.get<string>(
+					'API_ADDRESS_NUMBER',
+				)}, ${this.config.get<string>('API_ADDRESS_CITY')}, ${this.config.get<string>(
+					'API_ADDRESS_STATE',
+				)}, ${this.config.get<string>('API_ADDRESS_COUNTRY')}, ${this.config.get<string>(
+					'API_ADDRESS_CEP',
+				)}`,
+			);
+			this.logger.debug(
+				`file serving path: ${this.config.get<string>('API_FILE_SERVING_PATH')}`,
 			);
 			AppConfigService.log = true;
 		}
@@ -72,6 +91,29 @@ export class AppConfigService {
 
 	get AdminPassword(): string {
 		return this.config.get<string>('API_ADMIN_PASSWORD')!;
+	}
+
+	get AdminCPF(): string {
+		return this.config.get<string>('API_ADMIN_CPF')!;
+	}
+
+	get StripeSecretKey(): string {
+		return this.config.get<string>('API_STRIPE_SECRET_KEY')!;
+	}
+
+	get CondominiumAddress(): Address {
+		return {
+			country: this.config.get<string>('API_ADDRESS_COUNTRY')!,
+			city: this.config.get<string>('API_ADDRESS_CITY')!,
+			state: this.config.get<string>('API_ADDRESS_STATE')!,
+			cep: this.config.get<string>('API_ADDRESS_CEP')!,
+			street: this.config.get<string>('API_ADDRESS_STREET')!,
+			number: this.config.get<number>('API_ADDRESS_NUMBER')!,
+		};
+	}
+
+	get FileServingPath(): string {
+		return this.config.get<string>('API_FILE_SERVING_PATH')!;
 	}
 
 	get NodeEnv(): string {
