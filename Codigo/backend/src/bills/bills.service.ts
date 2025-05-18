@@ -219,7 +219,11 @@ export class BillsService {
 	}
 
 	findAll() {
-		return this.billRepository.find();
+		const queryBuilder = this.billRepository.createQueryBuilder('bill');
+		return queryBuilder
+			.leftJoinAndSelect('bill.apartment', 'apartment')
+			.leftJoinAndSelect('bill.file', 'file')
+			.getMany();
 	}
 
 	async findOne(id: string) {
