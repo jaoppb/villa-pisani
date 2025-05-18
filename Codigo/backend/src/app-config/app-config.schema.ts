@@ -17,6 +17,7 @@ export const validationSchema = Joi.object({
 	API_ADDRESS_CEP: Joi.string().required(),
 	API_ADDRESS_STREET: Joi.string().required(),
 	API_ADDRESS_NUMBER: Joi.number().required(),
+	API_FILE_SERVING_PATH: Joi.string().default('/app/files'),
 	DB_TYPE: Joi.string().required(),
 	DB_NAME: Joi.string().required(),
 	DB_HOST: Joi.string().required(),

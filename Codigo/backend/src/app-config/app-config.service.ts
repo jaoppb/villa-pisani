@@ -59,6 +59,9 @@ export class AppConfigService {
 					'API_ADDRESS_CEP',
 				)}`,
 			);
+			this.logger.debug(
+				`file serving path: ${this.config.get<string>('API_FILE_SERVING_PATH')}`,
+			);
 			AppConfigService.log = true;
 		}
 	}
@@ -100,6 +103,10 @@ export class AppConfigService {
 			street: this.config.get<string>('API_ADDRESS_STREET')!,
 			number: this.config.get<number>('API_ADDRESS_NUMBER')!,
 		};
+	}
+
+	get FileServingPath(): string {
+		return this.config.get<string>('API_FILE_SERVING_PATH')!;
 	}
 
 	get NodeEnv(): string {
