@@ -12,7 +12,7 @@ import { BillFile } from '../files/entities/file.entity';
 import { Month } from './month.entity';
 import { Apartment } from 'src/apartments/entities/apartment.entity';
 
-@Entity()
+@Entity('bills')
 export class Bill {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
