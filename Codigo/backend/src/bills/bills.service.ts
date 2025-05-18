@@ -241,10 +241,12 @@ export class BillsService {
 	}
 
 	async remove(id: string) {
-		const bill = await this.billRepository.findOne({
-			where: { id },
-			relations: ['file'],
-		});
+		const bill = await this.billRepository
+			.createQueryBuilder('bill')
+			.leftJoinAndSelect('bill.file', 'file')
+			.leftJoinAndSelect('bill.apartment', 'apartment')
+			.where('bill.id = :id', { id })
+			.getOne();
 
 		if (!bill) {
 			this.logger.error('Bill not found', id);
