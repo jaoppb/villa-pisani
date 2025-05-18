@@ -1,26 +1,57 @@
 import { Injectable } from '@nestjs/common';
-import { CreateBillFileDto } from './dto/create-file.dto';
-import { UpdateBillFileDto } from './dto/update-file.dto';
+import { Bill } from '../entities/bill.entity';
+import { createWriteStream, existsSync, mkdirSync, unlink } from 'fs';
+import { get } from 'https';
+import { FileServeController } from 'src/files/files.controller';
+import { AppConfigService } from 'src/app-config/app-config.service';
 
 @Injectable()
 export class BillFilesService {
-	create(createFileDto: CreateBillFileDto) {
-		return 'This action adds a new file';
+	constructor(private readonly appConfigService: AppConfigService) {}
+
+	static readonly FOLDER = 'bills';
+
+	private _createFolder() {
+		if (!existsSync(this._dir)) {
+			mkdirSync(this._dir, { recursive: true });
+		}
 	}
 
-	findAll() {
-		return `This action returns all files`;
+	private get _dir() {
+		return `${FileServeController.ROOT}/${BillFilesService.FOLDER}`;
 	}
 
-	findOne(id: string) {
-		return `This action returns a #${id} file`;
+	private _getFilePath(bill: Bill): string {
+		return `${this._dir}/${(bill.createdAt ?? new Date()).getFullYear()}-${bill.refer}-${bill.apartment.number}.pdf`;
 	}
 
-	update(id: string, updateFileDto: UpdateBillFileDto) {
-		return `This action updates a #${id} file`;
+	download(bill: Bill, url: string): Promise<string> {
+		return new Promise((res, rej) => {
+			const path = this._getFilePath(bill);
+			this._createFolder();
+			const file = createWriteStream(path);
+			get(url, (response) => {
+				response.pipe(file);
+				file.on('finish', () => {
+					file.close();
+					res(path.replace(FileServeController.ROOT + '/', ''));
+				});
+			}).on('error', (err) => {
+				rej(err);
+			});
+		});
 	}
 
-	remove(id: string) {
-		return `This action removes a #${id} file`;
+	deleteFile(bill: Bill) {
+		return new Promise((res, rej) => {
+			const path = this._getFilePath(bill);
+			unlink(path, (err) => {
+				if (err) {
+					rej(err);
+				} else {
+					res(true);
+				}
+			});
+		});
 	}
 }
