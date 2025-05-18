@@ -236,7 +236,20 @@ export class BillsService {
 		return bill;
 	}
 
-	remove(id: string) {
-		return `This action removes a #${id} bill`;
+	async remove(id: string) {
+		const bill = await this.billRepository.findOne({
+			where: { id },
+			relations: ['file'],
+		});
+
+		if (!bill) {
+			this.logger.error('Bill not found', id);
+			throw new NotFoundException('Bill not found');
+		}
+
+		await this.billFilesService.deleteFile(bill);
+		const removed = await this.billRepository.remove(bill);
+		this.logger.log('Bill removed', id);
+		return removed;
 	}
 }
