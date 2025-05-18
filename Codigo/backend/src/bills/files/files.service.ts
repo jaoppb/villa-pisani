@@ -45,6 +45,7 @@ export class BillFilesService {
 	deleteFile(bill: Bill) {
 		return new Promise((res, rej) => {
 			const path = this._getFilePath(bill);
+			if (!existsSync(path)) res(true);
 			unlink(path, (err) => {
 				if (err) {
 					rej(err);
