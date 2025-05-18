@@ -16,10 +16,6 @@ export class BillsService {
 		return `This action returns a #${id} bill`;
 	}
 
-	update(id: string, updateBillDto: UpdateBillDto) {
-		return `This action updates a #${id} bill`;
-	}
-
 	remove(id: string) {
 		return `This action removes a #${id} bill`;
 	}

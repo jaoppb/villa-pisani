@@ -1,15 +1,6 @@
-import {
-	Controller,
-	Get,
-	Post,
-	Body,
-	Patch,
-	Param,
-	Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
-import { UpdateBillDto } from './dto/update-bill.dto';
 
 @Controller('bills')
 export class BillsController {
@@ -28,11 +19,6 @@ export class BillsController {
 	@Get(':id')
 	findOne(@Param('id') id: string) {
 		return this.billsService.findOne(id);
-	}
-
-	@Patch(':id')
-	update(@Param('id') id: string, @Body() updateBillDto: UpdateBillDto) {
-		return this.billsService.update(id, updateBillDto);
 	}
 
 	@Delete(':id')
