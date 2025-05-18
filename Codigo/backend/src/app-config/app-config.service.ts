@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Address } from './address';
 
 @Injectable()
 export class AppConfigService {
@@ -49,6 +50,15 @@ export class AppConfigService {
 			this.logger.debug(
 				`application environment: ${this.config.get<string>('NODE_ENV')}`,
 			);
+			this.logger.debug(
+				`condominium address: ${this.config.get<string>('API_ADDRESS_STREET')}, ${this.config.get<string>(
+					'API_ADDRESS_NUMBER',
+				)}, ${this.config.get<string>('API_ADDRESS_CITY')}, ${this.config.get<string>(
+					'API_ADDRESS_STATE',
+				)}, ${this.config.get<string>('API_ADDRESS_COUNTRY')}, ${this.config.get<string>(
+					'API_ADDRESS_CEP',
+				)}`,
+			);
 			AppConfigService.log = true;
 		}
 	}
@@ -79,6 +89,17 @@ export class AppConfigService {
 
 	get StripeSecretKey(): string {
 		return this.config.get<string>('API_STRIPE_SECRET_KEY')!;
+	}
+
+	get CondominiumAddress(): Address {
+		return {
+			country: this.config.get<string>('API_ADDRESS_COUNTRY')!,
+			city: this.config.get<string>('API_ADDRESS_CITY')!,
+			state: this.config.get<string>('API_ADDRESS_STATE')!,
+			cep: this.config.get<string>('API_ADDRESS_CEP')!,
+			street: this.config.get<string>('API_ADDRESS_STREET')!,
+			number: this.config.get<number>('API_ADDRESS_NUMBER')!,
+		};
 	}
 
 	get NodeEnv(): string {
