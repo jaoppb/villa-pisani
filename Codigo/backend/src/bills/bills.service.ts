@@ -202,7 +202,10 @@ export class BillsService {
 				this.logger.log('Bill created', bill);
 			}
 
-			return await queryRunner.manager.save(bills);
+			const savedBills = await queryRunner.manager.save(bills);
+			this.logger.log('Bills saved', savedBills);
+			await queryRunner.commitTransaction();
+			return savedBills;
 		} catch (error) {
 			for (const { file } of bills) {
 				if (!file) continue;
