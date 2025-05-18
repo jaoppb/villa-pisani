@@ -214,7 +214,7 @@ export class BillsService {
 	}
 
 	findAll() {
-		return `This action returns all bills`;
+		return this.billRepository.find();
 	}
 
 	findOne(id: string) {
