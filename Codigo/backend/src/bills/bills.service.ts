@@ -1,5 +1,6 @@
 import {
 	BadRequestException,
+	ForbiddenException,
 	Injectable,
 	Logger,
 	NotFoundException,
@@ -13,6 +14,8 @@ import { AppConfigService } from 'src/app-config/app-config.service';
 import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { BillFile } from './files/entities/file.entity';
 import { BillFilesService } from './files/files.service';
+import { User } from 'src/user/entities/user.entity';
+import { Month } from './entities/month.entity';
 
 @Injectable()
 export class BillsService {
@@ -227,6 +230,41 @@ export class BillsService {
 			.leftJoinAndSelect('bill.apartment', 'apartment')
 			.leftJoinAndSelect('bill.file', 'file')
 			.getMany();
+	}
+
+	// TODO add paid filter
+	async findAllFromUser(user: User): Promise<Bill[]>;
+	async findAllFromUser(user: User, refer: Month): Promise<Bill[]>;
+	async findAllFromUser(user: User, refer?: Month) {
+		if (user.apartment === null || user.apartment === undefined) {
+			throw new BadRequestException(
+				'You are not assigned to an apartment',
+			);
+		}
+
+		const apartment = await this.apartmentRepository
+			.createQueryBuilder('apartment')
+			.leftJoinAndSelect('apartment.owner', 'owner')
+			.where('apartment.number = :number', {
+				number: user.apartment.number,
+			})
+			.getOne();
+		if (apartment!.owner!.id !== user.id) {
+			throw new ForbiddenException(
+				'You are not the owner of your apartment',
+			);
+		}
+
+		const queryBuilder = this.billRepository
+			.createQueryBuilder('bill')
+			.leftJoinAndSelect('bill.file', 'file')
+			.where('bill.apartment.number = :number', {
+				number: apartment!.number,
+			});
+		if (refer) queryBuilder.andWhere('bill.refer = :refer', { refer });
+		const bills = await queryBuilder.getMany();
+		this.logger.log('Bills found', bills);
+		return bills;
 	}
 
 	async findOne(id: string) {
