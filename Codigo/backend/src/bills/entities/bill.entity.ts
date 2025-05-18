@@ -29,7 +29,11 @@ export class Bill {
 	@Column({ type: 'datetime' })
 	dueDate: Date;
 
-	@OneToOne(() => BillFile, (file) => file.bill)
+	@OneToOne(() => BillFile, (file) => file.bill, {
+		cascade: true,
+		eager: true,
+	})
+	@JoinColumn({ referencedColumnName: 'id' })
 	file: Relation<BillFile>;
 
 	@ManyToOne(() => Apartment, (apartment) => apartment.bills)
