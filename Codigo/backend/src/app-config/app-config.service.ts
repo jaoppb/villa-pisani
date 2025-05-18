@@ -44,6 +44,9 @@ export class AppConfigService {
 				`admin password: ${this.config.get<string>('API_ADMIN_PASSWORD')}`,
 			);
 			this.logger.debug(
+				`stripe secret key: ${this.config.get<string>('API_STRIPE_SECRET_KEY')}`,
+			);
+			this.logger.debug(
 				`application environment: ${this.config.get<string>('NODE_ENV')}`,
 			);
 			AppConfigService.log = true;
@@ -72,6 +75,10 @@ export class AppConfigService {
 
 	get AdminPassword(): string {
 		return this.config.get<string>('API_ADMIN_PASSWORD')!;
+	}
+
+	get StripeSecretKey(): string {
+		return this.config.get<string>('API_STRIPE_SECRET_KEY')!;
 	}
 
 	get NodeEnv(): string {
