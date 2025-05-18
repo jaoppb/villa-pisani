@@ -186,6 +186,7 @@ export class AuthService implements OnModuleInit {
 			name: 'Admin',
 			password,
 			roles: [Role.MANAGER],
+			cpf: this.appConfigService.AdminCPF,
 		});
 		this.logger.log('Admin user created', adminUser);
 	}
