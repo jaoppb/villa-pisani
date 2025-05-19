@@ -8,6 +8,7 @@ import {
 	Req,
 	ParseEnumPipe,
 	Headers,
+	RawBody,
 } from '@nestjs/common';
 import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
@@ -30,7 +31,7 @@ export class BillsController {
 	@Post('webhook')
 	@Public()
 	updateStatus(
-		@Body() body: string,
+		@RawBody() body: Buffer,
 		@Headers('stripe-signature') signature: string,
 	) {
 		return this.billsService.handleWebhook(signature, body);

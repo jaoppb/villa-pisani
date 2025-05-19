@@ -35,7 +35,7 @@ export class BillsService {
 		this.stripe = new Stripe(appConfigService.StripeSecretKey);
 	}
 
-	async handleWebhook(signature: string, body: string) {
+	async handleWebhook(signature: string, body: Buffer) {
 		try {
 			const event = this.stripe.webhooks.constructEvent(
 				body,
