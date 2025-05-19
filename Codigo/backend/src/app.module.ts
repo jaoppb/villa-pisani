@@ -12,7 +12,8 @@ import { FeedbackModule } from './feedback/feedback.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { RoleGuard } from './auth/roles/role.guard';
-import { EntregasModule } from './entregas/entregas.module'; 
+import { EntregasModule } from './entregas/entregas.module';
+import { RegrasModule } from './regras/regras.module'; // <-- Novo módulo importado
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { EntregasModule } from './entregas/entregas.module';
     UserModule,
     AuthModule,
     FeedbackModule,
-    EntregasModule, // <-- Novo módulo adicionado aqui
+    EntregasModule,
+    RegrasModule, // <-- Novo módulo adicionado aqui
   ],
   controllers: [AppController],
   providers: [
