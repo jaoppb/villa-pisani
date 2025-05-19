@@ -11,6 +11,7 @@ import {
 import { BillFile } from '../files/entities/file.entity';
 import { Month } from './month.entity';
 import { Apartment } from 'src/apartments/entities/apartment.entity';
+import { BillState } from './bill-state.entity';
 
 @Entity('bills')
 export class Bill {
@@ -42,4 +43,7 @@ export class Bill {
 
 	@Column({ type: 'enum', enum: Month })
 	refer: Month;
+
+	@Column({ type: 'enum', enum: BillState, default: BillState.PENDING })
+	state: BillState;
 }
