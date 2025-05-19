@@ -12,6 +12,7 @@ export const validationSchema = Joi.object({
 	API_ADMIN_PASSWORD: Joi.string().required(),
 	API_ADMIN_CPF: Joi.string().required(),
 	API_STRIPE_SECRET_KEY: Joi.string().required(),
+	API_STRIPE_WEBHOOK_SECRET: Joi.string(),
 	API_ADDRESS_COUNTRY: Joi.string().default('BR'),
 	API_ADDRESS_CITY: Joi.string().required(),
 	API_ADDRESS_STATE: Joi.string().required(),

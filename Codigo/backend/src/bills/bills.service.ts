@@ -16,6 +16,7 @@ import { BillFile } from './files/entities/file.entity';
 import { BillFilesService } from './files/files.service';
 import { User } from 'src/user/entities/user.entity';
 import { Month } from './entities/month.entity';
+import { BillState } from './entities/bill-state.entity';
 
 @Injectable()
 export class BillsService {
@@ -32,6 +33,68 @@ export class BillsService {
 		private readonly dataSource: DataSource,
 	) {
 		this.stripe = new Stripe(appConfigService.StripeSecretKey);
+	}
+
+	async handleWebhook(signature: string, body: string) {
+		try {
+			const event = this.stripe.webhooks.constructEvent(
+				body,
+				signature,
+				this.appConfigService.StripeWebhookSecret,
+			);
+			this.logger.log('Webhook event received', event);
+
+			const states: { [key in Stripe.Event.Type]?: BillState } = {
+				'payment_intent.succeeded': BillState.PAID,
+				'payment_intent.payment_failed': BillState.FAILED,
+				'payment_intent.canceled': BillState.CANCELED,
+			};
+
+			const state = states[event.type];
+			if (!state) {
+				this.logger.warn(
+					`Unhandled event type: ${event.type}`,
+					event.type,
+				);
+				throw new BadRequestException('Unhandled event type');
+			}
+
+			const bill = await this.billRepository.findOne({
+				where: {
+					externalId: (event.data.object as Stripe.PaymentIntent).id,
+				},
+			});
+			if (!bill) {
+				this.logger.error(
+					`Bill not found for event type: ${event.type}`,
+					event.type,
+				);
+				throw new NotFoundException('Bill not found');
+			}
+
+			if (bill.state === BillState.PAID) {
+				this.logger.warn(
+					`Bill already paid, ignoring event type: ${event.type}`,
+					event.type,
+				);
+				throw new BadRequestException(
+					'Bill already paid, ignoring event type',
+				);
+			}
+
+			bill.state = state;
+			const saved = await this.billRepository.save(bill);
+			this.logger.debug('Bill state updated', saved);
+			return saved;
+		} catch (error) {
+			if (
+				error instanceof Stripe.errors.StripeSignatureVerificationError
+			) {
+				this.logger.error('Invalid signature', error);
+				throw new BadRequestException('Invalid signature');
+			}
+			throw error;
+		}
 	}
 
 	private async _handleApartmentNumbers(numbers: number[]) {
