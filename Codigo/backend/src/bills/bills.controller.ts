@@ -7,6 +7,7 @@ import {
 	Delete,
 	Req,
 	ParseEnumPipe,
+	Headers,
 } from '@nestjs/common';
 import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
@@ -14,6 +15,7 @@ import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
 import { Request } from 'src/http/request';
 import { Month } from './entities/month.entity';
+import { Public } from 'src/auth/meta/public.decorator';
 
 @Controller('bills')
 export class BillsController {
@@ -23,6 +25,15 @@ export class BillsController {
 	@Roles(Role.MANAGER)
 	create(@Body() createBillDto: CreateBillDto) {
 		return this.billsService.create(createBillDto);
+	}
+
+	@Post('webhook')
+	@Public()
+	updateStatus(
+		@Body() body: string,
+		@Headers('stripe-signature') signature: string,
+	) {
+		return this.billsService.handleWebhook(signature, body);
 	}
 
 	@Get()
