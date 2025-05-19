@@ -51,6 +51,11 @@ export class AppConfigService {
 				`stripe secret key: ${this.config.get<string>('API_STRIPE_SECRET_KEY')}`,
 			);
 			this.logger.debug(
+				`stripe webhook secret: ${this.config.get<string>(
+					'API_STRIPE_WEBHOOK_SECRET',
+				)}`,
+			);
+			this.logger.debug(
 				`application environment: ${this.config.get<string>('NODE_ENV')}`,
 			);
 			this.logger.debug(
@@ -99,6 +104,10 @@ export class AppConfigService {
 
 	get StripeSecretKey(): string {
 		return this.config.get<string>('API_STRIPE_SECRET_KEY')!;
+	}
+
+	get StripeWebhookSecret(): string {
+		return this.config.get<string>('API_STRIPE_WEBHOOK_SECRET')!;
 	}
 
 	get CondominiumAddress(): Address {
