@@ -7,6 +7,8 @@ import { ApartmentsComponent } from "./apartments/apartments.component";
 import { ApartmentComponent } from "./apartment/apartment.component";
 import { ApartmentGuard, IsAdminGuard, IsLoggedInGuard } from "../../guards/authenticate.guard";
 import { inject } from "@angular/core";
+import { DeliveryComponent } from "./delivery/delivery.component";
+import { DeliverysComponent } from "./deliverys/deliverys.component";
 
 export const routes: Routes = [
 	{
@@ -52,4 +54,14 @@ export const routes: Routes = [
 		component: ApartmentComponent,
 		canMatch: [ApartmentGuard],
 	},
+	{
+		path: 'delivery',
+		pathMatch: 'full',
+		component: DeliverysComponent,
+	},
+	{
+		path: 'delivery/:id',
+		component: DeliveryComponent,
+		data: { isDetailView: true },
+	}
 ]
