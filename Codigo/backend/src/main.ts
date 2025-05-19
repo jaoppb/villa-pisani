@@ -1,12 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CustomLogger } from './custom.logger';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import {
+	INestApplication,
+	NestApplicationOptions,
+	ValidationPipe,
+} from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import metadata from './metadata';
 
+const options: NestApplicationOptions = {
+	rawBody: true,
+};
+
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
+	const app = await NestFactory.create(AppModule, options);
 	configPipe(app);
 	configLogger(app);
 	await configureSwagger(app);
