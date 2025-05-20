@@ -3,5 +3,6 @@ test
 .gitignore
 .git
 .dockerignore
-dockerfile
+Dockerfile
+.env
 README.md
