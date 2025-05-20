@@ -28,6 +28,7 @@ services:
       - "${PHPMYADMIN_EXTERNAL_PORT}:${PHPMYADMIN_INTERNAL_PORT}"
   api:
     container_name: vp-api
+    image: vp-api
     build: ./backend
     restart: unless-stopped
     env_file:
@@ -49,6 +50,7 @@ services:
       - db
   app:
     container_name: vp-app
+    image: vp-app
     build: ./frontend
     restart: unless-stopped
     ports:
