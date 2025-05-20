@@ -7,19 +7,19 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { join } from 'path';
+import { AppConfigService } from 'src/app-config/app-config.service';
 
 @Controller('files')
 export class FileServeController {
-	static readonly ROOT = '/app/files';
+	constructor(private readonly appConfigService: AppConfigService) {}
 
 	@Get('*path')
 	serveFile(@Param('path') path: string[], @Res() response: Response) {
 		const finalPath = join(
-			FileServeController.ROOT,
-			'files',
+			this.appConfigService.FileServingPath,
 			path.join('/'),
 		);
-		if (!finalPath.startsWith(join(FileServeController.ROOT, 'files'))) {
+		if (!finalPath.startsWith(this.appConfigService.FileServingPath)) {
 			throw new ForbiddenException("You shouldn't be here");
 		}
 		return response.sendFile(finalPath);
