@@ -5,11 +5,11 @@ import { EntregasController } from './entregas.controller';
 import { Entrega } from './entities/entrega.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Entrega]) // Registra a entidade Entrega para injeção no repositório
-  ],
-  controllers: [EntregasController],
-  providers: [EntregasService],
-  exports: [EntregasService] // Opcional, exporta o service se precisar em outros módulos
+	imports: [
+		TypeOrmModule.forFeature([Entrega]), // Registra a entidade Entrega para injeção no repositório
+	],
+	controllers: [EntregasController],
+	providers: [EntregasService],
+	exports: [EntregasService], // Opcional, exporta o service se precisar em outros módulos
 })
 export class EntregasModule {}

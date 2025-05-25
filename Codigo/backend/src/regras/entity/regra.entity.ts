@@ -2,15 +2,15 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('regras')
 export class Regra {
-  @PrimaryGeneratedColumn()
-  id: number;
+	@PrimaryGeneratedColumn()
+	id: number;
 
-  @Column()
-  titulo: string;
+	@Column()
+	titulo: string;
 
-  @Column('text')
-  descricao: string;
+	@Column('text')
+	descricao: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  dataCriacao: Date;
+	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+	dataCriacao: Date;
 }

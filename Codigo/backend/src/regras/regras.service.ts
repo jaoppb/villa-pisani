@@ -7,29 +7,29 @@ import { UpdateRegraDto } from './dto/update-regra.dto';
 
 @Injectable()
 export class RegrasService {
-  constructor(
-    @InjectRepository(Regra)
-    private regraRepository: Repository<Regra>,
-  ) {}
+	constructor(
+		@InjectRepository(Regra)
+		private regraRepository: Repository<Regra>,
+	) {}
 
-  findAll() {
-    return this.regraRepository.find();
-  }
+	findAll() {
+		return this.regraRepository.find();
+	}
 
-  findOne(id: number) {
-    return this.regraRepository.findOneBy({ id });
-  }
+	findOne(id: number) {
+		return this.regraRepository.findOneBy({ id });
+	}
 
-  create(data: CreateRegraDto) {
-    const novaRegra = this.regraRepository.create(data);
-    return this.regraRepository.save(novaRegra);
-  }
+	create(data: CreateRegraDto) {
+		const novaRegra = this.regraRepository.create(data);
+		return this.regraRepository.save(novaRegra);
+	}
 
-  update(id: number, data: UpdateRegraDto) {
-    return this.regraRepository.update(id, data);
-  }
+	update(id: number, data: UpdateRegraDto) {
+		return this.regraRepository.update(id, data);
+	}
 
-  remove(id: number) {
-    return this.regraRepository.delete(id);
-  }
+	remove(id: number) {
+		return this.regraRepository.delete(id);
+	}
 }

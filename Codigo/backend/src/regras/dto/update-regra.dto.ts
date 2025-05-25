@@ -1,4 +1,4 @@
 export class UpdateRegraDto {
-  titulo?: string;
-  descricao?: string;
+	titulo?: string;
+	descricao?: string;
 }
