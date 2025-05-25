@@ -16,44 +16,48 @@ import { ApartmentsModule } from './apartments/apartments.module';
 import { NoticesModule } from './notices/notices.module';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { BillsModule } from './bills/bills.module';
+import { EntregasModule } from './entregas/entregas.module';
+import { RegrasModule } from './regras/regras.module'; // <-- Novo módulo importado
 
 @Module({
-	imports: [
-		AppConfigModule,
-		DatabaseModule,
-		LoggerModule.forRoot({
-			pinoHttp: {
-				level: 'trace',
-				transport: {
-					target: 'pino-pretty',
-					options: {
-						colorize: true,
-						colorizeObjects: true,
-					},
-				},
-			},
-		}),
-		UserModule,
-		AuthModule,
-		FeedbackModule,
-		ExpensesModule,
-		ApartmentsModule,
-		NoticesModule,
-		BillsModule,
-	],
-	controllers: [AppController, FileServeController],
-	providers: [
-		AppService,
-		CustomLogger,
-		{
-			provide: APP_GUARD,
-			useClass: GlobalGuard,
-		},
-		{
-			provide: APP_INTERCEPTOR,
-			useClass: ResponseInterceptor,
-		},
-	],
-	exports: [CustomLogger],
+  imports: [
+    AppConfigModule,
+    DatabaseModule,
+    LoggerModule.forRoot({
+      pinoHttp: {
+        level: 'trace',
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+            colorizeObjects: true,
+          },
+        },
+      },
+    }),
+    UserModule,
+    AuthModule,
+    FeedbackModule,
+    ExpensesModule,
+    ApartmentsModule,
+    NoticesModule,
+    BillsModule,
+    EntregasModule,
+    RegrasModule,
+  ],
+  controllers: [AppController, FileServeController],
+  providers: [
+    AppService,
+    CustomLogger,
+    {
+      provide: APP_GUARD,
+      useClass: GlobalGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
+  ],
+  exports: [CustomLogger],
 })
 export class AppModule {}
