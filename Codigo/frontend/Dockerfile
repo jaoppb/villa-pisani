@@ -14,7 +14,7 @@ WORKDIR /app
 COPY --from=desc /app ./
 RUN npm run build
 
-FROM node:22-alpine AS runner
+FROM node:22-alpine AS dev
 
 WORKDIR /app
 COPY --from=build /app ./
