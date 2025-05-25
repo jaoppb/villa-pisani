@@ -29,7 +29,9 @@ services:
   api:
     container_name: vp-api
     image: vp-api
-    build: ./backend
+    build:
+      context: ./backend
+      target: dev
     restart: unless-stopped
     env_file:
       - ./backend/.env
@@ -51,7 +53,9 @@ services:
   app:
     container_name: vp-app
     image: vp-app
-    build: ./frontend
+    build:
+      context: ./frontend
+      target: dev
     restart: unless-stopped
     ports:
       - "${APP_EXTERNAL_PORT}:${APP_INTERNAL_PORT}"
