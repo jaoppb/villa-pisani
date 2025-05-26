@@ -1,1 +1,10 @@
-<p>modal-confirm-receipt works!</p>
+<app-modal-base [isOpen]="isOpen" (isOpenChange)="handleIsOpenChange($event)">
+	<h1>
+		Gostaria de confirma a entrega da Entrega
+		<b>{{ this.delivery.sender }}</b>
+	</h1>
+	<div>
+		<button class="close" (click)="handleIsOpenChange(!isOpen)">Não</button>
+		<button class="remove" (click)="confirmReceipt()">Sim</button>
+	</div>
+</app-modal-base>

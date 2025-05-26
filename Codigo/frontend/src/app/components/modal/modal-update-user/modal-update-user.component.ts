@@ -29,7 +29,6 @@ export class ModalUpdateUserComponent implements OnInit {
     private fb: FormBuilder,
     private userService: UserService,
   ) {
-    console.log(this.user)
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3),]],
       email: ['', [Validators.required, Validators.email]],
@@ -39,8 +38,6 @@ export class ModalUpdateUserComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.user)
-    console.log(this.user.birthDate ? new Date(this.user.birthDate) : null)
     this.form.patchValue({
       name: this.user.name,
       email: this.user.email,
@@ -77,9 +74,7 @@ export class ModalUpdateUserComponent implements OnInit {
   }
 
   submit() {
-    console.log(this.form.value)
     this.userService.updateUser(this.user.id, this.form.value).subscribe((res: any) => {
-      console.log(res)
       this.userUpdated.emit(res.body);
       this.isOpen = false;
       this.isOpenChange.emit(this.isOpen);
