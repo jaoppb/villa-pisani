@@ -36,6 +36,9 @@ export class Delivery {
 	@ManyToOne(() => User)
 	confirmTo?: Relation<User>;
 
+	@Column({ type: 'datetime', nullable: true })
+	confirmAt?: Date;
+
 	@ManyToOne(() => Apartment, (apartment) => apartment.deliveries, {
 		nullable: true,
 	})

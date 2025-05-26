@@ -53,7 +53,18 @@ export class DeliveriesService {
 	}
 
 	findAll() {
-		return this.deliveriesRepository.find();
+		return this.deliveriesRepository
+			.find({
+				relations: ['apartment', 'receiver'],
+				order: { receivedAt: 'DESC' },
+			})
+			.then((deliveries) => {
+				return deliveries.map((delivery) => ({
+					...delivery,
+					receiver: delivery.receiver.name,
+					apartment: delivery.apartment?.number,
+				}));
+			});
 	}
 
 	async findOne(id: string) {
@@ -73,7 +84,7 @@ export class DeliveriesService {
 	async findOneInhabitant(id: string, user: User) {
 		const delivery = await this.deliveriesRepository.findOne({
 			where: { id },
-			relations: ['apartment'],
+			relations: ['apartment', 'receiver'],
 		});
 
 		if (!delivery) {
@@ -81,7 +92,15 @@ export class DeliveriesService {
 			throw new NotFoundException(`Delivery with id ${id} not found`);
 		}
 
-		if (delivery.apartment && delivery.apartment !== user.apartment) {
+		this.logger.debug(
+			'Checking if user belongs to the apartment of the delivery',
+			{ delivery, user },
+		);
+
+		if (
+			delivery.apartment &&
+			delivery.apartment?.number !== user.apartment?.number
+		) {
 			this.logger.debug(
 				'User does not belong to the apartment of the delivery',
 				id,
@@ -100,16 +119,34 @@ export class DeliveriesService {
 	}
 
 	async markDelivered(id: string, dto: DeliveredDeliveryDto) {
-		const delivery = await this.deliveriesRepository.findOneBy({ id });
+		const delivery = await this.deliveriesRepository.findOne({
+			where: { id },
+			relations: ['apartment'],
+		});
 		if (!delivery) {
 			this.logger.debug('Delivery not found', id);
 			throw new NotFoundException(`Delivery with id ${id} not found`);
 		}
 
+		if (delivery.status !== DeliveryStatus.RECEIVED) {
+			this.logger.debug(
+				'Delivery already marked as delivered or confirmed',
+				id,
+				delivery.status,
+			);
+			throw new BadRequestException(
+				`Delivery with id ${id} already marked as delivered or confirmed`,
+			);
+		}
+
 		delivery.deliveredTo = dto.deliveredTo;
 		delivery.deliveredAt = new Date();
-		if (delivery.apartment) delivery.status = DeliveryStatus.DELIVERED;
-		else delivery.status = DeliveryStatus.CONFIRMED;
+		if (delivery.apartment) {
+			delivery.status = DeliveryStatus.DELIVERED;
+		} else {
+			delivery.status = DeliveryStatus.CONFIRMED;
+			delivery.confirmAt = new Date();
+		}
 
 		await this.deliveriesRepository.save(delivery);
 		return delivery;
@@ -118,7 +155,7 @@ export class DeliveriesService {
 	async confirmDelivery(id: string, user: User) {
 		const delivery = await this.deliveriesRepository.findOne({
 			where: { id, status: Not(DeliveryStatus.CONFIRMED) },
-			relations: ['apartment'],
+			relations: ['apartment', 'receiver'],
 		});
 		if (!delivery) {
 			this.logger.debug('Delivery not found or already confirmed', id);
@@ -132,7 +169,7 @@ export class DeliveriesService {
 			);
 		}
 
-		if (delivery.apartment !== user.apartment) {
+		if (delivery.apartment?.number !== user.apartment?.number) {
 			this.logger.debug(
 				'User does not belong to the apartment of the delivery',
 				id,
@@ -143,10 +180,27 @@ export class DeliveriesService {
 			);
 		}
 
+		if (delivery.status !== DeliveryStatus.DELIVERED) {
+			this.logger.debug(
+				'Delivery not marked as delivered',
+				id,
+				delivery.status,
+			);
+			throw new BadRequestException(
+				`Delivery with id ${id} not marked as delivered`,
+			);
+		}
+
 		delivery.confirmTo = user;
+		delivery.confirmAt = new Date();
 		delivery.status = DeliveryStatus.CONFIRMED;
 
 		await this.deliveriesRepository.save(delivery);
-		return delivery;
+		return {
+			...delivery,
+			receiver: delivery.receiver.name,
+			apartment: delivery.apartment?.number,
+			confirmTo: delivery.confirmTo?.name,
+		};
 	}
 }

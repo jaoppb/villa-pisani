@@ -32,21 +32,23 @@ export class DeliveriesController {
 		return this.deliveriesService.findAll();
 	}
 
+	// TODO: ta funcionado de um jeito diferente, arrumar depois
 	@Get(':id')
-	@Roles(Role.MANAGER, Role.EMPLOYEE)
-	findOne(@Param('id') id: string) {
-		return this.deliveriesService.findOne(id);
-	}
-
-	@Get(':id')
-	@Roles(Role.INHABITANT)
-	findOneNormal(@Param('id') id: string, @Req() req: Request) {
-		return this.deliveriesService.findOneInhabitant(id, req.user);
+	findOne(@Param('id') id: string, @Req() req: Request) {
+		const user = req.user;
+		if (
+			user.roles.includes(Role.MANAGER) ||
+			user.roles.includes(Role.EMPLOYEE)
+		) {
+			return this.deliveriesService.findOne(id);
+		} else {
+			return this.deliveriesService.findOneInhabitant(id, user);
+		}
 	}
 
 	@Post(':id/delivered')
 	@Roles(Role.MANAGER, Role.EMPLOYEE)
-	delivered(@Param('id') id: string, dto: DeliveredDeliveryDto) {
+	delivered(@Param('id') id: string, @Body() dto: DeliveredDeliveryDto) {
 		return this.deliveriesService.markDelivered(id, dto);
 	}
 
