@@ -1,10 +1,13 @@
-import { IsNumber, IsPositive, IsString } from 'class-validator';
+import { IsOptional, IsPositive, IsString } from 'class-validator';
 
 export class CreateDeliveryDto {
 	@IsString()
 	sender: string;
 
-	@IsNumber()
+	@IsString()
+	recipient: string;
+
 	@IsPositive()
-	apartment: number;
+	@IsOptional()
+	apartment?: number;
 }

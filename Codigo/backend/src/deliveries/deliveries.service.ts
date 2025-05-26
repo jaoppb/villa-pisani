@@ -5,7 +5,6 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
-import { UpdateDeliveryDto } from './dto/update-delivery.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Delivery } from './entities/delivery.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,6 +12,7 @@ import { Not, Repository } from 'typeorm';
 import { ApartmentsService } from 'src/apartments/apartments.service';
 import { DeliveredDeliveryDto } from './dto/delivered-delivery.dto';
 import { DeliveryStatus } from './entities/delivery-status';
+import { Apartment } from 'src/apartments/entities/apartment.entity';
 
 @Injectable()
 export class DeliveriesService {
@@ -24,26 +24,50 @@ export class DeliveriesService {
 	) {}
 
 	async create(receiver: User, dto: CreateDeliveryDto) {
-		const apartment = await this.apartmentsService.findOne(dto.apartment);
-		if (!apartment) {
-			this.logger.debug('Apartment not found', dto.apartment, receiver);
+		let apartment: Apartment | undefined = undefined;
+		if (dto.apartment) {
+			apartment =
+				(await this.apartmentsService.findOne(dto.apartment)) ??
+				undefined;
+			if (!apartment) {
+				this.logger.debug(
+					'Apartment not found',
+					dto.apartment,
+					receiver,
+				);
+			}
 		}
 
 		const delivery = this.deliveriesRepository.create({
 			receiver,
 			sender: dto.sender,
-			apartment: apartment ?? undefined,
+			recipient: dto.recipient,
+			apartment: apartment,
 		});
 		await this.deliveriesRepository.save(delivery);
-		return delivery;
+		return {
+			...delivery,
+			receiver: delivery.receiver.name,
+			apartment: delivery.apartment?.number,
+		};
 	}
 
 	findAll() {
 		return this.deliveriesRepository.find();
 	}
 
-	findOne(id: string) {
-		return this.deliveriesRepository.findOneBy({ id });
+	async findOne(id: string) {
+		const delivery = await this.deliveriesRepository.findOne({
+			where: { id },
+			relations: ['apartment', 'receiver'],
+		});
+		if (!delivery)
+			throw new NotFoundException(`Delivery with id ${id} not found`);
+		return {
+			...delivery,
+			receiver: delivery.receiver.name,
+			apartment: delivery.apartment?.number,
+		};
 	}
 
 	async findOneInhabitant(id: string, user: User) {
@@ -68,7 +92,11 @@ export class DeliveriesService {
 			);
 		}
 
-		return delivery;
+		return {
+			...delivery,
+			receiver: delivery.receiver.name,
+			apartment: delivery.apartment?.number,
+		};
 	}
 
 	async markDelivered(id: string, dto: DeliveredDeliveryDto) {
