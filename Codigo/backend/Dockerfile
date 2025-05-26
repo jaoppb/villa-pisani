@@ -25,8 +25,15 @@ WORKDIR /app
 COPY --from=metadata /app ./
 RUN npm run build
 
-FROM node:22-alpine AS runner
+FROM node:22-alpine AS dev
 
 WORKDIR /app
 COPY --from=build /app ./
 CMD ["npm", "run", "start:dev"]
+
+FROM node:22-alpine AS prod
+
+WORKDIR /app
+COPY --from=desc /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+CMD ["node", "dist/main.js"]
