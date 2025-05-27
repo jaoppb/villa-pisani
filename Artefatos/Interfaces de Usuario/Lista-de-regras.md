@@ -1,6 +1,6 @@
 ## Layout sugerido
 
-![Layout da lista de entregas](../images/Lista-de-regras.png)
+![Layout da lista de entregas](../images/lista-de-regras.png)
 ![Layout da lista de entregas](../images/criar-regra.png)
 
 ## Campos

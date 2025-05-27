@@ -1,6 +1,6 @@
 ## Layout sugerido
 
-![Layout da lista de entregas](../images/Entrega-Unico.png)
+![Layout da lista de entregas](../images/entrega-unico.png)
 ![Layout da Criar encomenda](../images/confirma-entrega.png)
 ![Layout da Criar encomenda](../images/entregar-encomenda.png)
 

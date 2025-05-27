@@ -1,6 +1,6 @@
 ## Layout sugerido
 
-![Layout da lista de entregas](../images/Entrega-Funcionario.png)
+![Layout da lista de entregas](../images/entrega-funcionario.png)
 ![Layout da Criar encomenda](../images/criar-entrega.png)
 
 ## Relacionamentos com outras interfaces
