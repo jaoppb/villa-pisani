@@ -26,6 +26,7 @@ import { EncryptionModule } from 'src/encryption/encryption.module';
 	],
 	controllers: [ApartmentsController],
 	providers: [ApartmentsService],
+	exports: [ApartmentsService],
 })
 export class ApartmentsModule implements OnModuleInit {
 	constructor(private readonly apartmentsService: ApartmentsService) {}

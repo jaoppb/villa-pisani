@@ -1,1 +1,33 @@
-<p>modal-create-delivery works!</p>
+<app-modal-base [isOpen]="isOpen" (isOpenChange)="handleIsOpenChange($event)">
+	<h1>Nova Entrega</h1>
+	<form [formGroup]="form" (ngSubmit)="submit()">
+		<app-input
+			formControlName="sender"
+			placeholder="NOME DO REMETENTE"
+			id="full-sender"
+			type="text"
+			leftIcon="pen"
+			[errors]="this.form.get('sender')?.errors"
+			[touched]="this.form.get('sender')?.touched ?? false"
+		/>
+		<app-input
+			formControlName="recipient"
+			placeholder="NOME DO DESTINATÁRIO"
+			id="full-recipient"
+			type="text"
+			leftIcon="pen"
+			[errors]="this.form.get('recipient')?.errors"
+			[touched]="this.form.get('recipient')?.touched ?? false"
+		/>
+		<app-input
+			formControlName="apartment"
+			placeholder="APARTAMENTO"
+			id="full-apartment"
+			type="text"
+			leftIcon="pen"
+			[errors]="this.form.get('apartment')?.errors"
+			[touched]="this.form.get('apartment')?.touched ?? false"
+		/>
+		<button type="submit" [disabled]="form.invalid">Enviar</button>
+	</form>
+</app-modal-base>

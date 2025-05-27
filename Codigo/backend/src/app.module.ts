@@ -16,6 +16,9 @@ import { ApartmentsModule } from './apartments/apartments.module';
 import { NoticesModule } from './notices/notices.module';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { BillsModule } from './bills/bills.module';
+import { EntregasModule } from './entregas/entregas.module';
+import { RegrasModule } from './regras/regras.module'; // <-- Novo módulo importado
+import { DeliveriesModule } from './deliveries/deliveries.module';
 
 @Module({
 	imports: [
@@ -40,6 +43,9 @@ import { BillsModule } from './bills/bills.module';
 		ApartmentsModule,
 		NoticesModule,
 		BillsModule,
+		DeliveriesModule,
+		// EntregasModule,
+		// RegrasModule,
 	],
 	controllers: [AppController, FileServeController],
 	providers: [
