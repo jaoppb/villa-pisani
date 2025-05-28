@@ -17,7 +17,7 @@ import { NoticesModule } from './notices/notices.module';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { BillsModule } from './bills/bills.module';
 import { EntregasModule } from './entregas/entregas.module';
-import { RegrasModule } from './regras/regras.module'; // <-- Novo módulo importado
+import { RegrasModule } from './regras/regras.module';
 import { DeliveriesModule } from './deliveries/deliveries.module';
 
 @Module({
