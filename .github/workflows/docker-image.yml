@@ -8,7 +8,6 @@ env:
   REGISTRY: ghcr.io
   REGISTRY_USERNAME: ${{ github.actor }}
   REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-  IMAGE_NAME_PREFIX: vp
 
 jobs:
   build-and-push-image:
@@ -18,9 +17,9 @@ jobs:
       matrix:
         include:
           - context: ./Codigo/frontend
-            image_name: ${{ env.IMAGE_NAME_PREFIX }}-frontend
+            image_name: vp-frontend
           - context: ./Codigo/backend
-            image_name: ${{ env.IMAGE_NAME_PREFIX }}-backend
+            image_name: vp-backend
     permissions:
       packages: write
       contents: read
