@@ -1,25 +1,55 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  release:
+    types: [published]
+
+env:
+  REGISTRY: ghcr.io
+  REGISTRY_USERNAME: ${{ github.actor }}
+  REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+  IMAGE_NAME_PREFIX: vp
 
 jobs:
-  build-frontend:
+  build-and-push-image:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - context: ./Codigo/frontend
+            image_name: ${{ env.IMAGE_NAME_PREFIX }}-frontend
+          - context: ./Codigo/backend
+            image_name: ${{ env.IMAGE_NAME_PREFIX }}-backend
+    permissions:
+      packages: write
+      contents: read
+      attestations: write
+      id-token: write
     steps:
     - uses: actions/checkout@v4
-    - name: Build the frontend Docker image
-      run: |
-        cd ./Codigo/frontend
-        docker build . --file Dockerfile --tag vp-app:$(date +%s)
-  build-backend:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Build the backend Docker image
-      run: |
-        cd ./Codigo/backend
-        docker build . --file Dockerfile --tag vp-api:$(date +%s)
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ env.REGISTRY_USERNAME }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      with:
+        images: ${{ env.REGISTRY }}/${{ matrix.image_name }}
+    - name: Build and push Docker image
+      id: push
+      uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+      with:
+        context: ${{ matrix.context }}
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}    
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@v2
+      with:
+        subject-name: ${{ env.REGISTRY }}/${{ matrix.image_name }}
+        subject-digest: ${{ steps.push.outputs.digest }}
+        push-to-registry: true
