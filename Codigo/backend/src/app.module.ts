@@ -7,9 +7,18 @@ import { LoggerModule } from 'nestjs-pino';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth/auth.guard';
-import { RoleGuard } from './auth/roles/role.guard';
+import { FeedbackModule } from './feedback/feedback.module';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ExpensesModule } from './expenses/expenses.module';
+import { FileServeController } from './files/files.controller';
+import { GlobalGuard } from './auth/guards/global.guard';
+import { ApartmentsModule } from './apartments/apartments.module';
+import { NoticesModule } from './notices/notices.module';
+import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { BillsModule } from './bills/bills.module';
+import { EntregasModule } from './entregas/entregas.module';
+import { RegrasModule } from './regras/regras.module';
+import { DeliveriesModule } from './deliveries/deliveries.module';
 
 @Module({
 	imports: [
@@ -29,18 +38,26 @@ import { RoleGuard } from './auth/roles/role.guard';
 		}),
 		UserModule,
 		AuthModule,
+		FeedbackModule,
+		ExpensesModule,
+		ApartmentsModule,
+		NoticesModule,
+		BillsModule,
+		DeliveriesModule,
+		// EntregasModule,
+		// RegrasModule,
 	],
-	controllers: [AppController],
+	controllers: [AppController, FileServeController],
 	providers: [
 		AppService,
 		CustomLogger,
 		{
 			provide: APP_GUARD,
-			useClass: AuthGuard,
+			useClass: GlobalGuard,
 		},
 		{
-			provide: APP_GUARD,
-			useClass: RoleGuard,
+			provide: APP_INTERCEPTOR,
+			useClass: ResponseInterceptor,
 		},
 	],
 	exports: [CustomLogger],

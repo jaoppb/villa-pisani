@@ -1,1 +1,27 @@
-<router-outlet/>
+<Header>
+	<app-icons
+		name="menu"
+		class="open-aside"
+		size="32"
+		(click)="toggleSidebar()"
+	/>
+	<app-icons name="logo" size="96" />
+	<app-theme-toggle />
+</Header>
+<aside class="sidebar" [class.open]="isSidebarOpen">
+	<app-icons
+		name="close"
+		class="close-aside"
+		size="32"
+		(click)="toggleSidebar()"
+	/>
+	<h1>Menu temporario</h1>
+	<div class="sidebar-menu">
+		<a href="/condominium/home">home</a>
+		<a href="/condominium/feedback">feedback</a>
+		<a href="/condominium/expenses">expenses</a>
+		<a href="/condominium/users">users</a>
+		<a href="/condominium/apartments">apartments</a>
+	</div>
+</aside>
+<router-outlet />

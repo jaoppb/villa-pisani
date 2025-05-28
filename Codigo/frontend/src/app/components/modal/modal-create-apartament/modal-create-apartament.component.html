@@ -1,0 +1,22 @@
+<app-modal-base [isOpen]="isOpen" (isOpenChange)="handleIsOpenChange($event)">
+	<h1>Criar Apartamento</h1>
+	<form [formGroup]="form" (ngSubmit)="submit()">
+		<app-input
+			formControlName="number"
+			placeholder="Numero"
+			id="description"
+			type="number"
+			[touched]="this.form.get('number')?.touched ?? false"
+			[errors]="this.form.get('number')?.errors"
+		/>
+		<app-input
+			formControlName="floor"
+			id="floor"
+			type="number"
+			placeholder="Andar"
+			[touched]="this.form.get('floor')?.touched ?? false"
+			[errors]="this.form.get('floor')?.errors"
+		/>
+		<button type="submit" [disabled]="form.invalid">Enviar</button>
+	</form>
+</app-modal-base>

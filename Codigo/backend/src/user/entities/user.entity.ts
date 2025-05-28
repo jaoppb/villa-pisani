@@ -1,14 +1,23 @@
+import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { Role } from 'src/auth/roles/role.entity';
+import { Feedback } from 'src/feedback/entity/feedback.entity';
+import { Notice } from 'src/notices/entities/notice.entity';
 import {
+	AfterLoad,
 	BeforeUpdate,
 	Column,
 	CreateDateColumn,
 	Entity,
+	ManyToOne,
+	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
+import { SafeUserDto } from '../dto/safe-user.dto';
+import { MapTo } from 'src/interceptors/meta/map-to.decorator';
 
 @Entity('users')
+@MapTo(SafeUserDto)
 export class User {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
@@ -22,11 +31,31 @@ export class User {
 	@Column()
 	password: string;
 
+	@Column({ unique: true })
+	cpf: string;
+
 	@Column({ type: 'datetime', nullable: true })
 	birthDate?: Date;
 
 	@Column({ type: 'set', enum: Role, default: [] })
 	roles: Role[];
+
+	@OneToMany(() => Feedback, (feedback) => feedback.user, {
+		eager: false,
+	})
+	feedbacks: Feedback[];
+
+	@OneToMany(() => Notice, (notice) => notice.author)
+	notices: Notice[];
+
+	@ManyToOne(() => Apartment, (apartment) => apartment.inhabitants, {
+		nullable: true,
+		eager: false,
+	})
+	apartment?: Apartment;
+
+	@Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+	lastPasswordChange: Date;
 
 	@CreateDateColumn()
 	createAt: Date;
@@ -37,5 +66,19 @@ export class User {
 	@BeforeUpdate()
 	updateDate() {
 		this.updateAt = new Date();
+	}
+
+	private _cachedPassword?: string;
+
+	@AfterLoad()
+	private _cachePassword() {
+		this._cachedPassword = this.password;
+	}
+
+	@BeforeUpdate()
+	private _checkPasswordChange() {
+		if (this._cachedPassword !== this.password) {
+			this.lastPasswordChange = new Date();
+		}
 	}
 }

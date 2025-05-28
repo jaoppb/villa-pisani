@@ -1,0 +1,16 @@
+@for (i of this.data; track i.key) {
+<label class="radio-tags" [attr.data-key]="i.key" [class.checked]="i.checked">
+	<input
+		type="checkbox"
+		[name]="this.name"
+		[checked]="i.checked"
+		[readOnly]="this.readonly"
+		(change)="toggleSelection(i.key)"
+	/>
+	{{ i.label }}
+</label>
+} @if (this.addable) {
+<label class="add-tags" (click)="add()">
+	<app-icons name="plus" />
+</label>
+}

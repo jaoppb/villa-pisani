@@ -1,0 +1,37 @@
+:host {
+	position: absolute;
+	height: 100vh;
+	width: 100vw;
+	top: 0;
+	color: var(--black);
+}
+
+h1 {
+	font-size: 3.5rem;
+	text-align: center;
+	color: var(--blue-gray);
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 20px;
+	width: 100%;
+}
+app-input {
+	width: 100%;
+}
+
+button {
+	background-color: var(--primary-highlight-color);
+	width: 100%;
+	color: var(--white);
+	font-weight: bolder;
+	border: none;
+	padding: 10px;
+	border-radius: 500px;
+	font-size: 1.2rem;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}

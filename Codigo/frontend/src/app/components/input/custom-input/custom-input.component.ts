@@ -1,10 +1,10 @@
-import { Component, forwardRef, Input } from '@angular/core';
+import { Component, forwardRef, Input, ViewChild, ElementRef } from '@angular/core';
 import { InputTextInterface } from '../interface/input-text.interface';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { IconsComponent } from '../../icons/iconBase/icons.component';
 
 @Component({
-  selector: 'app-input',
+  selector: 'app-input[type="text"],app-input[type="number"],app-input[type="password"],app-input[type="date"],app-input[type="email"]',
   imports: [IconsComponent],
   providers: [
     {
@@ -16,16 +16,28 @@ import { IconsComponent } from '../../icons/iconBase/icons.component';
   templateUrl: './custom-input.component.html',
   styleUrl: './custom-input.component.scss'
 })
-export class CustomInputComponent implements InputTextInterface{
+export class CustomInputComponent implements InputTextInterface {
   @Input() id!: string;
   @Input() type: string = 'text';
   @Input() placeholder: string = '';
   @Input() value: string = '';
-  @Input() errors: any = null; 
+  @Input() errors: any = null;
   @Input() touched: boolean = false;
   @Input() leftIcon: string = '';
   @Input() rightIcon: string = '';
+  @ViewChild('input') inputRef!: ElementRef<HTMLInputElement>;
+  showPassword: boolean = false;
 
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+    this.inputRef.nativeElement.type = this.showPassword ? 'text' : 'password';
+  }
+  openCalendar(): void {
+    const inputElement = this.getInputElement();
+    if (inputElement) {
+      inputElement.showPicker?.();
+    }
+  }
   writeValue(value: string): void {
     this.value = value || '';
   }
@@ -36,22 +48,26 @@ export class CustomInputComponent implements InputTextInterface{
     this.onTouched = fn;
   }
   setDisabledState?(isDisabled: boolean): void {
-    
+
   }
   onChange(value: string): void {
-    
+    this.touched = true;
   }
   onBlur(value: string): void {
-    
+
   }
   onTouched(): void {
     this.touched = true;
   }
+
   onInput(event: Event): void {
+    this.touched = true;
     const target = event.target as HTMLInputElement;
     this.value = target.value;
     this.onChange(this.value);
-    console.log(this.errors);
   }
 
+  getInputElement(): HTMLInputElement | null {
+    return this.inputRef?.nativeElement || null;
+  }
 }

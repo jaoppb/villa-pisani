@@ -1,0 +1,39 @@
+<main>
+	<div
+		class="card add-button"
+		(click)="this.isOpenModalDeliveredCreate = true"
+	>
+		<app-icons name="plus" stroke="0.4" size="72" />
+	</div>
+	@for(delivery of this.deliveries; track delivery.id) {
+	<a
+		[routerLink]="['/condominium/delivery', delivery.id]"
+		class="card"
+		[class.viewed]="delivery.status !== 'confirmed'"
+		[class.not-viewed]="delivery.status === 'confirmed'"
+	>
+		<h1>{{ delivery.sender }}</h1>
+		<div class="card-content">
+			<div>
+				<h2>Para:</h2>
+				<p>{{ delivery.recipient }}</p>
+			</div>
+			<div>
+				<h2>Recebido por:</h2>
+				<p>{{ delivery.receiver }}</p>
+			</div>
+			<div>
+				<h2>Status:</h2>
+				<p>{{ this.mapStatus[delivery.status] }}</p>
+			</div>
+		</div>
+	</a>
+	}
+</main>
+@if(this.isOpenModalDeliveredCreate && this.isStaff()){
+<app-modal-create-delivery
+	(isOpen)="(this.isOpenModalDeliveredCreate)"
+	(isOpenChange)="this.modalDeliveredCreateChange($event)"
+></app-modal-create-delivery>
+
+}

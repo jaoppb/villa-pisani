@@ -1,0 +1,8 @@
+<textarea
+	#input
+	[id]="id"
+	[placeholder]="placeholder"
+	[value]="value"
+	(input)="onInput($event)"
+	(blur)="onBlur(value)"
+>{{value}}</textarea>

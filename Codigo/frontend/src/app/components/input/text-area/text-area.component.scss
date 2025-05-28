@@ -1,0 +1,24 @@
+textarea {
+	display: block;
+	border: 2px solid var(--primary-highlight-color);
+	background-color: transparent;
+	border-radius: 5px;
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	font-size: 16px;
+	color: var(--text-color-app);
+	outline: none;
+	resize: none;
+	transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+	&:focus {
+		border-color: var(--secondary-highlight-color);
+		box-shadow: 0 0 5px var(--secondary-highlight-color);
+	}
+
+	&::placeholder {
+		color: var(--gray);
+		font-style: italic;
+	}
+}

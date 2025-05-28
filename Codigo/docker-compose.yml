@@ -13,7 +13,7 @@ services:
     command: >
       --default-authentication-plugin=mysql_native_password
     volumes:
-      - ./db:/var/lib/mysql
+      - data:/var/lib/mysql
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: vp-myadmin
@@ -28,7 +28,10 @@ services:
       - "${PHPMYADMIN_EXTERNAL_PORT}:${PHPMYADMIN_INTERNAL_PORT}"
   api:
     container_name: vp-api
-    build: ./backend
+    image: vp-api
+    build:
+      context: ./backend
+      target: dev
     restart: unless-stopped
     env_file:
       - ./backend/.env
@@ -47,10 +50,12 @@ services:
       - ./backend/src:/app/src
     depends_on:
       - db
-    command: "npm run start:debug"
   app:
     container_name: vp-app
-    build: ./frontend
+    image: vp-app
+    build:
+      context: ./frontend
+      target: dev
     restart: unless-stopped
     ports:
       - "${APP_EXTERNAL_PORT}:${APP_INTERNAL_PORT}"
@@ -61,3 +66,6 @@ services:
       - api
     environment:
       - API_URL=${API_INTERNAL_PORT}
+
+volumes:
+  data:

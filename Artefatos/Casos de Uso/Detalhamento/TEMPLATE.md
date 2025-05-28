@@ -1,4 +1,10 @@
-# Caso de Uso \<AÇÃO\>
+# Descrição de Caso de Uso
+
+Nome do Caso de Uso: \
+ID: \
+Ator Primário: \
+Ator(es) Secundário(s): \
+Sumário: 
 
 ## Precondições
 
@@ -35,6 +41,12 @@ Precondições:
 1. 
 
 Passos:
+
+1. 
+2. 
+3. 
+
+## Póscondições
 
 1. 
 2. 

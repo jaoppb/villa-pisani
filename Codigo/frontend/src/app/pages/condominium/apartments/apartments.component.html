@@ -1,0 +1,33 @@
+<main>
+	<h1>Apartamentos</h1>
+	<div>
+		@for (apartment of apartments; track apartment.number) {
+		<a
+			[routerLink]="['/condominium/apartment', apartment.number]"
+			class="apartment-card"
+			key="{apartment.number}"
+		>
+			<div>
+				<h2>AP-{{ apartment.number || 00 }}</h2>
+			</div>
+			<div>
+				<app-icons name="pen" />
+			</div>
+		</a>
+		}
+		<div
+			class="apartment-card card-add"
+			(click)="openModalCreateApartment()"
+		>
+			<app-icons name="plus" />
+		</div>
+	</div>
+</main>
+
+@if(this.IsOpenModalCreateApartment && this.isAdmin()){
+<app-modal-create-apartament
+	[isOpen]="IsOpenModalCreateApartment"
+	(isOpenChange)="handleIsOpenCreateApartmentChange($event)"
+	(newApartment)="handleCreateApartment($event)"
+/>
+}

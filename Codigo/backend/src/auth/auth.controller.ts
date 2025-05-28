@@ -13,6 +13,8 @@ import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { Public } from './meta/public.decorator';
 import { Request } from 'src/http/request';
 import { CurrentUserDto } from './dto/current-user.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { NoRole } from './roles/no-role.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -39,13 +41,13 @@ export class AuthController {
 
 	@Public()
 	@Post('signin')
-	async signIn(@Body() body: SignInAuthDto) {
-		const { email, password } = body;
-		const user = await this.authService.signIn(email, password);
+	async signIn(@Body() dto: SignInAuthDto) {
+		const user = await this.authService.signIn(dto);
 
 		const payload = {
 			email: user.email,
 			sub: user.id,
+			roles: user.roles,
 			iss: 'login',
 		};
 
@@ -56,20 +58,10 @@ export class AuthController {
 		return { accessToken };
 	}
 
+	@ApiBearerAuth()
 	@Get('me')
+	@NoRole()
 	profile(@RequestDecorator() req: Request): CurrentUserDto {
-		const { user } = req;
-
-		const result: CurrentUserDto = {
-			id: user.id,
-			name: user.name,
-			email: user.email,
-			createAt: user.createAt,
-			updateAt: user.updateAt,
-			birthDate: user.birthDate,
-			roles: user.roles,
-		};
-
-		return result;
+		return req.user;
 	}
 }

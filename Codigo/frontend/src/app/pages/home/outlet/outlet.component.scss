@@ -1,0 +1,28 @@
+@use 'sass:color';
+:host{
+	min-height: 100vh;
+}
+
+Header{
+	position: fixed;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 20px;
+	border-bottom: 1px solid var(--text-color-app);
+	color: var(--text-color-app);
+	background-color: lab(100% 0.01 -0.01 / 0.01);
+	backdrop-filter: blur(10px);
+	z-index: 1000;
+	top: 0;
+	width: 100%;
+}
+
+.auth-links{
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	a{
+		color: var(--text-color-app);
+	}
+}

@@ -4,19 +4,23 @@ import { CustomInputComponent } from '../../../components/input/custom-input/cus
 import { UserService } from '../../../services/user.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MetaData } from '../../../services/meta-data.service';
+import { RouterModule } from '@angular/router';
+import { ApartmentService } from '../../../services/apartment.service';
 
 @Component({
   selector: 'app-register',
-  imports: [CustomInputComponent, ReactiveFormsModule],
+  imports: [CustomInputComponent, ReactiveFormsModule, RouterModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
   form: FormGroup;
+  inviteParam: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
+    private apartmentService: ApartmentService,
     private meta: MetaData,
   ) {
     this.meta.setMetaData({
@@ -25,16 +29,19 @@ export class RegisterComponent {
       keywords: 'login, account, user, vila pisane',
     });
 
+    const urlParams = new URLSearchParams(window.location.search);
+    this.inviteParam = urlParams.get('invite');
+
     this.form = this.fb.group({
-      name: ['',[ 
+      name: ['', [
         Validators.required,
         Validators.minLength(3),
       ]],
-      email: ['',[ 
+      email: ['', [
         Validators.required,
         Validators.email
       ]],
-      birthDate: ['',[ 
+      birthDate: ['', [
         this.validateAge
       ]],
       password: ['', [
@@ -42,13 +49,13 @@ export class RegisterComponent {
         Validators.minLength(8),
         Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&()[\]{}<>#^~`|\\:;'"?/.,+=_-])[A-Za-z\d@$!%*?&()[\]{}<>#^~`|\\:;'"?/.,+=_-]+$/)
       ]],
-      passwordVerification: ['',[ 
+      passwordVerification: ['', [
         Validators.required
       ]],
     }, { validators: this.passwordsMatch });
   }
 
-  private validateAge(control: any): { [key: string]: string|boolean } | null {
+  private validateAge(control: any): { [key: string]: string | boolean } | null {
     const birthDate = new Date(control.value);
     const today = new Date();
     const monthDifference = today.getMonth() - birthDate.getMonth();
@@ -62,7 +69,7 @@ export class RegisterComponent {
     return age >= 2 ? null : { customError: 'Você não tem idade o suficiente' };
   }
 
-  private passwordsMatch(group: FormGroup): { [key: string]: string|boolean } | null {
+  private passwordsMatch(group: FormGroup): { [key: string]: string | boolean } | null {
     const password = group.get('password')?.value;
     const passwordVerification = group.get('passwordVerification')?.value;
     if (password !== passwordVerification) {
@@ -72,7 +79,9 @@ export class RegisterComponent {
     return null;
   }
 
-  submit(): void {
+  async submit() {
+    if (this.inviteParam)
+      this.form.value.invite = this.inviteParam;
     this.userService.register(this.form.value).subscribe({
       next: () => {
         window.location.href = '/auth/login';
