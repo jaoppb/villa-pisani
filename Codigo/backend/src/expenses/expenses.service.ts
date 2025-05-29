@@ -1,12 +1,13 @@
 import {
 	BadRequestException,
+	HttpException,
 	Injectable,
 	Logger,
 	NotFoundException,
 } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Expense } from './entities/expense.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tag } from './tags/entities/tag.entity';
@@ -20,6 +21,7 @@ export class ExpensesService {
 		private readonly expensesRepository: Repository<Expense>,
 		@InjectRepository(Tag)
 		private readonly tagsRepository: Repository<Tag>,
+		private readonly dataSource: DataSource,
 		private readonly filesService: ExpenseFilesService,
 	) {}
 
@@ -39,31 +41,45 @@ export class ExpensesService {
 			throw new BadRequestException('Tags not found');
 		}
 
-		const expense: Expense = await this.expensesRepository.save({
-			title: createExpenseDto.title,
-			description: createExpenseDto.description,
-			files: [],
-			tags,
-		});
+		const queryRunner = this.dataSource.createQueryRunner();
 
-		if (createExpenseDto.files && createExpenseDto.files.length > 0) {
-			try {
-				const files = await this.filesService.upload(
-					expense.id,
-					createExpenseDto.files,
-				);
-				expense.files = Array.isArray(files) ? files : [files];
-			} catch (err) {
-				this.logger.error('Files upload error', err);
+		await queryRunner.connect();
+		await queryRunner.startTransaction();
 
-				await this.remove(expense.id);
+		try {
+			const expense: Expense = await queryRunner.manager.save(Expense, {
+				title: createExpenseDto.title,
+				description: createExpenseDto.description,
+				files: [],
+				tags,
+			});
 
-				throw new BadRequestException('Files upload error');
+			if (createExpenseDto.files && createExpenseDto.files.length > 0) {
+				try {
+					const files = await this.filesService.upload(
+						expense.id,
+						createExpenseDto.files,
+					);
+					expense.files = Array.isArray(files) ? files : [files];
+				} catch (err) {
+					this.logger.error('Files upload error', err);
+
+					await queryRunner.manager.remove(Expense, expense);
+
+					throw new BadRequestException('Files upload error');
+				}
 			}
-		}
 
-		this.logger.log('Expense create', expense);
-		return expense;
+			this.logger.log('Expense create', expense);
+			return expense;
+		} catch (error) {
+			await queryRunner.rollbackTransaction();
+			if (error instanceof HttpException) throw error;
+			this.logger.error('Expense create error', error);
+			throw new BadRequestException('Expense create error');
+		} finally {
+			await queryRunner.release();
+		}
 	}
 
 	findAll() {
