@@ -1,4 +1,18 @@
 services:
+  localstack:
+    container_name: vp-localstack
+    image: localstack/localstack:latest
+    restart: unless-stopped
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=${AWS_REGION}
+    volumes:
+      - localstack:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./localstack:/docker-entrypoint-initaws.d
   db:
     container_name: vp-db
     image: mysql:8.0
@@ -50,6 +64,7 @@ services:
       - ./backend/src:/app/src
     depends_on:
       - db
+      - localstack
   app:
     container_name: vp-app
     image: vp-app
@@ -69,3 +84,4 @@ services:
 
 volumes:
   data:
+  localstack:
