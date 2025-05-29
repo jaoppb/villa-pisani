@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, QueryRunner, Repository } from 'typeorm';
 import { ExpenseFile } from './entities/file.entity';
 import { Expense } from '../entities/expense.entity';
 import { FilesService } from 'src/files/files.service';
@@ -18,23 +18,10 @@ export class ExpenseFilesService {
 	) {}
 
 	private async _uploadOne(
-		expenseId: string,
+		queryRunner: QueryRunner,
+		expense: Expense,
 		incomeFile: Express.Multer.File,
 	) {
-		const expense = await this.expensesRepository.findOneBy({
-			id: expenseId,
-		});
-
-		if (!expense) {
-			this.logger.error(`Expense not found ${expenseId}`);
-			throw new BadRequestException('Expense not found');
-		}
-
-		const queryRunner = this.dataSource.createQueryRunner();
-
-		await queryRunner.connect();
-		await queryRunner.startTransaction();
-
 		try {
 			let file = await queryRunner.manager.save(ExpenseFile, {
 				name: incomeFile.originalname,
@@ -57,42 +44,24 @@ export class ExpenseFilesService {
 			}
 			file = await queryRunner.manager.save(ExpenseFile, file);
 
-			await queryRunner.commitTransaction();
-
 			this.logger.log('File create', file);
 			return (await this.filesRepository.findOne({
 				where: { id: file.id },
 				select: ['id', 'name', 'url'],
 			}))!;
 		} catch (error) {
-			await queryRunner.rollbackTransaction();
 			await this.filesService.deleteFolder(`expenses/${expense.id}/`);
 			this.logger.error('File create', error);
 			throw error;
-		} finally {
-			await queryRunner.release();
 		}
 	}
 
 	private async _uploadMultiple(
-		expenseId: string,
+		queryRunner: QueryRunner,
+		expense: Expense,
 		incomeFiles: Array<Express.Multer.File>,
 	) {
-		const expense = await this.expensesRepository.findOneBy({
-			id: expenseId,
-		});
-
-		if (!expense) {
-			this.logger.error(`Expense not found ${expenseId}`);
-			throw new BadRequestException('Expense not found');
-		}
-
-		const queryRunner = this.dataSource.createQueryRunner();
-
-		await queryRunner.connect();
-		await queryRunner.startTransaction();
-
-		const uploadedUrls: string[] = [];
+		const parsedFiles: ExpenseFile[] = [];
 		try {
 			for (const file of incomeFiles) {
 				const data = await queryRunner.manager.save(ExpenseFile, {
@@ -110,41 +79,39 @@ export class ExpenseFilesService {
 					throw new BadRequestException('File upload error');
 				}
 				data.url = url;
-				await queryRunner.manager.save(ExpenseFile, data);
-				uploadedUrls.push(url);
+				parsedFiles.push(data);
 			}
 
-			await queryRunner.commitTransaction();
+			const savedFiles = await queryRunner.manager.save(
+				ExpenseFile,
+				parsedFiles,
+			);
+			this.logger.log('Files create all', savedFiles);
+
+			const all = await queryRunner.manager.find(ExpenseFile, {
+				where: { id: In(savedFiles.map((f) => f.id)) },
+				select: ['id', 'name', 'url'],
+			});
+			return all;
 		} catch (error) {
 			await this.filesService.deleteFolder(`expenses/${expense.id}`);
-
-			await queryRunner.rollbackTransaction();
 			this.logger.error('File create all', error);
 			throw error;
-		} finally {
-			await queryRunner.release();
 		}
-
-		const savedFiles = await this.filesRepository
-			.createQueryBuilder('files')
-			.select(['files.id', 'files.name', 'files.url'])
-			.where('files.url IN (:...urls)', { urls: uploadedUrls })
-			.getMany();
-		this.logger.log('Files create all', savedFiles);
-		return savedFiles;
 	}
 
 	async upload(
-		expenseId: string,
+		queryRunner: QueryRunner,
+		expense: Expense,
 		incomeFile: Express.Multer.File | Array<Express.Multer.File>,
 	): Promise<ExpenseFile | Array<ExpenseFile>> {
 		if (Array.isArray(incomeFile)) {
 			return incomeFile.length > 1
-				? this._uploadMultiple(expenseId, incomeFile)
-				: this._uploadOne(expenseId, incomeFile[0]);
+				? this._uploadMultiple(queryRunner, expense, incomeFile)
+				: this._uploadOne(queryRunner, expense, incomeFile[0]);
 		}
 
-		return this._uploadOne(expenseId, incomeFile);
+		return this._uploadOne(queryRunner, expense, incomeFile);
 	}
 
 	async remove(id: string) {

@@ -57,7 +57,8 @@ export class ExpensesService {
 			if (createExpenseDto.files && createExpenseDto.files.length > 0) {
 				try {
 					const files = await this.filesService.upload(
-						expense.id,
+						queryRunner,
+						expense,
 						createExpenseDto.files,
 					);
 					expense.files = Array.isArray(files) ? files : [files];
@@ -136,15 +137,29 @@ export class ExpensesService {
 		}
 
 		if (files && files.length > 0) {
+			const queryRunner = this.dataSource.createQueryRunner();
+
+			await queryRunner.connect();
+			await queryRunner.startTransaction();
+
 			// TODO avaliate if it should replace all files or just add new ones
 			try {
-				const savedFiles = await this.filesService.upload(id, files);
+				const savedFiles = await this.filesService.upload(
+					queryRunner,
+					expense,
+					files,
+				);
 				if (Array.isArray(savedFiles))
 					expense.files.push(...savedFiles);
 				else expense.files.push(savedFiles);
+
+				await queryRunner.commitTransaction();
 			} catch (err) {
+				await queryRunner.rollbackTransaction();
 				this.logger.error('Files upload error', err);
 				throw new BadRequestException('Files upload error');
+			} finally {
+				await queryRunner.release();
 			}
 		}
 
