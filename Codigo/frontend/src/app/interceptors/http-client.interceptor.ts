@@ -1,5 +1,4 @@
 import { HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
-import { environment } from '../../environments/environment';
 import { inject } from '@angular/core';
 import { AccessTokenService } from '../services/accessToken.service';
 
@@ -10,7 +9,7 @@ export const HttpClientInterceptor: HttpInterceptorFn = (req, next) => {
 
   if (!req.url.includes('https://')) {
     clonedRequest = req.clone({
-      url: `${environment.apiURL}/${req.url}`,
+      url: `${window.location.origin}/api/${req.url}`,
       setHeaders: {
         Authorization: `Bearer ${token}`,
       },
