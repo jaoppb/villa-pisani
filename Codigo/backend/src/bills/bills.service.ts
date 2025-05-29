@@ -203,12 +203,14 @@ export class BillsService {
 
 		const billFile = await queryRunner.manager.save(BillFile, {
 			name: `${new Date().getFullYear()}-${bill.refer}-${bill.apartment.number}.pdf`,
-			url: await this.billFilesService.download(
-				bill,
-				intent.next_action!.boleto_display_details!.pdf!,
-			),
+			mimetype: 'application/pdf',
+			url: '',
 		});
-		bill.file = billFile;
+		billFile.url = await this.billFilesService.download(
+			billFile,
+			intent.next_action!.boleto_display_details!.pdf!,
+		);
+		bill.file = await queryRunner.manager.save(BillFile, billFile);
 
 		return bill;
 	}
@@ -276,7 +278,7 @@ export class BillsService {
 			for (const { file } of bills) {
 				if (!file) continue;
 
-				await this.billFilesService.deleteFile(file.bill);
+				await this.billFilesService.deleteFile(file.id);
 			}
 
 			this.logger.error('Failed to save the bill', error);
@@ -357,7 +359,7 @@ export class BillsService {
 			throw new NotFoundException('Bill not found');
 		}
 
-		await this.billFilesService.deleteFile(bill);
+		await this.billFilesService.deleteFile(bill.file.id);
 		const removed = await this.billRepository.remove(bill);
 		this.logger.log('Bill removed', id);
 		return removed;
