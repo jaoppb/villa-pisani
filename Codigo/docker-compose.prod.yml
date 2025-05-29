@@ -10,6 +10,9 @@ services:
     environment:
       - API_PORT=${API_INTERNAL_PORT}
       - APP_PORT=${APP_INTERNAL_PORT}
+    depends_on:
+      - api
+      - app
   api:
     container_name: vp-api
     image: ghcr.io/icei-puc-minas-pmges-ti/vp-backend:latest
@@ -27,8 +30,6 @@ services:
       - NODE_ENV=production
     volumes:
       - ./backend/src:/app/src
-    depends_on:
-      - db
   app:
     container_name: vp-app
     image: ghcr.io/icei-puc-minas-pmges-ti/vp-frontend:latest
