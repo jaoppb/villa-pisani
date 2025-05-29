@@ -63,13 +63,11 @@ export class ExpensesService {
 					expense.files = Array.isArray(files) ? files : [files];
 				} catch (err) {
 					this.logger.error('Files upload error', err);
-
-					await queryRunner.manager.remove(Expense, expense);
-
 					throw new BadRequestException('Files upload error');
 				}
 			}
 
+			await queryRunner.commitTransaction();
 			this.logger.log('Expense create', expense);
 			return expense;
 		} catch (error) {
