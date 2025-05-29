@@ -9,7 +9,7 @@ export const HttpClientInterceptor: HttpInterceptorFn = (req, next) => {
   const token = accessTokenService.AccessToken;
 
   if (!req.url.includes('https://')) {
-    const url = environment.apiURL ?? `${window.location.origin}/api/${req.url}`;
+    const url = (environment.apiURL ?? `${window.location.origin}/api`) + `/${req.url}`;
 	
 	clonedRequest = req.clone({
       url,

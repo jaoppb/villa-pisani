@@ -68,6 +68,21 @@ export class AppConfigService {
 				)}`,
 			);
 			this.logger.debug(
+				`aws endpoint: ${this.config.get<string>('API_AWS_ENDPOINT')}`,
+			);
+			this.logger.debug(
+				`aws bucket name: ${this.config.get<string>('API_AWS_BUCKET_NAME')}`,
+			);
+			this.logger.debug(
+				`aws access key id: ${this.config.get<string>('API_AWS_ACCESS_KEY_ID')}`,
+			);
+			this.logger.debug(
+				`aws secret access key: ${this.config.get<string>('API_AWS_SECRET_ACCESS_KEY')}`,
+			);
+			this.logger.debug(
+				`aws region: ${this.config.get<string>('API_AWS_REGION')}`,
+			);
+			this.logger.debug(
 				`file serving path: ${this.config.get<string>('API_FILE_SERVING_PATH')}`,
 			);
 			AppConfigService.log = true;
@@ -119,6 +134,26 @@ export class AppConfigService {
 			street: this.config.get<string>('API_ADDRESS_STREET')!,
 			number: this.config.get<number>('API_ADDRESS_NUMBER')!,
 		};
+	}
+
+	get AWSEndpoint(): string | undefined {
+		return this.config.get<string | undefined>('API_AWS_ENDPOINT');
+	}
+
+	get AWSBucketName(): string {
+		return this.config.get<string>('API_AWS_BUCKET_NAME')!;
+	}
+
+	get AWSAccessKeyId(): string {
+		return this.config.get<string>('API_AWS_ACCESS_KEY_ID')!;
+	}
+
+	get AWSSecretAccessKey(): string {
+		return this.config.get<string>('API_AWS_SECRET_ACCESS_KEY')!;
+	}
+
+	get AWSRegion(): string {
+		return this.config.get<string>('API_AWS_REGION')!;
 	}
 
 	get FileServingPath(): string {

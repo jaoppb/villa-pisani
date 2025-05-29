@@ -9,4 +9,7 @@ export abstract class File {
 
 	@Column()
 	url: string;
+
+	@Column()
+	mimetype: string;
 }
