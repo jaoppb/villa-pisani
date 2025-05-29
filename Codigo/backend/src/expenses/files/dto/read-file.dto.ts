@@ -8,5 +8,9 @@ export class ReadExpenseFileDto extends OmitType(ExpenseFile, [
 		super();
 		Object.assign(this, expenseFile);
 		delete this['expense'];
+
+		const parts = this.url.split('/');
+		parts.splice(-2, 1);
+		this.url = parts.join('/');
 	}
 }
