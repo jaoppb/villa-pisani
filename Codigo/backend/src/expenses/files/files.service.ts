@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { ExpenseFile } from './entities/file.entity';
 import { Expense } from '../entities/expense.entity';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class ExpenseFilesService {
@@ -12,16 +13,9 @@ export class ExpenseFilesService {
 		private readonly filesRepository: Repository<ExpenseFile>,
 		@InjectRepository(Expense)
 		private readonly expensesRepository: Repository<Expense>,
+		private readonly filesService: FilesService,
 		private readonly dataSource: DataSource,
 	) {}
-
-	private _saveFile(file: Express.Multer.File): string {
-		return file.path;
-	}
-
-	private _deleteFile(url: string) {
-		// TODO implement file deleting (cloud or disk?)
-	}
 
 	private async _uploadOne(
 		expenseId: string,
@@ -36,23 +30,48 @@ export class ExpenseFilesService {
 			throw new BadRequestException('Expense not found');
 		}
 
-		const url = this._saveFile(incomeFile);
+		const queryRunner = this.dataSource.createQueryRunner();
 
-		if (!url) {
-			this.logger.error('File upload error');
-			throw new BadRequestException('File upload error');
+		await queryRunner.connect();
+		await queryRunner.startTransaction();
+
+		try {
+			let file = await queryRunner.manager.save(ExpenseFile, {
+				name: incomeFile.originalname,
+				mimetype: incomeFile.mimetype,
+				expense,
+				url: '',
+			});
+			if (!file) {
+				this.logger.error('File create error');
+				throw new BadRequestException('File create error');
+			}
+			file.url = await this.filesService.saveFile(
+				`expenses/${expense.id}/${file.id}`,
+				incomeFile.buffer,
+			);
+
+			if (!file.url) {
+				this.logger.error('File upload error');
+				throw new BadRequestException('File upload error');
+			}
+			file = await queryRunner.manager.save(ExpenseFile, file);
+
+			await queryRunner.commitTransaction();
+
+			this.logger.log('File create', file);
+			return (await this.filesRepository.findOne({
+				where: { id: file.id },
+				select: ['id', 'name', 'url'],
+			}))!;
+		} catch (error) {
+			await queryRunner.rollbackTransaction();
+			await this.filesService.deleteFolder(`expenses/${expense.id}/`);
+			this.logger.error('File create', error);
+			throw error;
+		} finally {
+			await queryRunner.release();
 		}
-
-		const file = await this.filesRepository.save({
-			name: incomeFile.originalname,
-			expense,
-			url,
-		});
-		this.logger.log('File create', file);
-		return (await this.filesRepository.findOne({
-			where: { id: file.id },
-			select: ['id', 'name', 'url'],
-		}))!;
 	}
 
 	private async _uploadMultiple(
@@ -76,18 +95,28 @@ export class ExpenseFilesService {
 		const uploadedUrls: string[] = [];
 		try {
 			for (const file of incomeFiles) {
-				const url = this._saveFile(file);
-				uploadedUrls.push(url);
-				await queryRunner.manager.save(ExpenseFile, {
+				const data = await queryRunner.manager.save(ExpenseFile, {
 					name: file.originalname,
+					mimetype: file.mimetype,
 					expense,
-					url,
+					url: '',
 				});
+				const url = await this.filesService.saveFile(
+					`expenses/${expense.id}/${data.id}`,
+					file.buffer,
+				);
+				if (!url) {
+					this.logger.error('File upload error');
+					throw new BadRequestException('File upload error');
+				}
+				data.url = url;
+				await queryRunner.manager.save(ExpenseFile, data);
+				uploadedUrls.push(url);
 			}
 
 			await queryRunner.commitTransaction();
 		} catch (error) {
-			uploadedUrls.forEach((url) => this._deleteFile(url));
+			await this.filesService.deleteFolder(`expenses/${expense.id}`);
 
 			await queryRunner.rollbackTransaction();
 			this.logger.error('File create all', error);
@@ -119,7 +148,10 @@ export class ExpenseFilesService {
 	}
 
 	async remove(id: string) {
-		const file = await this.filesRepository.findOneBy({ id });
+		const file = await this.filesRepository.findOne({
+			where: { id },
+			relations: ['expense'],
+		});
 
 		if (!file) {
 			this.logger.error('File not found', id);
@@ -127,7 +159,22 @@ export class ExpenseFilesService {
 		}
 
 		const result = await this.filesRepository.remove(file);
+		await this.filesService.deleteFile(
+			`expenses/${file.expense.id}/${file.url}`,
+		);
 		this.logger.log('File remove', file);
 		return result;
+	}
+
+	async readFile(id: string) {
+		const file = await this.filesRepository.findOneBy({ id });
+		if (!file) {
+			this.logger.error('File not found', id);
+			throw new BadRequestException('File not found');
+		}
+		return {
+			file,
+			data: await this.filesService.readFile(file.url),
+		};
 	}
 }
