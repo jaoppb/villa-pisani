@@ -19,7 +19,7 @@ async function bootstrap() {
 	configLogger(app);
 	await configureSwagger(app);
 	configureCors(app);
-	await app.listen(process.env.API_INTERNAL_PORT ?? 3000);
+	await app.listen(process.env.PORT ?? 3000);
 }
 
 function configLogger(app: INestApplication) {
