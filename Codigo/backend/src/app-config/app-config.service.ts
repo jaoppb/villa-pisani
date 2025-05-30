@@ -21,7 +21,7 @@ export class AppConfigService {
 				`database host: ${this.config.get<string>('DB_HOST')}`,
 			);
 			this.logger.debug(
-				`database port: ${this.config.get<number>('DB_INTERNAL_PORT')}`,
+				`database port: ${this.config.get<number>('DB_PORT')}`,
 			);
 			this.logger.debug(
 				`using database user: ${this.config.get<string>('DB_USER')}`,
@@ -169,7 +169,7 @@ export class AppConfigService {
 			type: this.config.get<string>('DB_TYPE'),
 			name: this.config.get<string>('DB_NAME'),
 			host: this.config.get<string>('DB_HOST'),
-			port: this.config.get<number>('DB_INTERNAL_PORT'),
+			port: this.config.get<number>('DB_PORT'),
 			username: this.config.get<string>('DB_USER'),
 			password: this.config.get<string>('DB_PASS'),
 		};
