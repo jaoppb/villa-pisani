@@ -1,0 +1,149 @@
+{
+    "family": "villa-pisani",
+    "networkMode": "bridge",
+    "containerDefinitions": [
+        {
+            "name": "proxy",
+            "image": "",
+            "cpu": 1,
+            "memory": 2,
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "name": "http",
+                    "appProtocol": "grpc"
+                }
+            ],
+            "essential": true,
+            "restartPolicy": {
+                "enabled": true,
+                "ignoredExitCodes": [
+                    0
+                ],
+                "restartAttemptPeriod": 60
+            },
+            "dependsOn": [
+                {
+                    "containerName": "api",
+                    "condition": "START"
+                },
+                {
+                    "containerName": "app",
+                    "condition": "START"
+                }
+            ],
+			"mountPoints": [
+				{
+					"sourceVolume": "caddy_data",
+					"containerPath": "/data"
+				},
+				{
+					"sourceVolume": "caddy_config",
+					"containerPath": "/config"
+				}
+			],
+            "versionConsistency": "disabled",
+            "hostname": "proxy",
+            "disableNetworking": false,
+            "privileged": true,
+            "readonlyRootFilesystem": true,
+            "interactive": false,
+            "pseudoTerminal": false,
+            "logConfiguration": {
+                "logDriver": "fluentd",
+                "options": {
+                    "KeyName": "proxy"
+                }
+            }
+        },
+        {
+            "name": "api",
+            "image": "",
+            "cpu": 1,
+            "memory": 2,
+            "essential": true,
+            "restartPolicy": {
+                "enabled": true,
+                "ignoredExitCodes": [
+                    0
+                ],
+                "restartAttemptPeriod": 60
+            },
+            "versionConsistency": "disabled",
+            "hostname": "api",
+            "privileged": true,
+            "readonlyRootFilesystem": true,
+            "interactive": false,
+            "pseudoTerminal": false,
+            "logConfiguration": {
+                "logDriver": "fluentd",
+                "options": {
+                    "KeyName": "api"
+                }
+            }
+        },
+        {
+            "name": "app",
+            "image": "",
+            "repositoryCredentials": {
+                "credentialsParameter": ""
+            },
+            "cpu": 1,
+            "memory": 2,
+            "essential": true,
+            "restartPolicy": {
+                "enabled": true,
+                "ignoredExitCodes": [
+                    0
+                ],
+                "restartAttemptPeriod": 60
+            },
+            "dependsOn": [
+                {
+                    "containerName": "api",
+                    "condition": "START"
+                }
+            ],
+            "versionConsistency": "disabled",
+            "hostname": "app",
+            "disableNetworking": true,
+            "privileged": true,
+            "readonlyRootFilesystem": true,
+            "interactive": false,
+            "pseudoTerminal": false,
+            "logConfiguration": {
+                "logDriver": "fluentd",
+                "options": {
+                    "KeyName": "app"
+                }
+            }
+        }
+    ],
+    "volumes": [
+        {
+            "name": "caddy_config",
+            "dockerVolumeConfiguration": {
+                "scope": "task",
+                "autoprovision": true
+            }
+        },
+        {
+            "name": "caddy_data",
+            "dockerVolumeConfiguration": {
+                "scope": "task",
+                "autoprovision": true
+            }
+        }
+    ],
+    "requiresCompatibilities": [
+        "EC2"
+    ],
+    "pidMode": "host",
+    "ipcMode": "host",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
+}
