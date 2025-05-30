@@ -6,8 +6,8 @@
         {
             "name": "proxy",
             "image": "",
-            "cpu": 1,
-            "memory": 2,
+            "cpu": 512,
+            "memory": 1024,
             "portMappings": [
                 {
                     "containerPort": 80,
@@ -54,8 +54,8 @@
         {
             "name": "api",
             "image": "",
-            "cpu": 1,
-            "memory": 2,
+            "cpu": 1024,
+            "memory": 2048,
             "essential": true,
             "hostname": "api",
             "privileged": true,
@@ -75,8 +75,8 @@
             "repositoryCredentials": {
                 "credentialsParameter": ""
             },
-            "cpu": 1,
-            "memory": 2,
+            "cpu": 512,
+            "memory": 1024,
             "essential": true,
             "dependsOn": [
                 {
@@ -102,14 +102,14 @@
         {
             "name": "caddy_config",
             "dockerVolumeConfiguration": {
-                "scope": "task",
+                "scope": "shared",
                 "autoprovision": true
             }
         },
         {
             "name": "caddy_data",
             "dockerVolumeConfiguration": {
-                "scope": "task",
+                "scope": "shared",
                 "autoprovision": true
             }
         }
