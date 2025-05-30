@@ -9,7 +9,7 @@ env:
   ECR_REPOSITORY: villa-pisani
   ECS_SERVICE: villa-pisani-cluster-service
   ECS_CLUSTER: villa-pisani-cluster
-  ECS_TASK_DEFINITION: ./Codigo/aws/task-definition.json
+  ECS_TASK_DEFINITION: Codigo/aws/task-definition.json
 
 permissions:
   contents: read
