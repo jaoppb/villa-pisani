@@ -17,13 +17,6 @@
                 }
             ],
             "essential": true,
-            "restartPolicy": {
-                "enabled": true,
-                "ignoredExitCodes": [
-                    0
-                ],
-                "restartAttemptPeriod": 60
-            },
             "dependsOn": [
                 {
                     "containerName": "api",
@@ -44,7 +37,6 @@
 					"containerPath": "/config"
 				}
 			],
-            "versionConsistency": "disabled",
             "hostname": "proxy",
             "disableNetworking": false,
             "privileged": true,
@@ -64,14 +56,6 @@
             "cpu": 1,
             "memory": 2,
             "essential": true,
-            "restartPolicy": {
-                "enabled": true,
-                "ignoredExitCodes": [
-                    0
-                ],
-                "restartAttemptPeriod": 60
-            },
-            "versionConsistency": "disabled",
             "hostname": "api",
             "privileged": true,
             "readonlyRootFilesystem": true,
@@ -93,20 +77,12 @@
             "cpu": 1,
             "memory": 2,
             "essential": true,
-            "restartPolicy": {
-                "enabled": true,
-                "ignoredExitCodes": [
-                    0
-                ],
-                "restartAttemptPeriod": 60
-            },
             "dependsOn": [
                 {
                     "containerName": "api",
                     "condition": "START"
                 }
             ],
-            "versionConsistency": "disabled",
             "hostname": "app",
             "disableNetworking": true,
             "privileged": true,
