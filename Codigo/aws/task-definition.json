@@ -1,6 +1,7 @@
 {
     "family": "villa-pisani",
     "networkMode": "bridge",
+	"executionRoleArn": "arn:aws:iam::334908347312:role/ecsTaskExecutionRole",
     "containerDefinitions": [
         {
             "name": "proxy",
