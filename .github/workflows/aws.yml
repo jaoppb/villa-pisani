@@ -92,8 +92,8 @@ jobs:
           DATABASE=arn:aws:secretsmanager:us-east-1:334908347312:secret:prod/villa-pisani/database-igWDv5
           API=arn:aws:secretsmanager:us-east-1:334908347312:secret:prod/villa-pisani/api-rftBfG
         env-files: |
-          arn:aws:s3express:us-east-1:334908347312:bucket/villa-pisani-image--use1-az6--x-s3/common.env
-          arn:aws:s3express:us-east-1:334908347312:bucket/villa-pisani-image--use1-az6--x-s3/api.env
+          arn:aws:s3:::villa-pisani-bucket-deploy/common.env
+          arn:aws:s3:::villa-pisani-bucket-deploy/api.env
 
     - name: Modify task definition with app container
       id: app-container
@@ -103,8 +103,8 @@ jobs:
         container-name: app
         image: villa-pisani/${{ needs.build.outputs.APP_IMAGE_TAG }}:latest
         env-files: |
-          arn:aws:s3express:us-east-1:334908347312:bucket/villa-pisani-image--use1-az6--x-s3/common.env
-          arn:aws:s3express:us-east-1:334908347312:bucket/villa-pisani-image--use1-az6--x-s3/app.env
+          arn:aws:s3:::villa-pisani-bucket-deploy/common.env
+          arn:aws:s3:::villa-pisani-bucket-deploy/app.env
     
     - name: Modify task definition with proxy container
       id: proxy-container
@@ -114,7 +114,7 @@ jobs:
         container-name: proxy
         image: villa-pisani/${{ needs.build.outputs.PROXY_IMAGE_TAG }}:latest
         env-files: |
-          arn:aws:s3express:us-east-1:334908347312:bucket/villa-pisani-image--use1-az6--x-s3/common.env
+          arn:aws:s3:::villa-pisani-bucket-deploy/common.env
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
