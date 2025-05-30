@@ -1,7 +1,7 @@
 services:
   proxy:
     container_name: vp-proxy
-    image: caddy:2.10.0-alpine
+    image: ghcr.io/icei-puc-minas-pmges-ti/vp-proxy:latest
     restart: unless-stopped
     volumes:
       - caddy_data:/data
