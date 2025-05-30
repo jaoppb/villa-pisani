@@ -72,7 +72,7 @@ jobs:
         secrets: |
           DATABASE=arn:aws:secretsmanager:us-east-1:334908347312:secret:prod/villa-pisani/database-igWDv5
           API=arn:aws:secretsmanager:us-east-1:334908347312:secret:prod/villa-pisani/api-rftBfG
-        env_files: |
+        env-files: |
           arn:aws:s3express:us-east-1:334908347312:bucket/villa-pisani-image--use1-az6--x-s3/common.env
           arn:aws:s3express:us-east-1:334908347312:bucket/villa-pisani-image--use1-az6--x-s3/api.env
 
@@ -83,7 +83,7 @@ jobs:
         task-definition: ${{ steps.api-container.outputs.task-definition }}
         container-name: app
         image: villa-pisani/frontend:latest
-        env_files: |
+        env-files: |
           arn:aws:s3express:us-east-1:334908347312:bucket/villa-pisani-image--use1-az6--x-s3/common.env
           arn:aws:s3express:us-east-1:334908347312:bucket/villa-pisani-image--use1-az6--x-s3/app.env
     
@@ -94,7 +94,7 @@ jobs:
         task-definition: ${{ steps.app-container.outputs.task-definition }}
         container-name: proxy
         image: villa-pisani/frontend:latest
-        env_files: |
+        env-files: |
           arn:aws:s3express:us-east-1:334908347312:bucket/villa-pisani-image--use1-az6--x-s3/common.env
 
     - name: Deploy Amazon ECS task definition
