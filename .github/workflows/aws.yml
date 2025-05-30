@@ -23,11 +23,11 @@ jobs:
       matrix:
         include:
           - context:
-            image_name: villa-pisani/caddy
+            image_name: caddy
           - context: ./Codigo/frontend
-            image_name: villa-pisani/frontend
+            image_name: frontend
           - context: ./Codigo/backend
-            image_name: villa-pisani/backend
+            image_name: backend
     environment: production
 
     steps:
