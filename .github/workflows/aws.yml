@@ -1,4 +1,4 @@
-name: Build to Amazon ECR
+name: Deploy to Amazon ECS
 
 on:
   release:
