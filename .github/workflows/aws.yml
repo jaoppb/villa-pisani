@@ -71,6 +71,9 @@ jobs:
       - build
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
     - name: Modifiy task-definition with api container
       id: api-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
