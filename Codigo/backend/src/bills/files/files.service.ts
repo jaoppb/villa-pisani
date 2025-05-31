@@ -1,89 +1,84 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { Bill } from '../entities/bill.entity';
-import { createWriteStream, existsSync, mkdirSync, unlink } from 'fs';
-import { get } from 'https';
-import { AppConfigService } from 'src/app-config/app-config.service';
-import { IncomingMessage } from 'http';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { FilesService } from 'src/files/files.service';
+import { BillFile } from './entities/file.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class BillFilesService {
-	constructor(private readonly appConfigService: AppConfigService) {}
+	private readonly logger = new Logger(BillFilesService.name);
+	constructor(
+		private readonly filesService: FilesService,
+		@InjectRepository(BillFile)
+		private readonly filesRepository: Repository<BillFile>,
+	) {}
 
-	static readonly FOLDER = 'bills';
-
-	private _createFolder() {
-		if (!existsSync(this._dir)) {
-			mkdirSync(this._dir, { recursive: true });
+	async download(
+		billFile: BillFile,
+		url: string,
+		tries: number = 5,
+	): Promise<string> {
+		if (tries <= 0) {
+			this.logger.error('Max retries reached for downloading Boleto');
+			throw new BadRequestException(
+				'Failed to download Boleto after multiple attempts',
+			);
 		}
-	}
 
-	private get _dir() {
-		return `${this.appConfigService.FileServingPath}/${BillFilesService.FOLDER}`;
-	}
-
-	private _getFilePath(bill: Bill): string {
-		return `${this._dir}/${(bill.createdAt ?? new Date()).getFullYear()}-${bill.refer}-${bill.apartment.number}.pdf`;
-	}
-
-	download(bill: Bill, url: string): Promise<string> {
-		return new Promise((res, rej) => {
-			const path = this._getFilePath(bill);
-			const _doRequest = (
-				url: string,
-				callback: (message: IncomingMessage) => void,
-			) => {
-				get(url, callback).on('error', (err) => {
-					rej(err);
-				});
-			};
-			const _handleRedirect = (response: IncomingMessage) => {
-				const first = response.statusCode?.toString().charAt(0);
-				if (first === '3') {
-					const { location } = response.headers;
-					if (!location)
-						throw new BadRequestException(
-							'Failed to download Boleto',
-						);
-					return _doRequest(location, (response) => {
-						_handleRedirect(response);
-					});
-				}
-
-				if (first !== '2') {
-					throw new BadRequestException('Failed to download Boleto');
-				}
-
-				const file = createWriteStream(path);
-				response.pipe(file);
-				file.on('finish', () => {
-					file.close();
-					res(
-						path.replace(
-							this.appConfigService.FileServingPath + '/',
-							'',
-						),
-					);
-				});
-			};
-
-			this._createFolder();
-			_doRequest(url, (response) => {
-				_handleRedirect(response);
-			});
+		const response = await fetch(url, {
+			redirect: 'manual',
 		});
+
+		if (response.status >= 300 && response.status < 400) {
+			const location = response.headers.get('location');
+			if (location) return this.download(billFile, location);
+
+			this.logger.error(
+				'Redirect location not found in response headers',
+			);
+			throw new BadRequestException('Redirect location not found');
+		}
+
+		if (!response.ok) {
+			throw new BadRequestException('Failed to download Boleto');
+		}
+
+		if (
+			!response.headers.get('content-type')?.includes('application/pdf')
+		) {
+			return this.download(billFile, url, tries - 1);
+		}
+
+		const buffer = await response.arrayBuffer();
+		return this.filesService.saveFile(
+			`bills/${billFile.id}`,
+			Buffer.from(buffer),
+		);
 	}
 
-	deleteFile(bill: Bill) {
-		return new Promise((res, rej) => {
-			const path = this._getFilePath(bill);
-			if (!existsSync(path)) res(true);
-			unlink(path, (err) => {
-				if (err) {
-					rej(err);
-				} else {
-					res(true);
-				}
-			});
-		});
+	async readFile(id: string) {
+		const file = await this.filesRepository.findOneBy({ id });
+		if (!file) {
+			throw new BadRequestException('File not found');
+		}
+		const data = await this.filesService.readFile(file.getUrl());
+		return { file, data };
+	}
+
+	async deleteFile(id: string) {
+		const file = await this.filesRepository.findOneBy({ id });
+		if (!file) {
+			throw new BadRequestException('File not found');
+		}
+
+		this.logger.log(`Deleting file: ${file.getUrl()}`);
+		await this.filesService.deleteFile(file.getUrl());
+		this.logger.log(`File deleted: ${file.getUrl()}`);
+
+		this.logger.log('Removing file record from database:', file);
+		const removed = await this.filesRepository.remove(file);
+		this.logger.log('File record removed from database:', removed);
+
+		return removed;
 	}
 }

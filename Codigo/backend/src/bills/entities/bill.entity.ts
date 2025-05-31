@@ -9,7 +9,7 @@ import {
 	Relation,
 } from 'typeorm';
 import { BillFile } from '../files/entities/file.entity';
-import { Month } from './month.entity';
+import { fromDate, Month } from './month.entity';
 import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { BillState } from './bill-state.entity';
 
@@ -41,9 +41,17 @@ export class Bill {
 	@JoinColumn({ referencedColumnName: 'number' })
 	apartment: Relation<Apartment>;
 
-	@Column({ type: 'enum', enum: Month })
-	refer: Month;
+	@Column({ type: 'datetime' })
+	refer: Date;
 
 	@Column({ type: 'enum', enum: BillState, default: BillState.PENDING })
 	state: BillState;
+
+	getMonth(): Month {
+		return fromDate(this.refer);
+	}
+
+	getYear(): number {
+		return this.refer.getFullYear();
+	}
 }

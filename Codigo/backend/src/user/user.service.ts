@@ -133,7 +133,7 @@ export class UserService {
 
 	async generateUsers() {
 		this.logger.log('Generating users');
-		if (this.appConfig.NodeEnv === 'porduction') {
+		if (this.appConfig.NodeEnv === 'production') {
 			this.logger.log('production,Not generating users');
 			return;
 		}

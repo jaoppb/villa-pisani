@@ -9,5 +9,5 @@ export const LAZY_MAPPER_KEY = 'lazy_mapper_key';
 export const LazyMapTo = (map: LazyMap) =>
 	SetMetadata(LAZY_MAPPER_KEY, {
 		...map,
-		path: join(__dirname, '..', map.path),
+		path: join(__dirname, '../..', map.path),
 	});
