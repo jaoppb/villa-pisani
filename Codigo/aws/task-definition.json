@@ -47,7 +47,11 @@
             "logConfiguration": {
                 "logDriver": "syslog",
                 "options": {}
-            }
+            },
+            "links": [
+                "api",
+                "app"
+            ]
         },
         {
             "name": "api",
