@@ -103,9 +103,6 @@ jobs:
         env-files: |
           arn:aws:s3:::villa-pisani-bucket-deploy/common.env
           arn:aws:s3:::villa-pisani-bucket-deploy/api.env
-      
-    - name: debug
-      run: cat ${{ steps.api-container.outputs.task-definition }}
 
     - name: Modify task definition with app container
       id: app-container
@@ -121,9 +118,6 @@ jobs:
           arn:aws:s3:::villa-pisani-bucket-deploy/common.env
           arn:aws:s3:::villa-pisani-bucket-deploy/app.env
     
-    - name: debug
-      run: cat ${{ steps.app-container.outputs.task-definition }}
-
     - name: Modify task definition with proxy container
       id: proxy-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -136,9 +130,6 @@ jobs:
         image: ${{ env.PROXY_IMAGE }}
         env-files: |
           arn:aws:s3:::villa-pisani-bucket-deploy/common.env
-
-    - name: debug
-      run: cat ${{ steps.proxy-container.outputs.task-definition }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
