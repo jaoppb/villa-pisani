@@ -196,8 +196,8 @@ export class BillsService {
 				1000,
 		);
 		const refer = new Date(0);
-		refer.setFullYear(refer.getFullYear());
-		refer.setMonth(refer.getMonth());
+		refer.setFullYear(createBillDto.refer.getFullYear());
+		refer.setMonth(createBillDto.refer.getMonth());
 
 		return {
 			value: createBillDto.value,
