@@ -1,5 +1,5 @@
 #!/bin/sh
 
-./parse_secret.sh
+./parse-secret.sh
 
 node dist/main.js
