@@ -1,9 +1,9 @@
 #!/bin/sh
 
-export TMPDIR=$(mkdir -p $(mktemp -d -p ./ -u))
+export TMPDIR=$(mktemp -d -p ./)
 
 parse() {
-	tmp=$(mktemp -u)
+	tmp=$(mktemp)
 	jq -r 'to_entries[] | "export \(.key)=\(.value | @sh)"' > ${tmp}
 	echo $tmp
 }
