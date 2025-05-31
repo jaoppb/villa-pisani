@@ -1,8 +1,15 @@
 #!/bin/sh
 
-parse_secret() {
-	local secret=$1
-	echo $(echo $secret | jq -r 'to_entries[] | "\(.key)=\(.value)"')
+parse() {
+	tmp=$(mktemp)
+	jq -r 'to_entries[] | "export \(.key)=\(.value | @sh)"' > ${tmp}
+	echo $tmp
 }
 
-export $(parse_secret $DATABASE) $(parse_secret $API)
+API_TEMP=$(echo $API | parse)
+DATABASE_TEMP=$(echo $DATABASE | parse)
+
+source $API_TEMP
+source $DATABASE_TEMP
+
+rm -f $API_TEMP $DATABASE_TEMP
