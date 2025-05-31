@@ -1,17 +1,8 @@
 #!/bin/sh
 
-export TMPDIR=$(mktemp -d -p ./)
-
 parse() {
-	tmp=$(mktemp)
-	jq -r 'to_entries[] | "export \(.key)=\(.value | @sh)"' > ${tmp}
-	echo $tmp
+	jq -r 'to_entries[] | "export \(.key)=\(.value | @sh)"'
 }
 
-API_TEMP=$(echo $API | parse)
-DATABASE_TEMP=$(echo $DATABASE | parse)
-
-source $API_TEMP
-source $DATABASE_TEMP
-
-rm -rf $TMPDIR
+source <(echo $API | parse)
+source <(echo $DATABASE | parse)
