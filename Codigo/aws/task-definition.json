@@ -85,7 +85,6 @@
                 }
             ],
             "hostname": "app",
-            "disableNetworking": true,
             "privileged": true,
             "readonlyRootFilesystem": true,
             "interactive": false,
