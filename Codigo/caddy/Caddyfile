@@ -1,0 +1,19 @@
+:80 {
+	handle_path /api* {
+		reverse_proxy "api:{$API_PORT}"
+	}
+
+	handle {
+		reverse_proxy "app:{$APP_PORT}"
+	}
+}
+
+:443 {
+	handle_path /api* {
+		reverse_proxy "api:{$API_PORT}"
+	}
+
+	handle {
+		reverse_proxy "app:{$APP_PORT}"
+	}
+}

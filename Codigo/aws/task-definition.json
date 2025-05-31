@@ -1,0 +1,123 @@
+{
+    "family": "villa-pisani",
+    "networkMode": "bridge",
+	"executionRoleArn": "arn:aws:iam::334908347312:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+            "name": "proxy",
+            "image": "",
+            "cpu": 200,
+            "memory": 200,
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "name": "http",
+                    "appProtocol": "grpc"
+                }
+            ],
+            "essential": true,
+            "dependsOn": [
+                {
+                    "containerName": "api",
+                    "condition": "START"
+                },
+                {
+                    "containerName": "app",
+                    "condition": "START"
+                }
+            ],
+			"mountPoints": [
+				{
+					"sourceVolume": "caddy_data",
+					"containerPath": "/data"
+				},
+				{
+					"sourceVolume": "caddy_config",
+					"containerPath": "/config"
+				}
+			],
+            "hostname": "proxy",
+            "disableNetworking": false,
+            "privileged": true,
+            "readonlyRootFilesystem": true,
+            "interactive": false,
+            "pseudoTerminal": false,
+            "logConfiguration": {
+                "logDriver": "syslog",
+                "options": {}
+            },
+            "links": [
+                "api",
+                "app"
+            ]
+        },
+        {
+            "name": "api",
+            "image": "",
+            "cpu": 400,
+            "memory": 400,
+            "essential": true,
+            "hostname": "api",
+            "privileged": true,
+            "readonlyRootFilesystem": true,
+            "interactive": false,
+            "pseudoTerminal": false,
+            "logConfiguration": {
+                "logDriver": "syslog",
+                "options": {}
+            }
+        },
+        {
+            "name": "app",
+            "image": "",
+            "repositoryCredentials": {
+                "credentialsParameter": ""
+            },
+            "cpu": 200,
+            "memory": 200,
+            "essential": true,
+            "dependsOn": [
+                {
+                    "containerName": "api",
+                    "condition": "START"
+                }
+            ],
+            "hostname": "app",
+            "privileged": true,
+            "readonlyRootFilesystem": true,
+            "interactive": false,
+            "pseudoTerminal": false,
+            "logConfiguration": {
+                "logDriver": "syslog",
+                "options": {}
+            }
+        }
+    ],
+    "volumes": [
+        {
+            "name": "caddy_config",
+            "dockerVolumeConfiguration": {
+                "scope": "shared",
+                "autoprovision": true
+            }
+        },
+        {
+            "name": "caddy_data",
+            "dockerVolumeConfiguration": {
+                "scope": "shared",
+                "autoprovision": true
+            }
+        }
+    ],
+    "requiresCompatibilities": [
+        "EC2"
+    ],
+    "pidMode": "host",
+    "ipcMode": "host",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
+}

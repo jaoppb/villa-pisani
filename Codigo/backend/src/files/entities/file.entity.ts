@@ -8,5 +8,7 @@ export abstract class File {
 	name: string;
 
 	@Column()
-	url: string;
+	mimetype: string;
+
+	abstract getUrl(): string;
 }

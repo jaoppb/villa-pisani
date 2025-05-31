@@ -21,7 +21,7 @@ export class AppConfigService {
 				`database host: ${this.config.get<string>('DB_HOST')}`,
 			);
 			this.logger.debug(
-				`database port: ${this.config.get<number>('DB_INTERNAL_PORT')}`,
+				`database port: ${this.config.get<number>('DB_PORT')}`,
 			);
 			this.logger.debug(
 				`using database user: ${this.config.get<string>('DB_USER')}`,
@@ -66,6 +66,21 @@ export class AppConfigService {
 				)}, ${this.config.get<string>('API_ADDRESS_COUNTRY')}, ${this.config.get<string>(
 					'API_ADDRESS_CEP',
 				)}`,
+			);
+			this.logger.debug(
+				`aws endpoint: ${this.config.get<string>('API_AWS_ENDPOINT')}`,
+			);
+			this.logger.debug(
+				`aws bucket name: ${this.config.get<string>('API_AWS_BUCKET_NAME')}`,
+			);
+			this.logger.debug(
+				`aws access key id: ${this.config.get<string>('API_AWS_ACCESS_KEY_ID')}`,
+			);
+			this.logger.debug(
+				`aws secret access key: ${this.config.get<string>('API_AWS_SECRET_ACCESS_KEY')}`,
+			);
+			this.logger.debug(
+				`aws region: ${this.config.get<string>('API_AWS_REGION')}`,
 			);
 			this.logger.debug(
 				`file serving path: ${this.config.get<string>('API_FILE_SERVING_PATH')}`,
@@ -121,6 +136,26 @@ export class AppConfigService {
 		};
 	}
 
+	get AWSEndpoint(): string | undefined {
+		return this.config.get<string | undefined>('API_AWS_ENDPOINT');
+	}
+
+	get AWSBucketName(): string {
+		return this.config.get<string>('API_AWS_BUCKET_NAME')!;
+	}
+
+	get AWSAccessKeyId(): string {
+		return this.config.get<string>('API_AWS_ACCESS_KEY_ID')!;
+	}
+
+	get AWSSecretAccessKey(): string {
+		return this.config.get<string>('API_AWS_SECRET_ACCESS_KEY')!;
+	}
+
+	get AWSRegion(): string {
+		return this.config.get<string>('API_AWS_REGION')!;
+	}
+
 	get FileServingPath(): string {
 		return this.config.get<string>('API_FILE_SERVING_PATH')!;
 	}
@@ -134,7 +169,7 @@ export class AppConfigService {
 			type: this.config.get<string>('DB_TYPE'),
 			name: this.config.get<string>('DB_NAME'),
 			host: this.config.get<string>('DB_HOST'),
-			port: this.config.get<number>('DB_INTERNAL_PORT'),
+			port: this.config.get<number>('DB_PORT'),
 			username: this.config.get<string>('DB_USER'),
 			password: this.config.get<string>('DB_PASS'),
 		};

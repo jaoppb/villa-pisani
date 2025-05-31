@@ -1,4 +1,17 @@
 services:
+  localstack:
+    container_name: vp-localstack
+    image: localstack/localstack:latest
+    restart: unless-stopped
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+    volumes:
+      - localstack:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./localstack:/etc/localstack/init/ready.d
+    environment:
+     - AWS_SERVICES=s3
   db:
     container_name: vp-db
     image: mysql:8.0
@@ -37,12 +50,12 @@ services:
       - ./backend/.env
     environment:
       - DB_TYPE=mysql
-      - DB_HOST=db
+      - DB_HOST=${DB_HOST}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
-      - DB_INTERNAL_PORT=${DB_INTERNAL_PORT}
-      - API_INTERNAL_PORT=${API_INTERNAL_PORT}
+      - DB_PORT=${DB_INTERNAL_PORT}
+      - API_PORT=${API_INTERNAL_PORT}
     ports:
       - "${API_EXTERNAL_PORT}:${API_INTERNAL_PORT}"
       - "${API_DEBUG_EXTERNAL_PORT}:${API_DEBUG_INTERNAL_PORT}"
@@ -50,6 +63,8 @@ services:
       - ./backend/src:/app/src
     depends_on:
       - db
+      - localstack
+    command: npm run start:debug
   app:
     container_name: vp-app
     image: vp-app
@@ -65,7 +80,8 @@ services:
     depends_on:
       - api
     environment:
-      - API_URL=${API_INTERNAL_PORT}
+      - APP_PORT=${APP_INTERNAL_PORT}
 
 volumes:
   data:
+  localstack:
