@@ -88,10 +88,12 @@ jobs:
     - name: Modifiy task-definition with api container
       id: api-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
+      env:
+        API_IMAGE: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ needs.build.outputs.API_IMAGE_TAG }}
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: api
-        image: $ECR_REGISTRY/$ECR_REPOSITORY:${{ needs.build.outputs.API_IMAGE_TAG }}
+        image: ${{ env.API_IMAGE }}
         secrets: |
           DATABASE=arn:aws:secretsmanager:us-east-1:334908347312:secret:prod/villa-pisani/database-igWDv5
           API=arn:aws:secretsmanager:us-east-1:334908347312:secret:prod/villa-pisani/api-rftBfG
@@ -102,10 +104,12 @@ jobs:
     - name: Modify task definition with app container
       id: app-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
+      env:
+        APP_IMAGE: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ needs.build.outputs.APP_IMAGE_TAG }}
       with:
         task-definition: ${{ steps.api-container.outputs.task-definition }}
         container-name: app
-        image: $ECR_REGISTRY/$ECR_REPOSITORY:${{ needs.build.outputs.APP_IMAGE_TAG }}
+        image: ${{ env.APP_IMAGE }}
         env-files: |
           arn:aws:s3:::villa-pisani-bucket-deploy/common.env
           arn:aws:s3:::villa-pisani-bucket-deploy/app.env
@@ -113,10 +117,12 @@ jobs:
     - name: Modify task definition with proxy container
       id: proxy-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
+      env:
+        PROXY_IMAGE: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ needs.build.outputs.PROXY_IMAGE_TAG }}
       with:
         task-definition: ${{ steps.app-container.outputs.task-definition }}
         container-name: proxy
-        image: $ECR_REGISTRY/$ECR_REPOSITORY:${{ needs.build.outputs.PROXY_IMAGE_TAG }}
+        image: ${{ env.PROXY_IMAGE }}
         env-files: |
           arn:aws:s3:::villa-pisani-bucket-deploy/common.env
 
