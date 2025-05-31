@@ -12,3 +12,8 @@ export enum Month {
 	NOVEMBER = 'november',
 	DECEMBER = 'december',
 }
+
+export function fromDate(date: Date): Month {
+	const monthIndex = date.getMonth();
+	return Object.values(Month)[monthIndex] as Month;
+}

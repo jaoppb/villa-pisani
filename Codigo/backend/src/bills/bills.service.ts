@@ -15,7 +15,7 @@ import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { BillFile } from './files/entities/file.entity';
 import { BillFilesService } from './files/files.service';
 import { User } from 'src/user/entities/user.entity';
-import { Month } from './entities/month.entity';
+import { Month, toDate } from './entities/month.entity';
 import { BillState } from './entities/bill-state.entity';
 
 @Injectable()
@@ -176,7 +176,8 @@ export class BillsService {
 			},
 			metadata: {
 				apartmentNumber: apartment.number.toString(),
-				refer: createBillDto.refer,
+				month: createBillDto.refer.getMonth(),
+				year: createBillDto.refer.getFullYear().toString(),
 			},
 		});
 	}
@@ -198,11 +199,13 @@ export class BillsService {
 					60) *
 				1000,
 		);
-		bill.refer = createBillDto.refer;
+		bill.refer = new Date();
+		bill.refer.setFullYear(createBillDto.refer.getFullYear());
+		bill.refer.setMonth(createBillDto.refer.getMonth());
 		bill.apartment = apartment;
 
 		const billFile = await queryRunner.manager.save(BillFile, {
-			name: `${new Date().getFullYear()}-${bill.refer}-${bill.apartment.number}.pdf`,
+			name: `${bill.refer.getFullYear()}-${bill.getMonth()}-${bill.apartment.number}.pdf`,
 			mimetype: 'application/pdf',
 			url: '',
 		});
@@ -298,9 +301,10 @@ export class BillsService {
 	}
 
 	// TODO add paid filter
+	// TODO improve refer filter
 	async findAllFromUser(user: User): Promise<Bill[]>;
-	async findAllFromUser(user: User, refer: Month): Promise<Bill[]>;
-	async findAllFromUser(user: User, refer?: Month) {
+	async findAllFromUser(user: User, refer: [Month, number]): Promise<Bill[]>;
+	async findAllFromUser(user: User, refer?: [Month, number]) {
 		if (user.apartment === null || user.apartment === undefined) {
 			throw new BadRequestException(
 				'You are not assigned to an apartment',
@@ -326,7 +330,10 @@ export class BillsService {
 			.where('bill.apartment.number = :number', {
 				number: apartment!.number,
 			});
-		if (refer) queryBuilder.andWhere('bill.refer = :refer', { refer });
+		if (refer)
+			queryBuilder.andWhere('bill.refer = :refer', {
+				refer: toDate(refer[0], refer[1]),
+			});
 		const bills = await queryBuilder.getMany();
 		this.logger.log('Bills found', bills);
 		return bills;
