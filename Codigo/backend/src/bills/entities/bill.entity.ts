@@ -9,12 +9,16 @@ import {
 	Relation,
 } from 'typeorm';
 import { BillFile } from '../files/entities/file.entity';
-import { Month } from './month.entity';
+import { fromDate, Month } from './month.entity';
 import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { BillState } from './bill-state.entity';
 import { LazyMapTo } from 'src/interceptors/meta/lazy-map-to.decorator';
 
 @Entity('bills')
+@LazyMapTo({
+	path: 'bills/files/dto/read-file.dto',
+	className: 'ReadBillFileDto',
+})
 export class Bill {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;

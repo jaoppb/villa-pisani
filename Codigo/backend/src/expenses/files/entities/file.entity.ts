@@ -11,4 +11,8 @@ import { Entity, ManyToOne, Relation } from 'typeorm';
 export class ExpenseFile extends File {
 	@ManyToOne(() => Expense, (expense) => expense.files)
 	expense: Relation<Expense>;
+
+	getUrl(): string {
+		return `expenses/${this.expense.id}/${this.id}`;
+	}
 }

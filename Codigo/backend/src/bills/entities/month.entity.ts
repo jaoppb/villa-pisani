@@ -17,3 +17,11 @@ export function fromDate(date: Date): Month {
 	const monthIndex = date.getMonth();
 	return Object.values(Month)[monthIndex] as Month;
 }
+
+export function toDate(month: Month, year: number): Date {
+	const monthIndex = Object.values(Month).indexOf(month);
+	if (monthIndex === -1) {
+		throw new Error(`Invalid month: ${month}`);
+	}
+	return new Date(year, monthIndex, 1);
+}

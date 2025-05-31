@@ -6,4 +6,8 @@ import { Entity, OneToOne, Relation } from 'typeorm';
 export class BillFile extends File {
 	@OneToOne(() => Bill, (bill) => bill.file)
 	bill: Relation<Bill>;
+
+	getUrl(): string {
+		return `bills/${this.id}`;
+	}
 }

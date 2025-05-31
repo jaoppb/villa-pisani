@@ -4,13 +4,13 @@ import { ExpenseFile } from '../entities/file.entity';
 export class ReadExpenseFileDto extends OmitType(ExpenseFile, [
 	'expense',
 ] as const) {
+	url: string;
+
 	constructor(expenseFile: ExpenseFile) {
 		super();
 		Object.assign(this, expenseFile);
 		delete this['expense'];
 
-		const parts = this.url.split('/');
-		parts.splice(-2, 1);
-		this.url = parts.join('/');
+		this.url = expenseFile.getUrl();
 	}
 }
