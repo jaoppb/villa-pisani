@@ -36,6 +36,7 @@ FROM node:22-alpine AS prod
 RUN apk add --no-cache jq
 
 WORKDIR /app
+COPY ./scripts /app/scripts
 COPY --from=desc /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
-CMD ["node", "dist/main.js"]
+CMD ["./scripts/entrypoint.sh"]

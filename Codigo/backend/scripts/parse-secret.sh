@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 
 parse_secret() {
 	local secret=$1
