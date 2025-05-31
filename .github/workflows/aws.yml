@@ -89,8 +89,7 @@ jobs:
       id: api-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        API_IMAGE: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ needs.build.outputs.API_IMAGE_TAG }}
+        API_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ needs.build.outputs.API_IMAGE_TAG }}
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: api
@@ -108,8 +107,7 @@ jobs:
       id: app-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        APP_IMAGE: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ needs.build.outputs.APP_IMAGE_TAG }}
+        APP_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ needs.build.outputs.APP_IMAGE_TAG }}
       with:
         task-definition: ${{ steps.api-container.outputs.task-definition }}
         container-name: app
@@ -122,8 +120,7 @@ jobs:
       id: proxy-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        PROXY_IMAGE: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ needs.build.outputs.PROXY_IMAGE_TAG }}
+        PROXY_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ needs.build.outputs.PROXY_IMAGE_TAG }}
       with:
         task-definition: ${{ steps.app-container.outputs.task-definition }}
         container-name: proxy
