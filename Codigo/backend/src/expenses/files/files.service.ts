@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, QueryRunner, Repository } from 'typeorm';
+import { In, QueryRunner, Repository } from 'typeorm';
 import { ExpenseFile } from './entities/file.entity';
 import { Expense } from '../entities/expense.entity';
 import { FilesService } from 'src/files/files.service';
@@ -11,10 +11,7 @@ export class ExpenseFilesService {
 	constructor(
 		@InjectRepository(ExpenseFile)
 		private readonly filesRepository: Repository<ExpenseFile>,
-		@InjectRepository(Expense)
-		private readonly expensesRepository: Repository<Expense>,
 		private readonly filesService: FilesService,
-		private readonly dataSource: DataSource,
 	) {}
 
 	private async _uploadOne(
@@ -23,31 +20,23 @@ export class ExpenseFilesService {
 		incomeFile: Express.Multer.File,
 	) {
 		try {
-			let file = await queryRunner.manager.save(ExpenseFile, {
+			const file = await queryRunner.manager.save(ExpenseFile, {
 				name: incomeFile.originalname,
 				mimetype: incomeFile.mimetype,
 				expense,
-				url: '',
 			});
 			if (!file) {
 				this.logger.error('File create error');
 				throw new BadRequestException('File create error');
 			}
-			file.url = await this.filesService.saveFile(
+			await this.filesService.saveFile(
 				`expenses/${expense.id}/${file.id}`,
 				incomeFile.buffer,
 			);
 
-			if (!file.url) {
-				this.logger.error('File upload error');
-				throw new BadRequestException('File upload error');
-			}
-			file = await queryRunner.manager.save(ExpenseFile, file);
-
 			this.logger.log('File create', file);
-			return (await this.filesRepository.findOne({
+			return (await queryRunner.manager.findOne(ExpenseFile, {
 				where: { id: file.id },
-				select: ['id', 'name', 'url'],
 			}))!;
 		} catch (error) {
 			await this.filesService.deleteFolder(`expenses/${expense.id}/`);
@@ -61,14 +50,12 @@ export class ExpenseFilesService {
 		expense: Expense,
 		incomeFiles: Array<Express.Multer.File>,
 	) {
-		const parsedFiles: ExpenseFile[] = [];
+		const savedFiles: ExpenseFile[] = [];
 		try {
 			for (const file of incomeFiles) {
 				const data = await queryRunner.manager.save(ExpenseFile, {
 					name: file.originalname,
 					mimetype: file.mimetype,
-					expense,
-					url: '',
 				});
 				const url = await this.filesService.saveFile(
 					`expenses/${expense.id}/${data.id}`,
@@ -78,21 +65,12 @@ export class ExpenseFilesService {
 					this.logger.error('File upload error');
 					throw new BadRequestException('File upload error');
 				}
-				data.url = url;
-				parsedFiles.push(data);
+				savedFiles.push(data);
 			}
 
-			const savedFiles = await queryRunner.manager.save(
-				ExpenseFile,
-				parsedFiles,
-			);
-			this.logger.log('Files create all', savedFiles);
-
-			const all = await queryRunner.manager.find(ExpenseFile, {
-				where: { id: In(savedFiles.map((f) => f.id)) },
-				select: ['id', 'name', 'url'],
+			return await queryRunner.manager.find(ExpenseFile, {
+				where: { id: In(savedFiles.map((file) => file.id)) },
 			});
-			return all;
 		} catch (error) {
 			await this.filesService.deleteFolder(`expenses/${expense.id}`);
 			this.logger.error('File create all', error);
@@ -127,21 +105,24 @@ export class ExpenseFilesService {
 
 		const result = await this.filesRepository.remove(file);
 		await this.filesService.deleteFile(
-			`expenses/${file.expense.id}/${file.url}`,
+			`expenses/${file.expense.id}/${file.getUrl()}`,
 		);
 		this.logger.log('File remove', file);
 		return result;
 	}
 
 	async readFile(id: string) {
-		const file = await this.filesRepository.findOneBy({ id });
+		const file = await this.filesRepository.findOne({
+			where: { id },
+			relations: ['expense'],
+		});
 		if (!file) {
 			this.logger.error('File not found', id);
 			throw new BadRequestException('File not found');
 		}
 		return {
 			file,
-			data: await this.filesService.readFile(file.url),
+			data: await this.filesService.readFile(file.getUrl(true)),
 		};
 	}
 }

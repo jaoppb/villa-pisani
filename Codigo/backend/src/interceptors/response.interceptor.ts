@@ -101,7 +101,7 @@ export class ResponseInterceptor<
 		});
 		for (const { key, promise } of promises) {
 			const result = await promise;
-			mapped[key] = result;
+			if (result) mapped[key] = result;
 		}
 
 		return mapped;

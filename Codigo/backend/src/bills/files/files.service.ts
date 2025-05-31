@@ -13,7 +13,18 @@ export class BillFilesService {
 		private readonly filesRepository: Repository<BillFile>,
 	) {}
 
-	async download(billFile: BillFile, url: string): Promise<string> {
+	async download(
+		billFile: BillFile,
+		url: string,
+		tries: number = 5,
+	): Promise<string> {
+		if (tries <= 0) {
+			this.logger.error('Max retries reached for downloading Boleto');
+			throw new BadRequestException(
+				'Failed to download Boleto after multiple attempts',
+			);
+		}
+
 		const response = await fetch(url, {
 			redirect: 'manual',
 		});
@@ -32,6 +43,12 @@ export class BillFilesService {
 			throw new BadRequestException('Failed to download Boleto');
 		}
 
+		if (
+			!response.headers.get('content-type')?.includes('application/pdf')
+		) {
+			return this.download(billFile, url, tries - 1);
+		}
+
 		const buffer = await response.arrayBuffer();
 		return this.filesService.saveFile(
 			`bills/${billFile.id}`,
@@ -44,7 +61,7 @@ export class BillFilesService {
 		if (!file) {
 			throw new BadRequestException('File not found');
 		}
-		const data = await this.filesService.readFile(file.url);
+		const data = await this.filesService.readFile(file.getUrl());
 		return { file, data };
 	}
 
@@ -54,9 +71,9 @@ export class BillFilesService {
 			throw new BadRequestException('File not found');
 		}
 
-		this.logger.log(`Deleting file: ${file.url}`);
-		await this.filesService.deleteFile(file.url);
-		this.logger.log(`File deleted: ${file.url}`);
+		this.logger.log(`Deleting file: ${file.getUrl()}`);
+		await this.filesService.deleteFile(file.getUrl());
+		this.logger.log(`File deleted: ${file.getUrl()}`);
 
 		this.logger.log('Removing file record from database:', file);
 		const removed = await this.filesRepository.remove(file);

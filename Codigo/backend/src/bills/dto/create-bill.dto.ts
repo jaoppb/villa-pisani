@@ -1,13 +1,12 @@
 import {
 	ArrayMinSize,
 	IsArray,
-	IsEnum,
+	IsDateString,
 	IsNumber,
 	IsPositive,
 	Max,
 	Min,
 } from 'class-validator';
-import { Month } from '../entities/month.entity';
 
 export class CreateBillDto {
 	@IsNumber()
@@ -15,8 +14,8 @@ export class CreateBillDto {
 	@Max(49_999_99)
 	value: number;
 
-	@IsEnum(Month)
-	refer: Month;
+	@IsDateString()
+	refer: Date;
 
 	@Min(0)
 	@Max(60)
