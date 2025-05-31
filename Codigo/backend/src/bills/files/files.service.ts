@@ -13,7 +13,18 @@ export class BillFilesService {
 		private readonly filesRepository: Repository<BillFile>,
 	) {}
 
-	async download(billFile: BillFile, url: string): Promise<string> {
+	async download(
+		billFile: BillFile,
+		url: string,
+		tries: number = 5,
+	): Promise<string> {
+		if (tries <= 0) {
+			this.logger.error('Max retries reached for downloading Boleto');
+			throw new BadRequestException(
+				'Failed to download Boleto after multiple attempts',
+			);
+		}
+
 		const response = await fetch(url, {
 			redirect: 'manual',
 		});
@@ -30,6 +41,12 @@ export class BillFilesService {
 
 		if (!response.ok) {
 			throw new BadRequestException('Failed to download Boleto');
+		}
+
+		if (
+			!response.headers.get('content-type')?.includes('application/pdf')
+		) {
+			return this.download(billFile, url, tries - 1);
 		}
 
 		const buffer = await response.arrayBuffer();
