@@ -44,7 +44,7 @@ export class BillFilesService {
 		if (!file) {
 			throw new BadRequestException('File not found');
 		}
-		const data = await this.filesService.readFile(file.url);
+		const data = await this.filesService.readFile(file.getUrl());
 		return { file, data };
 	}
 
@@ -54,9 +54,9 @@ export class BillFilesService {
 			throw new BadRequestException('File not found');
 		}
 
-		this.logger.log(`Deleting file: ${file.url}`);
-		await this.filesService.deleteFile(file.url);
-		this.logger.log(`File deleted: ${file.url}`);
+		this.logger.log(`Deleting file: ${file.getUrl()}`);
+		await this.filesService.deleteFile(file.getUrl());
+		this.logger.log(`File deleted: ${file.getUrl()}`);
 
 		this.logger.log('Removing file record from database:', file);
 		const removed = await this.filesRepository.remove(file);

@@ -47,7 +47,7 @@ export class ExpenseFilesService {
 			this.logger.log('File create', file);
 			return (await this.filesRepository.findOne({
 				where: { id: file.id },
-				select: ['id', 'name', 'url'],
+				select: ['id', 'name'],
 			}))!;
 		} catch (error) {
 			await this.filesService.deleteFolder(`expenses/${expense.id}/`);
@@ -90,7 +90,7 @@ export class ExpenseFilesService {
 
 			const all = await queryRunner.manager.find(ExpenseFile, {
 				where: { id: In(savedFiles.map((f) => f.id)) },
-				select: ['id', 'name', 'url'],
+				select: ['id', 'name'],
 			});
 			return all;
 		} catch (error) {
@@ -127,7 +127,7 @@ export class ExpenseFilesService {
 
 		const result = await this.filesRepository.remove(file);
 		await this.filesService.deleteFile(
-			`expenses/${file.expense.id}/${file.url}`,
+			`expenses/${file.expense.id}/${file.getUrl()}`,
 		);
 		this.logger.log('File remove', file);
 		return result;
@@ -141,7 +141,7 @@ export class ExpenseFilesService {
 		}
 		return {
 			file,
-			data: await this.filesService.readFile(file.url),
+			data: await this.filesService.readFile(file.getUrl()),
 		};
 	}
 }
