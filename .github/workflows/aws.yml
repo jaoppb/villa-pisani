@@ -34,9 +34,9 @@ jobs:
     environment: production
 
     outputs:
-      API_IMAGE_TAG: ${{ steps.build-image.outputs.API_IMAGE_TAG }}
-      APP_IMAGE_TAG: ${{ steps.build-image.outputs.APP_IMAGE_TAG }}
-      PROXY_IMAGE_TAG: ${{ steps.build-image.outputs.PROXY_IMAGE_TAG }}
+      API_IMAGE: ${{ steps.build-image.outputs.API_IMAGE }}
+      APP_IMAGE: ${{ steps.build-image.outputs.APP_IMAGE }}
+      PROXY_IMAGE: ${{ steps.build-image.outputs.PROXY_IMAGE }}
 
     steps:
     - name: Checkout
@@ -62,7 +62,7 @@ jobs:
         cd ${{ matrix.context }}
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "${{ matrix.name }}_IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
+        echo "${{ matrix.name }}_IMAGE=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG:latest" >> $GITHUB_OUTPUT
 
   deploy:
     name: Deploy
@@ -87,7 +87,7 @@ jobs:
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: api
-        image: villa-pisani/${{ needs.build.outputs.API_IMAGE_TAG }}:latest
+        image: ${{ needs.build.outputs.API_IMAGE }}
         secrets: |
           DATABASE=arn:aws:secretsmanager:us-east-1:334908347312:secret:prod/villa-pisani/database-igWDv5
           API=arn:aws:secretsmanager:us-east-1:334908347312:secret:prod/villa-pisani/api-rftBfG
@@ -101,7 +101,7 @@ jobs:
       with:
         task-definition: ${{ steps.api-container.outputs.task-definition }}
         container-name: app
-        image: villa-pisani/${{ needs.build.outputs.APP_IMAGE_TAG }}:latest
+        image: ${{ needs.build.outputs.APP_IMAGE }}
         env-files: |
           arn:aws:s3:::villa-pisani-bucket-deploy/common.env
           arn:aws:s3:::villa-pisani-bucket-deploy/app.env
@@ -112,7 +112,7 @@ jobs:
       with:
         task-definition: ${{ steps.app-container.outputs.task-definition }}
         container-name: proxy
-        image: villa-pisani/${{ needs.build.outputs.PROXY_IMAGE_TAG }}:latest
+        image: ${{ needs.build.outputs.PROXY_IMAGE }}
         env-files: |
           arn:aws:s3:::villa-pisani-bucket-deploy/common.env
 
