@@ -6,8 +6,8 @@
         {
             "name": "proxy",
             "image": "",
-            "cpu": 512,
-            "memory": 1024,
+            "cpu": 200,
+            "memory": 200,
             "portMappings": [
                 {
                     "containerPort": 80,
@@ -54,8 +54,8 @@
         {
             "name": "api",
             "image": "",
-            "cpu": 1024,
-            "memory": 1024,
+            "cpu": 400,
+            "memory": 400,
             "essential": true,
             "hostname": "api",
             "privileged": true,
@@ -75,8 +75,8 @@
             "repositoryCredentials": {
                 "credentialsParameter": ""
             },
-            "cpu": 512,
-            "memory": 1024,
+            "cpu": 200,
+            "memory": 200,
             "essential": true,
             "dependsOn": [
                 {
