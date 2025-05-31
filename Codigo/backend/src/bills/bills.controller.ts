@@ -10,6 +10,7 @@ import {
 	Headers,
 	RawBody,
 	ParseIntPipe,
+	ParseDatePipe,
 } from '@nestjs/common';
 import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
@@ -25,8 +26,11 @@ export class BillsController {
 
 	@Post()
 	@Roles(Role.MANAGER)
-	create(@Body() createBillDto: CreateBillDto) {
-		return this.billsService.create(createBillDto);
+	create(
+		@Body() createBillDto: CreateBillDto,
+		@Body('refer', new ParseDatePipe()) refer: Date,
+	) {
+		return this.billsService.create({ ...createBillDto, refer });
 	}
 
 	@Post('webhook')

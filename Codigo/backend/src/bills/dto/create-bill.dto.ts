@@ -1,7 +1,7 @@
 import {
 	ArrayMinSize,
 	IsArray,
-	IsDate,
+	IsDateString,
 	IsNumber,
 	IsPositive,
 	Max,
@@ -14,7 +14,7 @@ export class CreateBillDto {
 	@Max(49_999_99)
 	value: number;
 
-	@IsDate()
+	@IsDateString()
 	refer: Date;
 
 	@Min(0)
