@@ -15,7 +15,7 @@ import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { BillFile } from './files/entities/file.entity';
 import { BillFilesService } from './files/files.service';
 import { User } from 'src/user/entities/user.entity';
-import { Month, toDate } from './entities/month.entity';
+import { fromDate, Month, toDate } from './entities/month.entity';
 import { BillState } from './entities/bill-state.entity';
 
 @Injectable()
@@ -182,16 +182,12 @@ export class BillsService {
 		});
 	}
 
-	private async _createBill(
-		queryRunner: QueryRunner,
+	private _createBill(
 		apartment: Apartment,
 		intent: Stripe.PaymentIntent,
 		createBillDto: CreateBillDto,
-	) {
-		const bill = new Bill();
-		bill.value = createBillDto.value;
-		bill.externalId = intent.id;
-		bill.dueDate = new Date(
+	): Partial<Bill> {
+		const dueDate = new Date(
 			(intent.created +
 				intent.payment_method_options!.boleto!.expires_after_days *
 					24 *
@@ -199,23 +195,35 @@ export class BillsService {
 					60) *
 				1000,
 		);
-		bill.refer = new Date();
-		bill.refer.setFullYear(createBillDto.refer.getFullYear());
-		bill.refer.setMonth(createBillDto.refer.getMonth());
-		bill.apartment = apartment;
+		const refer = new Date(0);
+		refer.setFullYear(refer.getFullYear());
+		refer.setMonth(refer.getMonth());
 
-		const billFile = await queryRunner.manager.save(BillFile, {
-			name: `${bill.refer.getFullYear()}-${bill.getMonth()}-${bill.apartment.number}.pdf`,
+		return {
+			value: createBillDto.value,
+			externalId: intent.id,
+			dueDate,
+			refer,
+			apartment,
+			state: BillState.PENDING,
+		};
+	}
+
+	private async _saveBillFile(
+		queryRunner: QueryRunner,
+		refer: Date,
+		apartment: Apartment,
+		intent: Stripe.PaymentIntent,
+	): Promise<BillFile> {
+		const file = await queryRunner.manager.save(BillFile, {
+			name: `${refer.getFullYear()}-${fromDate(refer)}-${apartment.number}.pdf`,
 			mimetype: 'application/pdf',
-			url: '',
 		});
-		billFile.url = await this.billFilesService.download(
-			billFile,
+		await this.billFilesService.download(
+			file,
 			intent.next_action!.boleto_display_details!.pdf!,
 		);
-		bill.file = await queryRunner.manager.save(BillFile, billFile);
-
-		return bill;
+		return file;
 	}
 
 	async create(createBillDto: CreateBillDto) {
@@ -247,7 +255,7 @@ export class BillsService {
 		await queryRunner.connect();
 		await queryRunner.startTransaction();
 
-		const bills: Bill[] = [];
+		const bills: Partial<Bill>[] = [];
 		try {
 			for (const intent of intents) {
 				const apartment = apartments.find(
@@ -263,11 +271,12 @@ export class BillsService {
 						`Apartment not found for payment intent ${intent.id}`,
 					);
 				}
-				const bill = await this._createBill(
+				const bill = this._createBill(apartment, intent, createBillDto);
+				bill.file = await this._saveBillFile(
 					queryRunner,
+					bill.refer!,
 					apartment,
 					intent,
-					createBillDto,
 				);
 				bills.push(bill);
 				this.logger.log('Bill created', bill);
