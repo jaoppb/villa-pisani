@@ -95,7 +95,8 @@ jobs:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: api
         image: ${{ env.API_IMAGE }}
-        environment-variables:
+        environment-variables: |
+          PLACEHOLDER=PLACEHOLDER
         secrets: |
           DATABASE=arn:aws:secretsmanager:us-east-1:334908347312:secret:prod/villa-pisani/database-igWDv5
           API=arn:aws:secretsmanager:us-east-1:334908347312:secret:prod/villa-pisani/api-rftBfG
