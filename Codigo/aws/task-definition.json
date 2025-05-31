@@ -45,10 +45,8 @@
             "interactive": false,
             "pseudoTerminal": false,
             "logConfiguration": {
-                "logDriver": "fluentd",
-                "options": {
-                    "KeyName": "proxy"
-                }
+                "logDriver": "syslog",
+                "options": {}
             }
         },
         {
@@ -63,10 +61,8 @@
             "interactive": false,
             "pseudoTerminal": false,
             "logConfiguration": {
-                "logDriver": "fluentd",
-                "options": {
-                    "KeyName": "api"
-                }
+                "logDriver": "syslog",
+                "options": {}
             }
         },
         {
@@ -91,10 +87,8 @@
             "interactive": false,
             "pseudoTerminal": false,
             "logConfiguration": {
-                "logDriver": "fluentd",
-                "options": {
-                    "KeyName": "app"
-                }
+                "logDriver": "syslog",
+                "options": {}
             }
         }
     ],
