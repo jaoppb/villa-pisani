@@ -39,4 +39,4 @@ WORKDIR /app
 COPY ./scripts /app/scripts
 COPY --from=desc /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
-CMD ["./scripts/entrypoint.sh"]
+ENTRYPOINT ["./scripts/entrypoint.sh"]
