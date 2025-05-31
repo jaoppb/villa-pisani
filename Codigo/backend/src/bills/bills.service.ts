@@ -223,7 +223,9 @@ export class BillsService {
 			file,
 			intent.next_action!.boleto_display_details!.pdf!,
 		);
-		return file;
+		return (await queryRunner.manager.findOneBy(BillFile, {
+			id: file.id,
+		}))!;
 	}
 
 	async create(createBillDto: CreateBillDto) {
@@ -282,7 +284,7 @@ export class BillsService {
 				this.logger.log('Bill created', bill);
 			}
 
-			const savedBills = await queryRunner.manager.save(bills);
+			const savedBills = await queryRunner.manager.save(Bill, bills);
 			this.logger.log('Bills saved', savedBills);
 			await queryRunner.commitTransaction();
 			return savedBills;
