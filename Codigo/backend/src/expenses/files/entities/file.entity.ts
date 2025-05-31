@@ -12,7 +12,11 @@ export class ExpenseFile extends File {
 	@ManyToOne(() => Expense, (expense) => expense.files)
 	expense: Relation<Expense>;
 
-	getUrl(): string {
-		return `expenses/${this.expense.id}/${this.id}`;
+	getUrl(): string;
+	getUrl(key?: boolean): string;
+	getUrl(key?: boolean): string {
+		return key !== undefined && key
+			? `expenses/${this.expense.id}/${this.id}`
+			: `expenses/${this.id}`;
 	}
 }

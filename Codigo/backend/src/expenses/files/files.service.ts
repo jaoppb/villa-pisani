@@ -134,14 +134,17 @@ export class ExpenseFilesService {
 	}
 
 	async readFile(id: string) {
-		const file = await this.filesRepository.findOneBy({ id });
+		const file = await this.filesRepository.findOne({
+			where: { id },
+			relations: ['expense'],
+		});
 		if (!file) {
 			this.logger.error('File not found', id);
 			throw new BadRequestException('File not found');
 		}
 		return {
 			file,
-			data: await this.filesService.readFile(file.getUrl()),
+			data: await this.filesService.readFile(file.getUrl(true)),
 		};
 	}
 }
