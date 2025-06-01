@@ -6,7 +6,7 @@ import { UpdateMeetingDto } from './dto/update-meeting.dto';
 export class MeetingsService {
 	create(
 		createMeetingDto: CreateMeetingDto,
-		files: Array<Express.Multer.File>,
+		file: Express.Multer.File,
 	) {
 		return 'This action adds a new meeting';
 	}

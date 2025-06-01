@@ -8,17 +8,17 @@ import {
 	Delete,
 	ParseDatePipe,
 	UseInterceptors,
-	UploadedFiles,
 	ParseFilePipe,
 	MaxFileSizeValidator,
 	FileTypeValidator,
+	UploadedFile,
 } from '@nestjs/common';
 import { MeetingsService } from './meetings.service';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('meetings')
 export class MeetingsController {
@@ -33,17 +33,14 @@ export class MeetingsController {
 
 	@Post()
 	@Roles(Role.MANAGER)
-	@UseInterceptors(FilesInterceptor('files'))
+	@UseInterceptors(FileInterceptor('files'))
 	create(
 		@Body() createMeetingDto: CreateMeetingDto,
 		@Body('date', new ParseDatePipe()) date: Date,
-		@UploadedFiles(MeetingsController.filePipe)
-		files: Array<Express.Multer.File>,
+		@UploadedFile(MeetingsController.filePipe)
+		file: Express.Multer.File,
 	) {
-		return this.meetingsService.create(
-			{ ...createMeetingDto, date },
-			files,
-		);
+		return this.meetingsService.create({ ...createMeetingDto, date }, file);
 	}
 
 	@Get()
