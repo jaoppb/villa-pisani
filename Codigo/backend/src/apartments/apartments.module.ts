@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { ApartmentsService } from './apartments.service';
 import { ApartmentsController } from './apartments.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,6 +9,7 @@ import { AppConfigModule } from 'src/app-config/app-config.module';
 import { AppConfigService } from 'src/app-config/app-config.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { EncryptionModule } from 'src/encryption/encryption.module';
+import { EventEmitterReadinessWatcher } from '@nestjs/event-emitter';
 
 @Module({
 	imports: [
@@ -28,9 +29,13 @@ import { EncryptionModule } from 'src/encryption/encryption.module';
 	providers: [ApartmentsService],
 	exports: [ApartmentsService],
 })
-export class ApartmentsModule implements OnModuleInit {
-	constructor(private readonly apartmentsService: ApartmentsService) {}
-	async onModuleInit() {
+export class ApartmentsModule implements OnApplicationBootstrap {
+	constructor(
+		private readonly apartmentsService: ApartmentsService,
+		private readonly eventEmitterReadinessWatcher: EventEmitterReadinessWatcher,
+	) {}
+	async onApplicationBootstrap() {
+		await this.eventEmitterReadinessWatcher.waitUntilReady();
 		await this.apartmentsService.generateApartments();
 	}
 }
