@@ -133,20 +133,9 @@ export class ApartmentComponent {
 		this.userToRemove = user;
 		this.isOpenModalRemoveUser = true;
 	}
-	handleIsOpenRemoveUserChange(isOpen: boolean): void {
-		this.isOpenModalRemoveUser = isOpen;
-	}
 
 	handleRemoveUser(userId: string): void {
 		this.users = this.users.filter(user => user.id !== userId);
-	}
-
-	handleIsOpenInviteChange(isOpen: boolean): void {
-		this.isOpenModalInvite = isOpen;
-	}
-
-	handleIsOpenUpdateUserChange(isOpen: boolean): void {
-		this.IsOpenModalUpdateUser = isOpen;
 	}
 
 	handleUpdateUser(user: User): void {
@@ -156,7 +145,6 @@ export class ApartmentComponent {
 	openModalUpdateUser(user: User) {
 		this.userUpdate = user;
 		this.IsOpenModalUpdateUser = true;
-		window.scrollTo({ top: 0, behavior: 'smooth' });
 	}
 
 	setPage(page: PageState) {

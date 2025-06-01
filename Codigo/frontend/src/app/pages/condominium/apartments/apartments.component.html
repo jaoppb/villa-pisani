@@ -26,8 +26,7 @@
 
 @if(this.IsOpenModalCreateApartment && this.isAdmin()){
 <app-modal-create-apartament
-	[isOpen]="IsOpenModalCreateApartment"
-	(isOpenChange)="handleIsOpenCreateApartmentChange($event)"
+	[(isOpen)]="IsOpenModalCreateApartment"
 	(newApartment)="handleCreateApartment($event)"
 />
 }

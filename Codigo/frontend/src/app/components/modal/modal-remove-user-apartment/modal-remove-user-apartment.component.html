@@ -1,4 +1,4 @@
-<app-modal-base [isOpen]="isOpen" (isOpenChange)="handleIsOpenChange($event)">
+<app-modal-base [(isOpen)]="isOpen" (isOpenChange)="isOpenChange.emit($event)">
 	<h1>Deseja remover "{{ user.name }}" do apartamento</h1>
 	<div>
 		<button class="close" (click)="handleIsOpenChange(!isOpen)">Não</button>

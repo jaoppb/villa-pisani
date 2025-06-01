@@ -27,7 +27,6 @@ export class ModalCreateDeliveryComponent {
   }
 
   handleIsOpenChange(isOpen: boolean): void {
-    this.isOpen = isOpen;
     this.isOpenChange.emit(this.isOpen);
   }
 

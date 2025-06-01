@@ -42,11 +42,6 @@ export class ApartmentsComponent {
 
   openModalCreateApartment() {
     this.IsOpenModalCreateApartment = true;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  handleIsOpenCreateApartmentChange(isOpen: boolean): void {
-    this.IsOpenModalCreateApartment = isOpen;
   }
 
   handleCreateApartment(apartment: Apartments): void {

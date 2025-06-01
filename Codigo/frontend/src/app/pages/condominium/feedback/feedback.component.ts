@@ -53,9 +53,6 @@ export class FeedbackComponent {
     this.openModal = true;
   }
 
-  handleIsOpenChange(isOpen: boolean) {
-    this.openModal = isOpen;
-  }
   handleNewFeedback(feedback: feedbackResponse) {
     this.feedbackList.unshift({
       ...feedback,

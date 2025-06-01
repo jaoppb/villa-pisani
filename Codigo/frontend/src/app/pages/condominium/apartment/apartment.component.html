@@ -94,22 +94,19 @@
 </main>
 @if(this.isOpenModalRemoveUser && this.isAdmin()){
 <app-modal-remove-user-apartment
-	[isOpen]="isOpenModalRemoveUser"
+	[(isOpen)]="isOpenModalRemoveUser"
 	[user]="userToRemove"
 	[apartmentId]="apartment.number"
-	(isOpenChange)="handleIsOpenRemoveUserChange($event)"
 	(removeUser)="handleRemoveUser($event)"
 />
 } @if(this.isOpenModalInvite && this.isAdmin()){
 <app-modal-apartment-invite
-	[isOpen]="isOpenModalInvite"
+	[(isOpen)]="isOpenModalInvite"
 	[apartmentId]="apartment.number"
-	(isOpenChange)="handleIsOpenInviteChange($event)"
 />
 } @if(this.IsOpenModalUpdateUser && this.isAdmin()){
 <app-modal-update-user
-	[isOpen]="IsOpenModalUpdateUser"
-	(isOpenChange)="handleIsOpenUpdateUserChange($event)"
+	[(isOpen)]="IsOpenModalUpdateUser"
 	[user]="userUpdate"
 	(userUpdated)="handleUpdateUser($event)"
 />

@@ -69,7 +69,6 @@ export class ModalUpdateUserComponent implements OnInit {
   }
 
   handleIsOpenChange(isOpen: boolean): void {
-    this.isOpen = isOpen;
     this.isOpenChange.emit(this.isOpen);
   }
 

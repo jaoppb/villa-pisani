@@ -32,8 +32,8 @@
 </main>
 @if(this.isOpenModalDeliveredCreate && this.isStaff()){
 <app-modal-create-delivery
-	(isOpen)="(this.isOpenModalDeliveredCreate)"
-	(isOpenChange)="this.modalDeliveredCreateChange($event)"
-></app-modal-create-delivery>
-
+	]
+	[(isOpen)]="isOpenModalDeliveredCreate"
+	(isOpenChange)="modalDeliveredCreateChange($event)"
+/>
 }

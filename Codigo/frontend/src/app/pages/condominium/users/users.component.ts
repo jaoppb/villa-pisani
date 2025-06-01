@@ -48,10 +48,6 @@ export class UsersComponent {
     return this.tokenStorage.hasManager;
   }
 
-  handleIsOpenUpdateUserChange(isOpen: boolean): void {
-    this.IsOpenModalUpdateUser = isOpen;
-  }
-
   handleUpdateUser(user: User): void {
     this.getUsers();
   }
@@ -59,6 +55,5 @@ export class UsersComponent {
   openModalUpdateUser(user: User) {
     this.userSelected = user;
     this.IsOpenModalUpdateUser = true;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

@@ -37,7 +37,6 @@ export class DeliverysComponent {
   }
 
   modalDeliveredCreateChange(isOpen: boolean) {
-    this.isOpenModalDeliveredCreate = isOpen;
     this.getDeliveries();
   }
 }

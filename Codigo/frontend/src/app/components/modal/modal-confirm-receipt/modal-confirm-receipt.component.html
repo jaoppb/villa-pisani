@@ -1,4 +1,4 @@
-<app-modal-base [isOpen]="isOpen" (isOpenChange)="handleIsOpenChange($event)">
+<app-modal-base [(isOpen)]="isOpen" (isOpenChange)="isOpenChange.emit($event)">
 	<h1>
 		Gostaria de confirma a entrega da Entrega "{{ this.delivery.sender }}""
 	</h1>
