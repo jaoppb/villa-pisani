@@ -56,6 +56,7 @@ export class ExpenseFilesService {
 				const data = await queryRunner.manager.save(ExpenseFile, {
 					name: file.originalname,
 					mimetype: file.mimetype,
+					expense,
 				});
 				const url = await this.filesService.saveFile(
 					`expenses/${expense.id}/${data.id}`,
