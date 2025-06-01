@@ -25,7 +25,6 @@ export class DeliverysComponent {
   }
 
   async getDeliveries() {
-    console.log('DeliverysComponent initialized');
     this.deliveryService.getDeliveries().subscribe((res: any) => {
       if (res.body) {
         this.deliveries = res.body;

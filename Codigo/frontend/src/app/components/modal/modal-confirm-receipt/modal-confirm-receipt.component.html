@@ -1,7 +1,6 @@
 <app-modal-base [isOpen]="isOpen" (isOpenChange)="handleIsOpenChange($event)">
 	<h1>
-		Gostaria de confirma a entrega da Entrega
-		<b>{{ this.delivery.sender }}</b>
+		Gostaria de confirma a entrega da Entrega "{{ this.delivery.sender }}""
 	</h1>
 	<div>
 		<button class="close" (click)="handleIsOpenChange(!isOpen)">Não</button>
