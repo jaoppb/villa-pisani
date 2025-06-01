@@ -7,10 +7,7 @@ import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { User } from 'src/user/entities/user.entity';
 
 @Module({
-	imports: [
-		TypeOrmModule.forFeature([Notice, Apartment, User]),
-
-	],
+	imports: [TypeOrmModule.forFeature([Notice, Apartment, User])],
 	controllers: [NoticesController],
 	providers: [NoticesService],
 })

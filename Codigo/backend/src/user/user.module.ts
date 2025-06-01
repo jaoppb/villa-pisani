@@ -9,11 +9,7 @@ import { AppConfigService } from 'src/app-config/app-config.service';
 import { UserGenerateService } from './user-generate.service';
 
 @Module({
-	imports: [
-		EncryptionModule,
-		TypeOrmModule.forFeature([User, Apartment]),
-
-	],
+	imports: [EncryptionModule, TypeOrmModule.forFeature([User, Apartment])],
 	controllers: [UserController],
 	providers: [UserService, UserGenerateService, AppConfigService],
 	exports: [UserService],
