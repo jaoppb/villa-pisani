@@ -34,7 +34,7 @@ export class MeetingsController {
 
 	@Post()
 	@Roles(Role.MANAGER)
-	@UseInterceptors(FileInterceptor('files'))
+	@UseInterceptors(FileInterceptor('file'))
 	create(
 		@Body() createMeetingDto: CreateMeetingDto,
 		@Body('date', new ParseDatePipe()) date: Date,
