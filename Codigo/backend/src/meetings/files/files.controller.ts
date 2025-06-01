@@ -1,17 +1,16 @@
-import { Controller, Get, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param, StreamableFile } from '@nestjs/common';
 import { MeetingFilesService } from './files.service';
 
-@Controller('files')
+@Controller('files/meetings')
 export class MeetingFilesController {
 	constructor(private readonly filesService: MeetingFilesService) {}
 
 	@Get(':id')
-	findOne(@Param('id') id: string) {
-		return this.filesService.findOne(id);
-	}
-
-	@Delete(':id')
-	remove(@Param('id') id: string) {
-		return this.filesService.remove(id);
+	async findOne(@Param('id') id: string) {
+		const { buffer, metadata } = await this.filesService.readFile(id);
+		return new StreamableFile(buffer, {
+			type: metadata.mimetype,
+			disposition: `attachment; filename="${metadata.name}"`,
+		});
 	}
 }
