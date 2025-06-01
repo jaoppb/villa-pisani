@@ -2,8 +2,10 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	JoinColumn,
 	OneToOne,
 	PrimaryGeneratedColumn,
+	Relation,
 	UpdateDateColumn,
 } from 'typeorm';
 import { MeetingFile } from '../files/entities/file.entity';
@@ -17,7 +19,8 @@ export class Meeting {
 		cascade: true,
 		eager: true,
 	})
-	file: MeetingFile;
+	@JoinColumn()
+	file: Relation<MeetingFile>;
 
 	@Column({ type: 'datetime' })
 	date: Date;
