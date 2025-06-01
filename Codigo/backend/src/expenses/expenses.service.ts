@@ -188,8 +188,24 @@ export class ExpensesService {
 			throw new NotFoundException('Expense not found');
 		}
 
-		const expense = await this.expensesRepository.remove(found);
-		this.logger.log('Expense remove', expense);
-		return expense;
+		const queryRunner = this.dataSource.createQueryRunner();
+
+		await queryRunner.connect();
+		await queryRunner.startTransaction();
+
+		try {
+			await this.filesService.removeByExpense(queryRunner, found);
+			const expense = await queryRunner.manager.remove(found);
+			this.logger.log('Expense remove', expense);
+
+			await queryRunner.commitTransaction();
+			return expense;
+		} catch (error) {
+			await queryRunner.rollbackTransaction();
+			this.logger.error('Error removing files folder', error);
+			throw new BadRequestException('Error removing files folder');
+		} finally {
+			await queryRunner.release();
+		}
 	}
 }
