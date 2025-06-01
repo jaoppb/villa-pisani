@@ -218,4 +218,40 @@ export class ApartmentsService {
 			await queryRunner.release();
 		}
 	}
+
+	findDeliveries(apartmentNumber: number) {
+		return this.apartmentsRepository
+			.findOne({
+				where: { number: apartmentNumber },
+				relations: ['deliveries', 'deliveries.receiver'],
+			})
+			.then((apartment) => {
+				if (!apartment) {
+					this.logger.warn('Apartment not found', apartmentNumber);
+					throw new NotFoundException('Apartment not found');
+				}
+
+				return apartment.deliveries.map((delivery) => ({
+					...delivery,
+					receiver: delivery.receiver.name,
+					apartment: apartment.number,
+				}));
+			});
+	}
+
+	findBills(apartmentNumber: number) {
+		return this.apartmentsRepository
+			.findOne({
+				where: { number: apartmentNumber },
+				relations: ['bills'],
+			})
+			.then((apartment) => {
+				if (!apartment) {
+					this.logger.warn('Apartment not found', apartmentNumber);
+					throw new NotFoundException('Apartment not found');
+				}
+
+				return apartment.bills;
+			});
+	}
 }
