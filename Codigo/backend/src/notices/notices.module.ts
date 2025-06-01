@@ -3,14 +3,13 @@ import { NoticesService } from './notices.service';
 import { NoticesController } from './notices.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notice } from './entities/notice.entity';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { User } from 'src/user/entities/user.entity';
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([Notice, Apartment, User]),
-		EventEmitterModule.forRoot(),
+
 	],
 	controllers: [NoticesController],
 	providers: [NoticesService],

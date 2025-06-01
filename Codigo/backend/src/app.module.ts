@@ -19,11 +19,13 @@ import { BillsModule } from './bills/bills.module';
 import { EntregasModule } from './entregas/entregas.module';
 import { RegrasModule } from './regras/regras.module';
 import { DeliveriesModule } from './deliveries/deliveries.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
 	imports: [
 		AppConfigModule,
 		DatabaseModule,
+		EventEmitterModule.forRoot(),
 		LoggerModule.forRoot({
 			pinoHttp: {
 				level: 'trace',
