@@ -1,27 +1,97 @@
 <main>
-	<h1>AP {{ apartment.number || 00 }}</h1>
-	@if(this.isAdmin()){
-	<div class="add-invite" (click)="invite()">Criar Convite</div>
-	}
-	<div class="inhabitant">
-		@for (user of this.users; track user.id) {
-		<div class="user-card" key="{user.id}">
-			<div class="user-info">
-				<h2>{{ user.name }}</h2>
-			</div>
-			<div class="options">
-				@if(this.isAdmin()){
-				<div (click)="openModalUpdateUser(user)">
-					<app-icons name="pen" />
+	<div class="header">
+		<h1>AP {{ apartment.number || 00 }}</h1>
+		<div class="btns">
+			<div class="btn-options">
+				@if(this.pageStade !== PageState.INHABITANT){
+				<div
+					class="btn add-invite"
+					(click)="setPage(PageState.INHABITANT)"
+				>
+					Ver Moradores
 				</div>
-				<app-icons name="trash" (click)="openModalRemoveUser(user)" />
+				} @if(this.pageStade !== PageState.BILL){
+				<div class="btn add-invite" (click)="setPage(PageState.BILL)">
+					Ver Boletos
+				</div>
+				} @if(this.pageStade !== PageState.DELIVERY){
+				<div
+					class="btn add-invite"
+					(click)="setPage(PageState.DELIVERY)"
+				>
+					Ver Entregas
+				</div>
 				}
 			</div>
+			@if(this.isAdmin()){
+			<div class="btn add-invite" (click)="invite()">Criar Convite</div>
+			}
+		</div>
+	</div>
+	<div class="body">
+		@if(this.pageStade === PageState.INHABITANT){
+		<div class="inhabitant">
+			@for (user of this.users; track user.id) {
+			<div class="user-card" key="{user.id}">
+				<div class="user-info">
+					<h2>{{ user.name }}</h2>
+				</div>
+				<div class="options">
+					@if(this.isAdmin()){
+					<div (click)="openModalUpdateUser(user)">
+						<app-icons name="pen" />
+					</div>
+					<app-icons
+						name="trash"
+						(click)="openModalRemoveUser(user)"
+					/>
+					}
+				</div>
+			</div>
+			}@empty{
+			<div class="empty no-users">
+				<p>Nenhum morador cadastrado.</p>
+			</div>
+			}
+		</div>
+		} @if(this.pageStade === PageState.BILL){
+		<div class="bill">
+			@for(bill of this.bills; track bill.id) { }@empty{
+			<div class="empty no-bills">
+				<p>Nenhum boleto registrado.</p>
+			</div>
+			}
+		</div>
+		} @if(this.pageStade === PageState.DELIVERY){
+		<div class="delivery">
+			@for(delivery of this.deliveries; track delivery.id) {
+			<a
+				[routerLink]="['/condominium/delivery', delivery.id]"
+				class="card-delivery"
+				[class.viewed]="delivery.status !== 'confirmed'"
+				[class.not-viewed]="delivery.status === 'confirmed'"
+			>
+				<h1>{{ delivery.sender }}</h1>
+				<div class="card-content">
+					<div>
+						<h2>Para:</h2>
+						<p>{{ delivery.recipient }}</p>
+					</div>
+					<div>
+						<h2>Recebido por:</h2>
+						<p>{{ delivery.receiver }}</p>
+					</div>
+				</div>
+			</a>
+			}@empty{
+			<div class="empty no-deliveries">
+				<p>Nenhuma entrega registrada.</p>
+			</div>
+			}
 		</div>
 		}
 	</div>
 </main>
-
 @if(this.isOpenModalRemoveUser && this.isAdmin()){
 <app-modal-remove-user-apartment
 	[isOpen]="isOpenModalRemoveUser"
