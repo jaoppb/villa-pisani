@@ -1,0 +1,24 @@
+<main>
+	<div class="header">
+		<h1>Regras e normas</h1>
+		<button (click)="openModalCreateRule()">Nova regra</button>
+	</div>
+	<div class="body">
+		@for(rule of this.rules; track rule.id; let idx = $index) {
+		<app-dropbox [title]="idx + 1 + '. ' + rule.title">
+			<p>{{ rule.body }}</p>
+		</app-dropbox>
+		}@empty {
+		<div class="empty no-rules">
+			<p>Nenhum regra cadastrada.</p>
+		</div>
+		}
+	</div>
+</main>
+
+@if(this.isOpenModalCreateRule) {
+<app-modal-create-rules
+	[(isOpen)]="isOpenModalCreateRule"
+	(newRule)="handleNewRule($event)"
+/>
+}

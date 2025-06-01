@@ -9,6 +9,7 @@ import { ApartmentGuard, IsAdminGuard, IsLoggedInGuard } from "../../guards/auth
 import { inject } from "@angular/core";
 import { DeliveryComponent } from "./delivery/delivery.component";
 import { DeliverysComponent } from "./deliverys/deliverys.component";
+import { RulesComponent } from "./rules/rules.component";
 
 export const routes: Routes = [
 	{
@@ -63,5 +64,9 @@ export const routes: Routes = [
 		path: 'delivery/:id',
 		component: DeliveryComponent,
 		data: { isDetailView: true },
+	},
+	{
+		path: 'rules',
+		component: RulesComponent
 	}
 ]
