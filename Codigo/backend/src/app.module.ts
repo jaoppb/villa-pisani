@@ -20,6 +20,7 @@ import { RegrasModule } from './regras/regras.module';
 import { DeliveriesModule } from './deliveries/deliveries.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { FilesModule } from './files/files.module';
+import { RulesModule } from './rules/rules.module';
 
 @Module({
 	imports: [
@@ -47,6 +48,7 @@ import { FilesModule } from './files/files.module';
 		BillsModule,
 		DeliveriesModule,
 		FilesModule,
+		RulesModule,
 		// EntregasModule,
 		// RegrasModule,
 	],
