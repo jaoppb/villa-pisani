@@ -1,0 +1,137 @@
+name: Deploy to Amazon ECS
+
+on:
+  release:
+    types: [published]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: villa-pisani
+  ECS_SERVICE: villa-pisani-cluster-service
+  ECS_CLUSTER: villa-pisani-cluster
+  ECS_TASK_DEFINITION: Codigo/aws/task-definition.json
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - context: ./Codigo/caddy
+            image_name: caddy
+            name: PROXY
+          - context: ./Codigo/frontend
+            image_name: frontend
+            name: APP
+          - context: ./Codigo/backend
+            image_name: backend
+            name: API
+    environment: production
+
+    outputs:
+      API_IMAGE_TAG: ${{ steps.build-image.outputs.API_IMAGE_TAG }}
+      APP_IMAGE_TAG: ${{ steps.build-image.outputs.APP_IMAGE_TAG }}
+      PROXY_IMAGE_TAG: ${{ steps.build-image.outputs.PROXY_IMAGE_TAG }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}-${{ matrix.image_name }}
+      run: |
+        cd ${{ matrix.context }}
+        docker build --target prod -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "${{ matrix.name }}_IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs:
+      - build
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Modifiy task-definition with api container
+      id: api-container
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      env:
+        API_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ needs.build.outputs.API_IMAGE_TAG }}
+      with:
+        task-definition: ${{ env.ECS_TASK_DEFINITION }}
+        container-name: api
+        image: ${{ env.API_IMAGE }}
+        environment-variables: |
+          PLACEHOLDER=PLACEHOLDER
+        secrets: |
+          DATABASE=arn:aws:secretsmanager:us-east-1:334908347312:secret:prod/villa-pisani/database-igWDv5
+          API=arn:aws:secretsmanager:us-east-1:334908347312:secret:prod/villa-pisani/api-rftBfG
+        env-files: |
+          arn:aws:s3:::villa-pisani-bucket-deploy/common.env
+          arn:aws:s3:::villa-pisani-bucket-deploy/api.env
+
+    - name: Modify task definition with app container
+      id: app-container
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      env:
+        APP_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ needs.build.outputs.APP_IMAGE_TAG }}
+      with:
+        task-definition: ${{ steps.api-container.outputs.task-definition }}
+        container-name: app
+        image: ${{ env.APP_IMAGE }}
+        env-files: |
+          arn:aws:s3:::villa-pisani-bucket-deploy/common.env
+          arn:aws:s3:::villa-pisani-bucket-deploy/app.env
+    
+    - name: Modify task definition with proxy container
+      id: proxy-container
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      env:
+        PROXY_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ needs.build.outputs.PROXY_IMAGE_TAG }}
+      with:
+        task-definition: ${{ steps.app-container.outputs.task-definition }}
+        container-name: proxy
+        image: ${{ env.PROXY_IMAGE }}
+        env-files: |
+          arn:aws:s3:::villa-pisani-bucket-deploy/common.env
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.proxy-container.outputs.task-definition }}
+        service: ${{ env.ECS_SERVICE }}
+        cluster: ${{ env.ECS_CLUSTER }}
+        wait-for-service-stability: true

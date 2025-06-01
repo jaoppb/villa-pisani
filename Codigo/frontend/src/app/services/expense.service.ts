@@ -44,7 +44,7 @@ export class ExpenseService {
 	}
 
 	downloadFIle(url: string) {
-		return this.http.get(url, {
+		return this.http.get(`files/${url}`, {
 			responseType: 'blob',
 		})
 	}

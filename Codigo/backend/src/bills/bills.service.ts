@@ -15,7 +15,7 @@ import { Apartment } from 'src/apartments/entities/apartment.entity';
 import { BillFile } from './files/entities/file.entity';
 import { BillFilesService } from './files/files.service';
 import { User } from 'src/user/entities/user.entity';
-import { Month } from './entities/month.entity';
+import { fromDate, Month, toDate } from './entities/month.entity';
 import { BillState } from './entities/bill-state.entity';
 
 @Injectable()
@@ -176,21 +176,18 @@ export class BillsService {
 			},
 			metadata: {
 				apartmentNumber: apartment.number.toString(),
-				refer: createBillDto.refer,
+				month: createBillDto.refer.getMonth(),
+				year: createBillDto.refer.getFullYear().toString(),
 			},
 		});
 	}
 
-	private async _createBill(
-		queryRunner: QueryRunner,
+	private _createBill(
 		apartment: Apartment,
 		intent: Stripe.PaymentIntent,
 		createBillDto: CreateBillDto,
-	) {
-		const bill = new Bill();
-		bill.value = createBillDto.value;
-		bill.externalId = intent.id;
-		bill.dueDate = new Date(
+	): Partial<Bill> {
+		const dueDate = new Date(
 			(intent.created +
 				intent.payment_method_options!.boleto!.expires_after_days *
 					24 *
@@ -198,19 +195,37 @@ export class BillsService {
 					60) *
 				1000,
 		);
-		bill.refer = createBillDto.refer;
-		bill.apartment = apartment;
+		const refer = new Date(0);
+		refer.setFullYear(createBillDto.refer.getFullYear());
+		refer.setMonth(createBillDto.refer.getMonth());
 
-		const billFile = await queryRunner.manager.save(BillFile, {
-			name: `${new Date().getFullYear()}-${bill.refer}-${bill.apartment.number}.pdf`,
-			url: await this.billFilesService.download(
-				bill,
-				intent.next_action!.boleto_display_details!.pdf!,
-			),
+		return {
+			value: createBillDto.value,
+			externalId: intent.id,
+			dueDate,
+			refer,
+			apartment,
+			state: BillState.PENDING,
+		};
+	}
+
+	private async _saveBillFile(
+		queryRunner: QueryRunner,
+		refer: Date,
+		apartment: Apartment,
+		intent: Stripe.PaymentIntent,
+	): Promise<BillFile> {
+		const file = await queryRunner.manager.save(BillFile, {
+			name: `${refer.getFullYear()}-${fromDate(refer)}-${apartment.number}.pdf`,
+			mimetype: 'application/pdf',
 		});
-		bill.file = billFile;
-
-		return bill;
+		await this.billFilesService.download(
+			file,
+			intent.next_action!.boleto_display_details!.pdf!,
+		);
+		return (await queryRunner.manager.findOneBy(BillFile, {
+			id: file.id,
+		}))!;
 	}
 
 	async create(createBillDto: CreateBillDto) {
@@ -242,7 +257,7 @@ export class BillsService {
 		await queryRunner.connect();
 		await queryRunner.startTransaction();
 
-		const bills: Bill[] = [];
+		const bills: Partial<Bill>[] = [];
 		try {
 			for (const intent of intents) {
 				const apartment = apartments.find(
@@ -258,17 +273,18 @@ export class BillsService {
 						`Apartment not found for payment intent ${intent.id}`,
 					);
 				}
-				const bill = await this._createBill(
+				const bill = this._createBill(apartment, intent, createBillDto);
+				bill.file = await this._saveBillFile(
 					queryRunner,
+					bill.refer!,
 					apartment,
 					intent,
-					createBillDto,
 				);
 				bills.push(bill);
 				this.logger.log('Bill created', bill);
 			}
 
-			const savedBills = await queryRunner.manager.save(bills);
+			const savedBills = await queryRunner.manager.save(Bill, bills);
 			this.logger.log('Bills saved', savedBills);
 			await queryRunner.commitTransaction();
 			return savedBills;
@@ -276,7 +292,7 @@ export class BillsService {
 			for (const { file } of bills) {
 				if (!file) continue;
 
-				await this.billFilesService.deleteFile(file.bill);
+				await this.billFilesService.deleteFile(file.id);
 			}
 
 			this.logger.error('Failed to save the bill', error);
@@ -296,9 +312,10 @@ export class BillsService {
 	}
 
 	// TODO add paid filter
+	// TODO improve refer filter
 	async findAllFromUser(user: User): Promise<Bill[]>;
-	async findAllFromUser(user: User, refer: Month): Promise<Bill[]>;
-	async findAllFromUser(user: User, refer?: Month) {
+	async findAllFromUser(user: User, refer: [Month, number]): Promise<Bill[]>;
+	async findAllFromUser(user: User, refer?: [Month, number]) {
 		if (user.apartment === null || user.apartment === undefined) {
 			throw new BadRequestException(
 				'You are not assigned to an apartment',
@@ -324,7 +341,10 @@ export class BillsService {
 			.where('bill.apartment.number = :number', {
 				number: apartment!.number,
 			});
-		if (refer) queryBuilder.andWhere('bill.refer = :refer', { refer });
+		if (refer)
+			queryBuilder.andWhere('bill.refer = :refer', {
+				refer: toDate(refer[0], refer[1]),
+			});
 		const bills = await queryBuilder.getMany();
 		this.logger.log('Bills found', bills);
 		return bills;
@@ -357,7 +377,7 @@ export class BillsService {
 			throw new NotFoundException('Bill not found');
 		}
 
-		await this.billFilesService.deleteFile(bill);
+		await this.billFilesService.deleteFile(bill.file.id);
 		const removed = await this.billRepository.remove(bill);
 		this.logger.log('Bill removed', id);
 		return removed;

@@ -10,7 +10,6 @@ import { AuthModule } from './auth/auth.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ExpensesModule } from './expenses/expenses.module';
-import { FileServeController } from './files/files.controller';
 import { GlobalGuard } from './auth/guards/global.guard';
 import { ApartmentsModule } from './apartments/apartments.module';
 import { NoticesModule } from './notices/notices.module';
@@ -20,6 +19,7 @@ import { EntregasModule } from './entregas/entregas.module';
 import { RegrasModule } from './regras/regras.module';
 import { DeliveriesModule } from './deliveries/deliveries.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { FilesModule } from './files/files.module';
 
 @Module({
 	imports: [
@@ -46,10 +46,11 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 		NoticesModule,
 		BillsModule,
 		DeliveriesModule,
+		FilesModule,
 		// EntregasModule,
 		// RegrasModule,
 	],
-	controllers: [AppController, FileServeController],
+	controllers: [AppController],
 	providers: [
 		AppService,
 		CustomLogger,

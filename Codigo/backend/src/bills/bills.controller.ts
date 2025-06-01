@@ -9,6 +9,8 @@ import {
 	ParseEnumPipe,
 	Headers,
 	RawBody,
+	ParseIntPipe,
+	ParseDatePipe,
 } from '@nestjs/common';
 import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
@@ -24,8 +26,11 @@ export class BillsController {
 
 	@Post()
 	@Roles(Role.MANAGER)
-	create(@Body() createBillDto: CreateBillDto) {
-		return this.billsService.create(createBillDto);
+	create(
+		@Body() createBillDto: CreateBillDto,
+		@Body('refer', new ParseDatePipe()) refer: Date,
+	) {
+		return this.billsService.create({ ...createBillDto, refer });
 	}
 
 	@Post('webhook')
@@ -47,9 +52,11 @@ export class BillsController {
 	@Roles(Role.INHABITANT)
 	findSelf(
 		@Req() req: Request,
-		@Param('refer', new ParseEnumPipe(Month)) refer: Month,
+		@Param('month', new ParseEnumPipe(Month)) month: Month,
+		@Param('year', new ParseIntPipe())
+		year: number,
 	) {
-		return this.billsService.findAllFromUser(req.user, refer);
+		return this.billsService.findAllFromUser(req.user, [month, year]);
 	}
 
 	@Get(':id')
