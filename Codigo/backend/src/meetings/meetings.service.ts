@@ -4,7 +4,10 @@ import { UpdateMeetingDto } from './dto/update-meeting.dto';
 
 @Injectable()
 export class MeetingsService {
-	create(createMeetingDto: CreateMeetingDto) {
+	create(
+		createMeetingDto: CreateMeetingDto,
+		files: Array<Express.Multer.File>,
+	) {
 		return 'This action adds a new meeting';
 	}
 
