@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MeetingFilesService {
-	findOne(id: number) {
+	findOne(id: string) {
 		return `This action returns a #${id} file`;
 	}
 
-	remove(id: number) {
+	remove(id: string) {
 		return `This action removes a #${id} file`;
 	}
 }

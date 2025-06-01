@@ -7,11 +7,11 @@ export class MeetingFilesController {
 
 	@Get(':id')
 	findOne(@Param('id') id: string) {
-		return this.filesService.findOne(+id);
+		return this.filesService.findOne(id);
 	}
 
 	@Delete(':id')
 	remove(@Param('id') id: string) {
-		return this.filesService.remove(+id);
+		return this.filesService.remove(id);
 	}
 }
