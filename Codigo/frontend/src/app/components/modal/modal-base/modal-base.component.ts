@@ -18,6 +18,7 @@ export class ModalBaseComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.focusModal();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   handleIsOpenChange(isOpen: boolean): void {
@@ -44,7 +45,6 @@ export class ModalBaseComponent implements OnInit, OnDestroy, AfterViewInit {
   focusModal() {
     if (this.isOpen && this.modalRoot) {
       setTimeout(() => this.modalRoot.nativeElement.focus(), 0);
-      console.log('Modal focused');
     }
   }
 
