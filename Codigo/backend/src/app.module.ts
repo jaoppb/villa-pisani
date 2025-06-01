@@ -19,6 +19,7 @@ import { EntregasModule } from './entregas/entregas.module';
 import { RegrasModule } from './regras/regras.module';
 import { DeliveriesModule } from './deliveries/deliveries.module';
 import { FilesModule } from './files/files.module';
+import { MeetingsModule } from './meetings/meetings.module';
 
 @Module({
 	imports: [
@@ -45,6 +46,7 @@ import { FilesModule } from './files/files.module';
 		BillsModule,
 		DeliveriesModule,
 		FilesModule,
+		MeetingsModule,
 		// EntregasModule,
 		// RegrasModule,
 	],
