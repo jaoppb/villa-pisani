@@ -19,6 +19,7 @@ import { UpdateMeetingDto } from './dto/update-meeting.dto';
 import { Roles } from 'src/auth/roles/role.decorator';
 import { Role } from 'src/auth/roles/role.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ParseOptionalDatePipe } from 'src/pipes/parse-optional-date.pipe';
 
 @Controller('meetings')
 export class MeetingsController {
@@ -58,7 +59,7 @@ export class MeetingsController {
 	update(
 		@Param('id') id: string,
 		@Body() updateMeetingDto: UpdateMeetingDto,
-		@Body('date', new ParseDatePipe({ optional: true })) date?: Date,
+		@Body('date', ParseOptionalDatePipe) date?: Date,
 	) {
 		return this.meetingsService.update(id, { ...updateMeetingDto, date });
 	}
