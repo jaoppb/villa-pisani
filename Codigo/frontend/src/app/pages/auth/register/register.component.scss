@@ -1,7 +1,7 @@
-@use 'auth' as main;
-@include main.main;
+@use 'mixins';
+@include mixins.auth();
 
-form{
+form {
 	height: 100%;
 	display: flex;
 	flex-direction: column;

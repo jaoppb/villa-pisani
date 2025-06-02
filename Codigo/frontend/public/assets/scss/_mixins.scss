@@ -130,3 +130,59 @@
 	background-color: var(--background-color-app);
 	border-radius: 5px;
 }
+
+@mixin auth() {
+	:host {
+		display: block;
+		height: 100%;
+		width: 100%;
+	}
+
+	h1 {
+		@include title-page;
+		margin-bottom: 40px;
+	}
+
+	form {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 30px 10px;
+		padding-bottom: 50px;
+	}
+
+	.input-group {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+
+		app-input {
+			width: 100%;
+		}
+	}
+
+	.button-group {
+		width: 100%;
+		text-align: center;
+
+		.error-messages {
+			color: var(--error-message-color);
+			min-height: 20px;
+			margin-top: 5px;
+		}
+
+		a {
+			font-size: 1.1rem;
+		}
+
+		button {
+			@include button('rounded');
+			font-weight: bolder;
+			font-size: 1.2rem;
+			width: 100%;
+			margin-top: 10px;
+		}
+	}
+}
