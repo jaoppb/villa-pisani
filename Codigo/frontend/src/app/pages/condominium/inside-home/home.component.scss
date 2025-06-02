@@ -1,65 +1,79 @@
-.home-container {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+.mural, .comunicados {
+  width: 100%;
+  max-width: 1200px;
+  margin: 2rem 1rem;
 
-	.hero {
-		position: relative;
-		width: 100%;
-		height: 90vh;
-		overflow: hidden;
+  h2 {
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
 
-		img {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			filter: brightness(70%);
-		}
+    .svg-mural, .svg-comunicados {
+      width: 30px;
+      height: 30px;
+      background-color: #ccc; // espaço para o SVG
+    }
+  }
 
-		.overlay-text {
-			position: absolute;
-			display: block;
-			width: 100%;
-			max-width: 600px;
-			top: 30%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			text-align: center;
-			color: #fff;
-			z-index: 2;
-			font-size: 2.7rem;
-		}
-	}
+  .cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
 
-	.servicos {
-		display: flex;
-		justify-content: center;
-		flex-wrap: wrap;
-		gap: 2rem;
-		margin: 3rem 1rem;
-	
-		.servico-item {
-			width: 200px;
-			text-align: center;
-	
-			img {
-			width: 60px;
-			height: 60px;
-			margin-bottom: 0.8rem;
-			}
-	
-			h3 {
-			font-size: 1.2rem;
-			margin-bottom: 0.5rem;
-			}
-	
-			p {
-			font-size: 0.9rem;
-			color: #555;
-			}
-		}
-	}
+    .card {
+      background: #fff;
+      border: 2px solid #f0c36d;
+      border-radius: 10px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 150px;
+      transition: border-color 0.3s ease;
+
+      .card-content {
+        p {
+          font-size: 1rem;
+          font-weight: 500;
+          margin-bottom: 0.5rem;
+        }
+
+        small {
+          font-size: 0.75rem;
+          color: #777;
+        }
+      }
+
+      .svg-lupa {
+        margin-top: auto;
+        align-self: flex-end;
+        width: 20px;
+        height: 20px;
+        background-color: #ccc; // espaço para o SVG
+      }
+
+      &:hover {
+        border-color: #18726e; // verde no hover
+      }
+    }
+
+    .leia-mais {
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: center;
+      transition: border-color 0.3s ease;
+      
+      p {
+        margin: 0;
+      }
+
+      &:hover {
+        border-color: #18726e;
+      }
+    }
+  }
 }

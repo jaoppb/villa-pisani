@@ -23,7 +23,7 @@ export class FeedbackComponent {
     this.meta.setMetaData({
       title: 'Ouvidoria',
       description: 'Feedback do comdominio',
-      keywords: 'feedback, review, vila pisane',
+      keywords: 'feedback, review, villa pisani',
     });
     this.isAdmin = this.tokenService.hasManager;
     this.getFeedbackList();
