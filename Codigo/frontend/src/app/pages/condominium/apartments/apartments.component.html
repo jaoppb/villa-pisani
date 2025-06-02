@@ -1,26 +1,25 @@
 <main>
-	<h1>Apartamentos</h1>
-	<div>
-		@for (apartment of apartments; track apartment.number) {
+	<div class="header">
+		<h1>Apartamentos</h1>
+		<button>Criar boletos</button>
+	</div>
+	<div class="apartments-list">
+		<div
+			class="apartment-card card-add"
+			(click)="openModalCreateApartment()"
+		>
+			<app-icons name="plus" size="72" stroke="1" />
+		</div>
+		@for (apartment of apartments.slice().reverse(); track apartment.number)
+		{
 		<a
 			[routerLink]="['/condominium/apartment', apartment.number]"
 			class="apartment-card"
 			key="{apartment.number}"
 		>
-			<div>
-				<h2>AP-{{ apartment.number || 00 }}</h2>
-			</div>
-			<div>
-				<app-icons name="pen" />
-			</div>
+			{{ apartment.number }}
 		</a>
 		}
-		<div
-			class="apartment-card card-add"
-			(click)="openModalCreateApartment()"
-		>
-			<app-icons name="plus" />
-		</div>
 	</div>
 </main>
 
