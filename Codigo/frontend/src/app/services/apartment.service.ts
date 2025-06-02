@@ -2,6 +2,8 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Apartments, InviteResponse } from "../model/apartment.model";
 import { tap } from "rxjs";
+import { Delivery } from "../model/delivery.model";
+import { Bill } from "../model/bill.model";
 
 @Injectable({
     providedIn: 'root',
@@ -21,6 +23,14 @@ export class ApartmentService {
 
     getInhabitants(id: number) {
         return this.http.get(`apartments/${id}/inhabitants`, { observe: 'response' });
+    }
+
+    getDeliveries(id: number) {
+        return this.http.get<Delivery[]>(`apartments/${id}/deliveries`, { observe: 'response' });
+    }
+
+    getBills(id: number) {
+        return this.http.get<Bill[]>(`apartments/${id}/bills`, { observe: 'response' });
     }
 
     createApartment(data: Apartments) {
@@ -53,11 +63,20 @@ export class ApartmentService {
         return this.http.delete(`apartments/${id}/inhabitants/${inhabitantId}`, { observe: 'response' });
     }
 
-    getApartmentLoginUser() {
+
+    getCurrentUserApartment() {
         return this.http.get<Apartments>('apartments/self', { observe: 'response' });
     }
 
-    getApartmentLoginUserInhabitants() {
+    getCurrentUserApartmentInhabitants() {
         return this.http.get<Apartments>('apartments/self/inhabitants', { observe: 'response' });
+    }
+
+    getCurrentUserApartmentDeliveries() {
+        return this.http.get<Apartments>('apartments/self/deliveries', { observe: 'response' });
+    }
+
+    getCurrentUserApartmentBills() {
+        return this.http.get<Apartments>('apartments/self/bills', { observe: 'response' });
     }
 }

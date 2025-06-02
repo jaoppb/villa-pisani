@@ -1,4 +1,6 @@
-:host{
+@use 'mixins';
+
+:host {
 	position: absolute;
 	height: 100vh;
 	width: 100vw;
@@ -6,13 +8,11 @@
 	color: var(--black);
 }
 
-h1{
-	font-size: 3.5rem;
-	text-align: center;
-	color: var(--blue-gray);
+h1 {
+	@include mixins.title-page;
 }
 
-form{
+form {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -20,21 +20,15 @@ form{
 	margin-top: 20px;
 }
 
-#description{
+#description {
 	width: 100%;
 	height: 150px;
 }
 
-button{
-	background-color: var(--primary-highlight-color);
+button {
+	@include mixins.button('rounded');
 	width: 100%;
-	color: var(--white);
-	font-weight: bolder;
-	border: none;
-	padding: 10px;
 	border-radius: 500px;
 	font-size: 1.2rem;
-	cursor: pointer;
-	transition: background-color 0.3s;
 	margin-top: 10px;
 }

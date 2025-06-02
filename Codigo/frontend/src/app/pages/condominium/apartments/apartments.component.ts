@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { DropboxComponent } from '../../../components/dropbox/dropbox.component';
 import { IconsComponent } from '../../../components/icons/iconBase/icons.component';
 import { RouterModule } from '@angular/router';
 import { MetaData } from '../../../services/meta-data.service';
@@ -7,16 +6,19 @@ import { ApartmentService } from '../../../services/apartment.service';
 import { Apartments } from '../../../model/apartment.model';
 import { ModalCreateApartamentComponent } from '../../../components/modal/modal-create-apartament/modal-create-apartament.component';
 import { AccessTokenService } from '../../../services/accessToken.service';
+import { ModalCreateBillComponent } from '../../../components/modal/modal-create-bill/modal-create-bill.component';
 
 @Component({
   selector: 'app-apartments',
-  imports: [ModalCreateApartamentComponent, IconsComponent, RouterModule],
+  imports: [ModalCreateApartamentComponent, IconsComponent, RouterModule, ModalCreateBillComponent],
   templateUrl: './apartments.component.html',
   styleUrl: './apartments.component.scss'
 })
 export class ApartmentsComponent {
-  IsOpenModalCreateApartment: boolean = false;
   apartments: Apartments[] = [];
+  // Modal
+  IsOpenModalCreateApartment: boolean = false;
+  IsOpenModalCreateBill: boolean = true;
 
   constructor(
     private meta: MetaData,
@@ -42,11 +44,10 @@ export class ApartmentsComponent {
 
   openModalCreateApartment() {
     this.IsOpenModalCreateApartment = true;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  handleIsOpenCreateApartmentChange(isOpen: boolean): void {
-    this.IsOpenModalCreateApartment = isOpen;
+  openModalCreateBill() {
+    this.IsOpenModalCreateBill = true;
   }
 
   handleCreateApartment(apartment: Apartments): void {

@@ -48,7 +48,9 @@ export class ModalFeedbackComponent {
   }
 
   handleIsOpenChange(isOpen: boolean): void {
-    this.isOpen = isOpen;
     this.isOpenChange.emit(this.isOpen);
+    if (!isOpen) {
+      this.form.reset();
+    }
   }
 }

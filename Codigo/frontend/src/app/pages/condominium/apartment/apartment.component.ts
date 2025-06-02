@@ -9,6 +9,14 @@ import { IconsComponent } from '../../../components/icons/iconBase/icons.compone
 import { ModalRemoveUserApartmentComponent } from '../../../components/modal/modal-remove-user-apartment/modal-remove-user-apartment.component';
 import { ModalApartmentInviteComponent } from '../../../components/modal/modal-apartment-invite/modal-apartment-invite.component';
 import { ModalUpdateUserComponent } from '../../../components/modal/modal-update-user/modal-update-user.component';
+import { Delivery } from '../../../model/delivery.model';
+import { Bill } from '../../../model/bill.model';
+
+enum PageState {
+	INHABITANT = 'inhabitant',
+	BILL = 'bill',
+	DELIVERY = 'delivery',
+}
 
 @Component({
 	selector: 'app-apartment',
@@ -19,12 +27,20 @@ import { ModalUpdateUserComponent } from '../../../components/modal/modal-update
 export class ApartmentComponent {
 	apartment!: Apartments;
 	users: User[] = [];
+	deliveries: Delivery[] = [];
+	bills: Bill[] = [];
+	PageState = PageState;
+
+	// Modal states
 	isOpenModalRemoveUser: boolean = false;
 	isOpenModalInvite: boolean = false;
 	userToRemove!: User;
 	openModalInvites: boolean = false;
 	IsOpenModalUpdateUser: boolean = false;
 	userUpdate!: User;
+
+	// Types
+	pageStade: PageState = PageState.INHABITANT;
 
 	constructor(
 		private route: ActivatedRoute,
@@ -39,13 +55,17 @@ export class ApartmentComponent {
 					if (res.body) {
 						this.apartment = res.body;
 						this.getUsers(res.body.number);
+						this.getDeliveries(res.body.number);
+						this.getBills(res.body.number);
 					}
 				});
 			} else {
-				this.apartmentService.getApartmentLoginUser().subscribe((res: any) => {
+				this.apartmentService.getCurrentUserApartment().subscribe((res: any) => {
 					if (res.body) {
 						this.apartment = res.body;
 						this.getUsers();
+						this.getDeliveries();
+						this.getBills();
 					}
 				});
 			}
@@ -60,9 +80,41 @@ export class ApartmentComponent {
 				}
 			});
 		} else {
-			this.apartmentService.getApartmentLoginUserInhabitants().subscribe((res: any) => {
+			this.apartmentService.getCurrentUserApartmentInhabitants().subscribe((res: any) => {
 				if (res.body) {
 					this.users = res.body;
+				}
+			});
+		}
+	}
+
+	getDeliveries(apartmentId?: number) {
+		if (apartmentId !== undefined) {
+			this.apartmentService.getDeliveries(apartmentId).subscribe((res: any) => {
+				if (res.body) {
+					this.deliveries = res.body;
+				}
+			});
+		} else {
+			this.apartmentService.getCurrentUserApartmentDeliveries().subscribe((res: any) => {
+				if (res.body) {
+					this.deliveries = res.body;
+				}
+			});
+		}
+	}
+
+	getBills(apartmentId?: number) {
+		if (apartmentId !== undefined) {
+			this.apartmentService.getBills(apartmentId).subscribe((res: any) => {
+				if (res.body) {
+					this.bills = res.body;
+				}
+			});
+		} else {
+			this.apartmentService.getCurrentUserApartmentBills().subscribe((res: any) => {
+				if (res.body) {
+					this.bills = res.body;
 				}
 			});
 		}
@@ -81,20 +133,9 @@ export class ApartmentComponent {
 		this.userToRemove = user;
 		this.isOpenModalRemoveUser = true;
 	}
-	handleIsOpenRemoveUserChange(isOpen: boolean): void {
-		this.isOpenModalRemoveUser = isOpen;
-	}
 
 	handleRemoveUser(userId: string): void {
 		this.users = this.users.filter(user => user.id !== userId);
-	}
-
-	handleIsOpenInviteChange(isOpen: boolean): void {
-		this.isOpenModalInvite = isOpen;
-	}
-
-	handleIsOpenUpdateUserChange(isOpen: boolean): void {
-		this.IsOpenModalUpdateUser = isOpen;
 	}
 
 	handleUpdateUser(user: User): void {
@@ -104,6 +145,27 @@ export class ApartmentComponent {
 	openModalUpdateUser(user: User) {
 		this.userUpdate = user;
 		this.IsOpenModalUpdateUser = true;
-		window.scrollTo({ top: 0, behavior: 'smooth' });
+	}
+
+	setPage(page: PageState) {
+		this.pageStade = page;
+	}
+
+	formatDate(date: Date): string {
+		const options: Intl.DateTimeFormatOptions = {
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit'
+		};
+		return new Intl.DateTimeFormat('pt-BR', options).format(new Date(date));
+	}
+
+	formatMoney(value: number): string {
+		return new Intl.NumberFormat('pt-BR', {
+			style: 'currency',
+			currency: 'BRL'
+		}).format(value);
 	}
 }

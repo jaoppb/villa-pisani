@@ -16,8 +16,7 @@
 </div>
 @if(this.openModal && !this.isAdmin){
 <app-modal-feedback
-	[isOpen]="openModal"
-	(isOpenChange)="handleIsOpenChange($event)"
+	[(isOpen)]="openModal"
 	(newFeedBack)="handleNewFeedback($event)"
 />
 }

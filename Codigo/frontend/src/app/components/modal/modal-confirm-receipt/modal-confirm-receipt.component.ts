@@ -19,7 +19,7 @@ export class ModalConfirmReceiptComponent {
   ) {}
 
   handleIsOpenChange(isOpen: boolean): void {
-    this.isOpen = isOpen;
+    this.isOpen
     this.isOpenChange.emit(this.isOpen);
   }
 

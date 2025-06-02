@@ -1,3 +1,5 @@
+@use 'mixins';
+
 :host {
 	position: absolute;
 	height: 100vh;
@@ -7,9 +9,7 @@
 }
 
 h1 {
-	font-size: 3.5rem;
-	text-align: center;
-	color: var(--blue-gray);
+	@include mixins.title-page;
 }
 
 form {
@@ -26,25 +26,21 @@ app-input {
 #tags {
 	display: flex;
 	justify-content: center;
+	flex-wrap: wrap;
 }
 
 #description {
 	width: 100%;
 	height: 150px;
+
 	margin: 10px 0;
 }
 
 button {
-	background-color: var(--primary-highlight-color);
+	@include mixins.button('rounded');
 	width: 100%;
-	color: var(--white);
-	font-weight: bolder;
-	border: none;
-	padding: 10px;
 	border-radius: 500px;
 	font-size: 1.2rem;
-	cursor: pointer;
-	transition: background-color 0.3s;
 	margin-top: 10px;
 }
 

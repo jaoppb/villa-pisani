@@ -39,19 +39,19 @@
 		</div>
 	</div>
 	} @empty{
-	<p>Nenhuma despesa encontrada.</p>
+	<div class="empty no-expenses">
+		<p>Nenhuma despesa encontrada.</p>
+	</div>
 	}
 </div>
 @if(this.openModalCreateExpenses && this.isAdmin){
 <app-modal-expenses
-	[isOpen]="openModalCreateExpenses"
-	(isOpenChange)="handleIsOpenModalExpensesChange($event)"
+	[(isOpen)]="openModalCreateExpenses"
 	(newExpense)="handleNewExpense($event)"
 />
 } @if(this.openModalCreateTag && this.isAdmin){
 <app-modal-tag-expenses
-	[isOpen]="openModalCreateTag"
-	(isOpenChange)="handleIsOpenModalTagChange($event)"
+	[(isOpen)]="openModalCreateTag"
 	(newExpense)="handleNewTag($event)"
 />
 }

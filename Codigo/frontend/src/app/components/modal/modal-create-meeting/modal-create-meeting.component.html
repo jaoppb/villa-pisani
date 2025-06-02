@@ -1,0 +1,15 @@
+<app-modal-base [(isOpen)]="isOpen" (isOpenChange)="isOpenChange.emit($event)">
+	<h1>Nova Assembleia</h1>
+	<form [formGroup]="form" (ngSubmit)="submit()">
+		<app-input
+			type="date"
+			formControlName="date"
+			placeholder="Data da Reunião"
+			id="date"
+			leftIcon="calendar"
+			[errors]="this.form.get('date')?.errors"
+			[touched]="this.form.get('date')?.touched ?? false"
+		/>
+		<button type="submit" [disabled]="form.invalid">Enviar</button>
+	</form>
+</app-modal-base>

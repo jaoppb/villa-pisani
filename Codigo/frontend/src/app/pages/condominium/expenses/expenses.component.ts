@@ -131,12 +131,4 @@ export class ExpensesComponent {
   openTagModal() {
     this.openModalCreateTag = true;
   }
-
-  handleIsOpenModalExpensesChange(isOpen: boolean) {
-    this.openModalCreateExpenses = isOpen;
-  }
-
-  handleIsOpenModalTagChange(isOpen: boolean) {
-    this.openModalCreateTag = isOpen;
-  }
 }

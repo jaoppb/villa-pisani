@@ -1,0 +1,36 @@
+<app-modal-base [(isOpen)]="isOpen" (isOpenChange)="isOpenChange.emit($event)">
+	<h1>Nova Boleto</h1>
+	<form [formGroup]="form" (ngSubmit)="submit()">
+		<app-input
+			formControlName="date"
+			placeholder="DATA DE VENCIMENTO"
+			id="bill-date"
+			type="date"
+			[errors]="this.form.get('date')?.errors"
+			[touched]="this.form.get('date')?.touched ?? false"
+		/>
+		<app-input
+			formControlName="amount"
+			placeholder="VALOR DO BOLETO"
+			id="bill-amount"
+			type="number"
+			leftIcon="coins"
+			step="0.01"
+			[errors]="this.form.get('amount')?.errors"
+			[touched]="this.form.get('amount')?.touched ?? false"
+		/>
+		<div class="apartments">
+			<h5>Apartamentos</h5>
+			<app-input
+				formControlName="apartment"
+				placeholder="APARTAMENTO"
+				id="bill-apartment"
+				type="tags"
+				[data]="this.apartments"
+				[errors]="this.form.get('apartment')?.errors"
+				[touched]="this.form.get('apartment')?.touched ?? false"
+			/>
+		</div>
+		<button type="submit" [disabled]="form.invalid">Enviar</button>
+	</form>
+</app-modal-base>

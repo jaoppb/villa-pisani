@@ -82,6 +82,20 @@ export class ApartmentsController {
 		return await this.apartmentsService.findInhabitants(apartment.number);
 	}
 
+	@Get('self/deliveries')
+	async findSelfDeliveries(@Req() req: Request) {
+		const { apartment } = req.user;
+		if (!apartment) throw new NotFoundException('Apartment not found');
+		return await this.apartmentsService.findDeliveries(apartment.number);
+	}
+
+	@Get('self/bills')
+	async findSelfBills(@Req() req: Request) {
+		const { apartment } = req.user;
+		if (!apartment) throw new NotFoundException('Apartment not found');
+		return await this.apartmentsService.findBills(apartment.number);
+	}
+
 	@Get(':number')
 	@Roles(Role.MANAGER)
 	findOne(@Param('number') number: number) {
@@ -101,6 +115,18 @@ export class ApartmentsController {
 	@Roles(Role.MANAGER)
 	async findInhabitants(@Param('number') number: number) {
 		return await this.apartmentsService.findInhabitants(number);
+	}
+
+	@Get(':number/deliveries')
+	@Roles(Role.MANAGER)
+	async findDeliveries(@Param('number') number: number) {
+		return await this.apartmentsService.findDeliveries(number);
+	}
+
+	@Get(':number/bills')
+	@Roles(Role.MANAGER)
+	async findBills(@Param('number') number: number) {
+		return await this.apartmentsService.findBills(number);
 	}
 
 	@Delete(':number')

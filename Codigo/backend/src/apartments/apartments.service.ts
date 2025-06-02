@@ -12,6 +12,7 @@ import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { InviteApartmentDto } from './dto/invite-apartment.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class ApartmentsService {
@@ -24,6 +25,7 @@ export class ApartmentsService {
 		private readonly usersRepository: Repository<User>,
 		private readonly jwtService: JwtService,
 		private readonly dataSource: DataSource,
+		private eventEmitter: EventEmitter2,
 	) {}
 
 	async create(createApartmentDto: CreateApartmentDto) {
@@ -185,15 +187,14 @@ export class ApartmentsService {
 		await queryRunner.connect();
 		await queryRunner.startTransaction();
 
+		const existingApartments = await this.apartmentsRepository.find();
+		if (existingApartments.length > 0) {
+			this.logger.warn('Apartments already exist, skipping generation');
+			this.eventEmitter.emit('apartments.generated', existingApartments);
+			this.logger.log('event apartments.generated emitted');
+			return;
+		}
 		try {
-			const existingApartments = await this.apartmentsRepository.find();
-			if (existingApartments.length > 0) {
-				this.logger.warn(
-					'Apartments already exist, skipping generation',
-				);
-				return;
-			}
-
 			const apartments: Apartment[] = [];
 			for (let i = 2; i <= 20; i++) {
 				for (let j = 1; j <= 2; j++) {
@@ -216,5 +217,41 @@ export class ApartmentsService {
 		} finally {
 			await queryRunner.release();
 		}
+	}
+
+	findDeliveries(apartmentNumber: number) {
+		return this.apartmentsRepository
+			.findOne({
+				where: { number: apartmentNumber },
+				relations: ['deliveries', 'deliveries.receiver'],
+			})
+			.then((apartment) => {
+				if (!apartment) {
+					this.logger.warn('Apartment not found', apartmentNumber);
+					throw new NotFoundException('Apartment not found');
+				}
+
+				return apartment.deliveries.map((delivery) => ({
+					...delivery,
+					receiver: delivery.receiver.name,
+					apartment: apartment.number,
+				}));
+			});
+	}
+
+	findBills(apartmentNumber: number) {
+		return this.apartmentsRepository
+			.findOne({
+				where: { number: apartmentNumber },
+				relations: ['bills'],
+			})
+			.then((apartment) => {
+				if (!apartment) {
+					this.logger.warn('Apartment not found', apartmentNumber);
+					throw new NotFoundException('Apartment not found');
+				}
+
+				return apartment.bills;
+			});
 	}
 }

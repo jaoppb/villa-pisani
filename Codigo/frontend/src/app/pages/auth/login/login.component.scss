@@ -1,2 +1,2 @@
-@use 'auth';
-@include auth.main;
+@use 'mixins';
+@include mixins.auth();

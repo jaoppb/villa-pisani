@@ -1,5 +1,5 @@
 import { Routes } from "@angular/router";
-import { HomeComponent } from "./home/home.component";
+import { HomeComponent } from "./inside-home/home.component";
 import { FeedbackComponent } from "./feedback/feedback.component";
 import { ExpensesComponent } from "./expenses/expenses.component";
 import { UsersComponent } from "./users/users.component";
@@ -9,6 +9,8 @@ import { ApartmentGuard, IsAdminGuard, IsLoggedInGuard } from "../../guards/auth
 import { inject } from "@angular/core";
 import { DeliveryComponent } from "./delivery/delivery.component";
 import { DeliverysComponent } from "./deliverys/deliverys.component";
+import { RulesComponent } from "./rules/rules.component";
+import { MeetingComponent } from "./meeting/meeting.component";
 
 export const routes: Routes = [
 	{
@@ -63,5 +65,13 @@ export const routes: Routes = [
 		path: 'delivery/:id',
 		component: DeliveryComponent,
 		data: { isDetailView: true },
+	},
+	{
+		path: 'rules',
+		component: RulesComponent
+	},
+	{
+		path: 'meeting',
+		component: MeetingComponent
 	}
 ]
