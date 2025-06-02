@@ -150,4 +150,22 @@ export class ApartmentComponent {
 	setPage(page: PageState) {
 		this.pageStade = page;
 	}
+
+	formatDate(date: Date): string {
+		const options: Intl.DateTimeFormatOptions = {
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit'
+		};
+		return new Intl.DateTimeFormat('pt-BR', options).format(new Date(date));
+	}
+
+	formatMoney(value: number): string {
+		return new Intl.NumberFormat('pt-BR', {
+			style: 'currency',
+			currency: 'BRL'
+		}).format(value);
+	}
 }

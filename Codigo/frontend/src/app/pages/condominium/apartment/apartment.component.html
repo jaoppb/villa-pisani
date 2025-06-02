@@ -56,7 +56,20 @@
 		</div>
 		} @if(this.pageStade === PageState.BILL){
 		<div class="bill">
-			@for(bill of this.bills; track bill.id) { }@empty{
+			@for(bill of this.bills; track bill.id) {
+			<div class="card-bill">
+				<h1>Boleto</h1>
+				<span>R$ {{ this.formatMoney(bill.value) }}</span>
+				<div>
+					<h2>Criado:</h2>
+					<p>{{ this.formatDate(bill.createdAt) }}</p>
+				</div>
+				<div>
+					<h2>Vencimento:</h2>
+					<p>{{ this.formatDate(bill.dueDate) }}</p>
+				</div>
+			</div>
+			}@empty{
 			<div class="empty no-bills">
 				<p>Nenhum boleto registrado.</p>
 			</div>
