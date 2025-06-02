@@ -31,6 +31,7 @@ export class ModalApartmentInviteComponent implements OnInit {
   }
 
   handleIsOpenChange(isOpen: boolean): void {
+    this.isOpen = isOpen;
     this.isOpenChange.emit(this.isOpen);
   }
 

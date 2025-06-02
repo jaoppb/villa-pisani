@@ -21,6 +21,7 @@ export class ModalRemoveUserApartmentComponent {
   ) {}
 
   handleIsOpenChange(isOpen: boolean): void {
+    this.isOpen = isOpen;
     this.isOpenChange.emit(this.isOpen);
   }
 

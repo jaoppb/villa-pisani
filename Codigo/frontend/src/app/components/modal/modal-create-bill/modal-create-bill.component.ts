@@ -63,6 +63,7 @@ export class ModalCreateBillComponent {
   }
 
   handleIsOpenChange(isOpen: boolean): void {
+    this.isOpen = isOpen;
     this.isOpenChange.emit(this.isOpen);
   }
 
