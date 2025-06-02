@@ -1,7 +1,7 @@
 <main>
 	<div class="header">
 		<h1>Apartamentos</h1>
-		<button>Criar boletos</button>
+		<button (click)="openModalCreateBill()">Criar boletos</button>
 	</div>
 	<div class="apartments-list">
 		<div
@@ -28,4 +28,6 @@
 	[(isOpen)]="IsOpenModalCreateApartment"
 	(newApartment)="handleCreateApartment($event)"
 />
+} @if(this.IsOpenModalCreateBill && this.isAdmin()){
+<app-modal-create-bill [(isOpen)]="IsOpenModalCreateBill" />
 }
