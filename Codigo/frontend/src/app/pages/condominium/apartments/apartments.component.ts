@@ -18,7 +18,7 @@ export class ApartmentsComponent {
   apartments: Apartments[] = [];
   // Modal
   IsOpenModalCreateApartment: boolean = false;
-  IsOpenModalCreateBill: boolean = true;
+  IsOpenModalCreateBill: boolean = false;
 
   constructor(
     private meta: MetaData,
