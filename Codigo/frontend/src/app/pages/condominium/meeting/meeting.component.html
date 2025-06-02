@@ -1,0 +1,26 @@
+<main>
+	@if(this.isAdmin()){
+	<button (click)="openModalCreateMeeting()">
+		Nova Asembleia
+		<app-icons name="upload"></app-icons>
+	</button>
+	}
+	<div class="meeting-list">
+		@for (meeting of this.meetings; track meeting.id) {
+		<div class="meeting-card">
+			{{ formatarDataPorExtenso(meeting.date) }}
+		</div>
+		}@empty {
+		<div class="empty no-meeting">
+			<p>Nenhum Assembeia registrado.</p>
+		</div>
+		}
+	</div>
+</main>
+
+@if (this.isOpenModalCreateMeeting && this.isAdmin()) {
+<app-modal-create-meeting
+	[(isOpen)]="isOpenModalCreateMeeting"
+	(newMeeting)="getMeetings($event)"
+/>
+}

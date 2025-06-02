@@ -10,6 +10,7 @@ import { inject } from "@angular/core";
 import { DeliveryComponent } from "./delivery/delivery.component";
 import { DeliverysComponent } from "./deliverys/deliverys.component";
 import { RulesComponent } from "./rules/rules.component";
+import { MeetingComponent } from "./meeting/meeting.component";
 
 export const routes: Routes = [
 	{
@@ -68,5 +69,9 @@ export const routes: Routes = [
 	{
 		path: 'rules',
 		component: RulesComponent
+	},
+	{
+		path: 'meeting',
+		component: MeetingComponent
 	}
 ]
