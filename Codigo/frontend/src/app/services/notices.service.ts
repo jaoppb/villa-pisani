@@ -1,26 +1,44 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { feedbackRequest, feedbackResponse } from "../model/feedback.model";
+import { NoticeRequest, NoticeResponse } from "../model/notice.model";
 
 @Injectable({
     providedIn: 'root',
 })
-export class FeedbackService {
+export class NoticesService {
     constructor(
         private http: HttpClient,
     ) {}
 
-    getAllFeedback() {
-        return this.http
-            .get<feedbackResponse[]>
-            ('feedbacks/all',
-                { observe: 'response' });
-    }
-    getUserFeedback() {
-        return this.http.get<feedbackResponse[]>('feedbacks', { observe: 'response' });
+    createNotice(data: NoticeRequest) {
+        return this.http.post<NoticeResponse>('notices', data, { observe: 'response' });
     }
 
-    createFeedback(data: feedbackRequest) {
-        return this.http.post<feedbackResponse>('feedbacks', data, { observe: 'response' });
+    getAllNotices() {
+        return this.http.get<NoticeResponse[]>('notices', { observe: 'response' });
+    }
+
+    getUserNotices() {
+        return this.http.get<NoticeResponse[]>('notices/private', { observe: 'response' });
+    }
+
+    getNoticeById(id: string) {
+        return this.http.get<NoticeResponse>(`notices/${id}`, { observe: 'response' });
+    }
+
+    getNoticesByRole(role: string) {
+        return this.http.get<NoticeResponse[]>(`notices/role/${role}`, { observe: 'response' });
+    }
+
+    getNoticesById(id: string) {
+        return this.http.get<NoticeResponse>(`notices/${id}`, { observe: 'response' });
+    }
+
+    updateNotice(id: string, data: NoticeRequest) {
+        return this.http.put<NoticeResponse>(`notices/${id}`, data, { observe: 'response' });
+    }
+
+    deleteNotice(id: string) {
+        return this.http.delete(`notices/${id}`, { observe: 'response' });
     }
 }

@@ -1,12 +1,24 @@
-export interface feedbackRequest {
+export interface NoticeRequest {
+	title: string;
 	body: string;
-	anonymous: boolean;
+	target: {
+		type: 'apartments' | 'roles';
+		roles?: string[];
+		apartments?: number[];
+	}
+	important: boolean;
 }
 
-export interface feedbackResponse {
-	id: number;
-	userName: string;
+export interface NoticeResponse {
+	title: string;
 	body: string;
-	sentAt: string;
-	status: string;
+	target: {
+		type: string;
+		roles?: string[];
+		apartments?: number[];
+	}
+	important: boolean;
+	createdAt: string;
+	updatedAt: string;
+	author: string;
 }
