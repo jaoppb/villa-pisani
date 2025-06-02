@@ -64,12 +64,10 @@ export class DeliveryComponent {
   }
 
   modalConfirmDeliveryChange(isOpen: boolean): void {
-    this.isOpenModalDeliveredDelivered = isOpen;
     this.getDelivery(this.delivery.id);
   }
 
   modalConfirmReceiptChange(isOpen: boolean): void {
-    this.isOpenModalDeliveredConfirmed = isOpen;
     this.getDelivery(this.delivery.id);
   }
 }

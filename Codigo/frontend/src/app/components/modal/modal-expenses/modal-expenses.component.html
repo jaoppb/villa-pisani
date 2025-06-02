@@ -1,4 +1,4 @@
-<app-modal-base [isOpen]="isOpen" (isOpenChange)="handleIsOpenChange($event)">
+<app-modal-base [(isOpen)]="isOpen" (isOpenChange)="isOpenChange.emit($event)">
 	<h1>Nova conta</h1>
 	<form [formGroup]="form" (ngSubmit)="submit()">
 		<app-input

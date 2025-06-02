@@ -1,0 +1,25 @@
+<app-modal-base [(isOpen)]="isOpen" (isOpenChange)="isOpenChange.emit($event)">
+	<h1>Nova Regra</h1>
+	<form [formGroup]="form" (ngSubmit)="submit()">
+		<app-input
+			formControlName="title"
+			placeholder="TÍTULO DA REGRA"
+			id="title"
+			type="text"
+			leftIcon="pen"
+			[errors]="this.form.get('title')?.errors"
+			[touched]="this.form.get('title')?.touched ?? false"
+		/>
+
+		<app-input
+			formControlName="body"
+			placeholder="Descrição da regra"
+			id="body"
+			type="textarea"
+			[touched]="this.form.get('body')?.touched ?? false"
+			[errors]="this.form.get('body')?.errors"
+		/>
+
+		<button type="submit" [disabled]="form.invalid">Enviar</button>
+	</form>
+</app-modal-base>

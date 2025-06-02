@@ -57,15 +57,15 @@
 @if(this.isOpenModalDeliveredDelivered && this.delivery.status === 'received' &&
 this.isStaff()){
 <app-modal-confirm-delivery
+	[(isOpen)]="this.isOpenModalDeliveredDelivered"
 	[delivery]="this.delivery"
-	[isOpen]="this.isOpenModalDeliveredDelivered"
 	(isOpenChange)="modalConfirmDeliveryChange($event)"
 ></app-modal-confirm-delivery>
 } @if(this.isOpenModalDeliveredConfirmed && this.delivery.status === 'delivered'
 && this.isInhabitant()){
 <app-modal-confirm-receipt
+	[(isOpen)]="this.isOpenModalDeliveredConfirmed"
 	[delivery]="this.delivery"
-	[isOpen]="this.isOpenModalDeliveredConfirmed"
 	(isOpenChange)="modalConfirmReceiptChange($event)"
 ></app-modal-confirm-receipt>
 }

@@ -1,4 +1,4 @@
-<app-modal-base [isOpen]="isOpen" (isOpenChange)="handleIsOpenChange($event)">
+<app-modal-base [(isOpen)]="isOpen" (isOpenChange)="isOpenChange.emit($event)">
 	<h1>Convite para {{ apartmentId }}</h1>
 	<div class="qrcode">
 		<qrcode [qrdata]="link" [width]="250" />

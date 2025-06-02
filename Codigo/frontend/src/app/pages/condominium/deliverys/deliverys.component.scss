@@ -1,3 +1,5 @@
+@use 'mixins';
+
 main {
 	margin: auto;
 	margin-top: 20px;
@@ -8,55 +10,7 @@ main {
 }
 
 .card {
-	width: 250px;
-	height: 350px;
-	background-color: white;
-	border-radius: 5px;
-	border: 1px solid transparent;
-	display: flex;
-	flex-direction: column;
-	cursor: pointer;
-
-	h1 {
-		font-family: 'Montserrat', sans-serif;
-		text-align: center;
-		padding: 20px 0;
-	}
-
-	&.viewed {
-		border-color: var(--primary-highlight-color);
-
-		.card-content {
-			background-color: var(--primary-highlight-color);
-		}
-	}
-
-	&.not-viewed {
-		border-color: var(--secondary-highlight-color);
-
-		.card-content {
-			background-color: var(--secondary-highlight-color);
-		}
-	}
-
-	.card-content {
-		color: white;
-		height: 100%;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-around;
-		padding: 0 20px;
-
-		h2 {
-			font-family: 'Montserrat', sans-serif;
-			font-weight: 700;
-			font-size: 1.4rem;
-		}
-		p {
-			padding-left: 20px;
-			font-size: 1.2rem;
-		}
-	}
+	@include mixins.card-delivery;
 }
 
 .add-button {

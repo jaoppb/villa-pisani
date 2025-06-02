@@ -10,7 +10,6 @@ import { AppConfigService } from 'src/app-config/app-config.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { User } from 'src/user/entities/user.entity';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PublicGuard } from './guards/public.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
@@ -25,7 +24,6 @@ import { Apartment } from 'src/apartments/entities/apartment.entity';
 		PassportModule,
 		UserModule,
 		TypeOrmModule.forFeature([User, Apartment]),
-		EventEmitterModule.forRoot(),
 		JwtModule.registerAsync({
 			imports: [AppConfigModule],
 			inject: [AppConfigService],

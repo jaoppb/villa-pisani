@@ -1,9 +1,9 @@
 @use 'sass:color';
-:host{
+:host {
 	min-height: 100vh;
 }
 
-Header{
+Header {
 	position: fixed;
 	display: flex;
 	align-items: center;
@@ -18,11 +18,15 @@ Header{
 	width: 100%;
 }
 
-.auth-links{
+.logo {
+	color: var(--yellow);
+}
+
+.auth-links {
 	display: flex;
 	align-items: center;
 	gap: 1rem;
-	a{
+	a {
 		color: var(--text-color-app);
 	}
 }

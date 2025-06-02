@@ -1,8 +1,18 @@
 @if(isOpen){
-	<div class="back">
-		<div class="conteiner">
-			<app-icons name='close' class="close" size="36" (click)="closeModal()"></app-icons>
-			<ng-content></ng-content>
-		</div>
+<div class="back">
+	<div
+		class="conteiner"
+		#modalRoot
+		tabindex="-1"
+		(click)="$event.stopPropagation()"
+	>
+		<app-icons
+			name="close"
+			class="close"
+			size="36"
+			(click)="closeModal()"
+		></app-icons>
+		<ng-content></ng-content>
 	</div>
+</div>
 }

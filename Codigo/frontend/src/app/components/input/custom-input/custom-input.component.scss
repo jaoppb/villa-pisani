@@ -1,23 +1,23 @@
 .input-container {
 	margin-bottom: 1rem;
 
-	.input{
+	.input {
 		display: inline-flex;
 		border: 2px solid var(--primary-highlight-color);
 		background-color: transparent;
 		border-radius: 5px;
 		width: 100%;
 		align-items: center;
-	
-		app-icons{
+
+		app-icons {
 			margin: 0 10px;
 			color: var(--gray);
 		}
-		app-icons.click{
+		app-icons.click {
 			cursor: pointer;
 		}
-	
-		input{
+
+		input {
 			all: unset;
 			height: 100%;
 			width: 100%;
@@ -28,16 +28,16 @@
 			padding: 2px 5px;
 			border-radius: inherit;
 			font-weight: bold;
-	
-			&::placeholder{
+
+			&::placeholder {
 				color: var(--gray);
 			}
 			appearance: none;
 		}
 
-		input[type="date"]::-webkit-calendar-picker-indicator {
+		input[type='date']::-webkit-calendar-picker-indicator {
 			cursor: auto;
-			filter: blur(9999999px)
+			filter: blur(9999999px);
 		}
 
 		input:focus {
@@ -48,15 +48,14 @@
 			border-color: var(--secondary-highlight-color);
 			box-shadow: 0 0 5px var(--secondary-highlight-color);
 		}
-		
 	}
 
-	.error-messages{
+	.error-messages:not(:empty) {
 		color: var(--error-message-color);
 		min-height: 20px;
 		margin-top: 5px;
-		
-		small{
+
+		small {
 			display: block;
 		}
 	}

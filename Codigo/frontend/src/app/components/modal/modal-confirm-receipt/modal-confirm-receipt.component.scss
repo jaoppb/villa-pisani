@@ -1,3 +1,5 @@
+@use 'mixins';
+
 :host {
 	position: absolute;
 	height: 100vh;
@@ -7,9 +9,8 @@
 }
 
 h1 {
+	@include mixins.title-page;
 	font-size: 2.5rem;
-	text-align: center;
-	color: var(--blue-gray);
 }
 
 div {
@@ -21,22 +22,13 @@ div {
 	margin-top: 20px;
 }
 
-.close,
-.remove {
-	background-color: var(--primary-highlight-color);
+.close {
+	@include mixins.button('rounded');
 	width: 100%;
-	color: var(--white);
-	font-weight: bolder;
-	border: none;
-	padding: 10px;
-	border-radius: 500px;
 	font-size: 1.2rem;
-	cursor: pointer;
-	transition: background-color 0.3s;
-	margin-top: 10px;
 }
 .remove {
-	background-color: transparent;
-	border: 4px solid var(--primary-highlight-color);
-	color: var(--text-color-app);
+	@include mixins.button('bordered');
+	width: 100%;
+	font-size: 1.2rem;
 }

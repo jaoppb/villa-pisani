@@ -55,8 +55,7 @@
 
 @if(this.IsOpenModalUpdateUser && this.isAdmin()){
 <app-modal-update-user
-	[isOpen]="IsOpenModalUpdateUser"
-	(isOpenChange)="handleIsOpenUpdateUserChange($event)"
+	[(isOpen)]="IsOpenModalUpdateUser"
 	[user]="userSelected"
 	(userUpdated)="handleUpdateUser($event)"
 />
