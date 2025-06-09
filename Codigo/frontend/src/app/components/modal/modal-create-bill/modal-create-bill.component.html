@@ -19,6 +19,15 @@
 			[errors]="this.form.get('amount')?.errors"
 			[touched]="this.form.get('amount')?.touched ?? false"
 		/>
+		<app-input
+			formControlName="dueIn"
+			placeholder="DIAS PARA PAGAMENTO"
+			id="bill-due-in"
+			type="number"
+			leftIcon="clock"
+			[errors]="this.form.get('dueIn')?.errors"
+			[touched]="this.form.get('dueIn')?.touched ?? false"
+		/>
 		<div class="apartments">
 			<h5>Apartamentos</h5>
 			<app-input

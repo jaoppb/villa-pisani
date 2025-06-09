@@ -27,9 +27,16 @@ export class ModalCreateBillComponent {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    // Converte today para yyyy-MM-dd para o input type="date"
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayString = `${yyyy}-${mm}-${dd}`;
+
     this.form = this.fb.group({
-      date: [today, [Validators.required, this.validateDate]],
+      date: [todayString, [Validators.required]],
       amount: [null, [Validators.required, Validators.min(1)]],
+      dueIn: [null, [Validators.required, Validators.min(1)]],
       apartment: [[], [Validators.required, Validators.min(1)]],
     });
 
@@ -74,9 +81,9 @@ export class ModalCreateBillComponent {
       const selectedApartments = formData.apartment.map((apartment: string) => parseInt(apartment, 10));
 
       const billData = {
-        value: parseFloat(formData.amount),
-        refer: new Date(formData.date), // Converte para Date
-        dueIn: 30, // Assuming a fixed dueIn of 30 days
+        value: parseInt((parseFloat(formData.amount) * 100).toString()),
+        refer: new Date(formData.date),
+        dueIn: parseInt(formData.dueIn),
         apartmentNumbers: selectedApartments
       };
 
