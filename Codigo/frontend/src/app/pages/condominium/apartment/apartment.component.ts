@@ -168,4 +168,16 @@ export class ApartmentComponent {
 			currency: 'BRL'
 		}).format(value);
 	}
+
+	changeOwner(user: User): void {
+		if (this.apartment.owner.id === user.id) {
+			return;
+		}
+		this.apartmentService.updateApartment(this.apartment.number, { ...this.apartment, ownerId: user.id }).subscribe((res: any) => {
+			if (res.body) {
+				this.apartment = res.body;
+				this.getUsers(this.apartment.number);
+			}
+		});
+	}
 }
