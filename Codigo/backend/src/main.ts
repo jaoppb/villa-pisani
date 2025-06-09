@@ -17,7 +17,7 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule, options);
 	configPipe(app);
 	configLogger(app);
-	await configureSwagger(app);
+	if (process.env.NODE_ENV === 'development') await configureSwagger(app);
 	configureCors(app);
 	await app.listen(process.env.API_PORT ?? 3000);
 }
