@@ -9,7 +9,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
   templateUrl: './icons.component.html',
   styleUrl: './icons.component.scss'
 })
-export class IconsComponent implements OnChanges{
+export class IconsComponent implements OnChanges {
   @Input() name!: string;
   @Input() size: string = '24';
   @Input() color: string = 'currentColor';

@@ -37,9 +37,22 @@ export class ApartmentsService {
 			throw new BadRequestException('Apartment already exists');
 		}
 
-		this.logger.log('Creating apartment', createApartmentDto);
-		const created =
-			await this.apartmentsRepository.save(createApartmentDto);
+		const newApartment = new Apartment();
+		Object.assign(newApartment, createApartmentDto);
+		if (createApartmentDto.ownerId) {
+			const owner = await this.usersRepository.findOneBy({
+				id: createApartmentDto.ownerId,
+			});
+			if (!owner) {
+				this.logger.warn('Owner not found', createApartmentDto.ownerId);
+				throw new BadRequestException('Owner not found');
+			}
+			newApartment.owner = owner;
+			newApartment.inhabitants = [owner];
+		}
+
+		this.logger.log('Creating apartment', newApartment);
+		const created = await this.apartmentsRepository.save(newApartment);
 		this.logger.log('Created apartment', created);
 
 		return created;
@@ -127,9 +140,15 @@ export class ApartmentsService {
 		}
 
 		this.logger.log('Updating apartment with number', number);
+		const owner = updateApartmentDto.ownerId
+			? ((await this.usersRepository.findOneBy({
+					id: updateApartmentDto.ownerId,
+				})) ?? undefined)
+			: apartment.owner;
 		const updated = await this.apartmentsRepository.save({
 			...apartment,
 			...updateApartmentDto,
+			owner,
 		});
 		this.logger.log('Updated apartment number', updated);
 

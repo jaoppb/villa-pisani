@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Apartments, InviteResponse } from "../model/apartment.model";
+import { Apartments, AppartamentRequest, AppartamentRequestUpdate, InviteResponse } from "../model/apartment.model";
 import { tap } from "rxjs";
 import { Delivery } from "../model/delivery.model";
 import { Bill } from "../model/bill.model";
@@ -33,7 +33,7 @@ export class ApartmentService {
         return this.http.get<Bill[]>(`apartments/${id}/bills`, { observe: 'response' });
     }
 
-    createApartment(data: Apartments) {
+    createApartment(data: AppartamentRequest) {
         return this.http.post<Apartments>('apartments', data, { observe: 'response' });
     }
 
@@ -51,8 +51,8 @@ export class ApartmentService {
         return this.http.post('apartments/invite', { inviteToken: token }, { observe: 'response' });
     }
 
-    updateApartment(id: number, data: Apartments) {
-        return this.http.put<Apartments>(`apartments/${id}`, data, { observe: 'response' });
+    updateApartment(id: number, data: AppartamentRequestUpdate) {
+        return this.http.patch<Apartments>(`apartments/${id}`, data, { observe: 'response' });
     }
 
     deleteApartment(id: number) {

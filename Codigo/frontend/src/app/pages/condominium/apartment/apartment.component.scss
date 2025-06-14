@@ -63,7 +63,19 @@ main {
 		color: var(--text-color-app);
 		cursor: pointer;
 	}
+
+	.owner {
+		@include mixins.button;
+		cursor: default;
+	}
+	.owner-btn {
+		@include mixins.button('bordered');
+		background-color: transparent;
+		border: 2px solid var(--primary-highlight-color);
+		color: var(--text-color-app);
+	}
 }
+
 .card-delivery {
 	@include mixins.card-delivery;
 }

@@ -1,4 +1,4 @@
-import { IsNumber, IsPositive } from 'class-validator';
+import { IsNumber, IsOptional, IsPositive, IsUUID } from 'class-validator';
 
 export class CreateApartmentDto {
 	@IsNumber()
@@ -8,4 +8,8 @@ export class CreateApartmentDto {
 	@IsNumber()
 	@IsPositive()
 	floor: number;
+
+	@IsOptional()
+	@IsUUID()
+	ownerId?: string;
 }
