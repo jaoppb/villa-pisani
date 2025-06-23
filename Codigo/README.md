@@ -1,8 +1,14 @@
 # Código do projeto
 
-[Código do front-end](../Codigo/frontend/) -- repositório do código do front-end
+[Código do front-end](../Codigo/frontend/) -- Repositório do código do front-end
 
-[Código do back-end](../Codigo/backend/) -- repositório do código do back-end
+[Código do back-end](../Codigo/backend/) -- Repositório do código do back-end
+
+[Configuração AWS](../Codigo/aws/) -- Configuração para o deploy na AWS
+
+[Configuração Caddy](../Codigo/caddy/) -- Configuração do proxy reverso
+
+[Configuração Localstack](../Codigo/localstack/) -- Configuração para simular o serviço do S3 da AWS
 
 # Tutorial de como rodar Docker do projeto
 
