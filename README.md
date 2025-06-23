@@ -4,6 +4,7 @@ Desenvolver um sistema de gestão condominial para o Condomínio Villa Pisani, v
 
 ## Alunos integrantes da equipe
 
+-   [Guilherme de Almeida Santos](https://github.com/guilhermeas04)
 -   [João Pedro Peres Barbosa](https://github.com/jaoppb)
 -   [Luis Henrique Gonçalves Barbosa](https://github.com/BGLuis)
 -   [Marcela Mendes Campos](https://github.com/marcelacamposm)
