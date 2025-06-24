@@ -1,15 +1,11 @@
 cff-version: 1.0.1
 message: Please cite this software using these metadata.
-title: 
+title: Villa Pisani - Gerenciamento de Condomínio
 authors:
-  - family-names: Neri Guimarães Rocha
-    given-names: Alessandro
-  - family-names: de Almeida Santos
-    given-names: Guilherme
   - family-names: Peres Barbosa
     given-names: João Pedro
-  - family-names: Gonçalves Barbos
-    given-names: Luis Henrique 
+  - family-names: Gonçalves Barbosa
+    given-names: Luis Henrique
   - family-names: Mendes Campos
     given-names: Marcela
   - name-suffix: Professor
@@ -26,9 +22,15 @@ authors:
     given-names: Ramon
 
 keywords:
-  - 
-  - 
-repository-code: 
+  - nest.js
+  - angular
+  - condomínio
+  - aplicação web
+  - gerenciamento
+  - gereção de boleto
+  - stripe
+  - villa pisani
+repository-code: https://github.com/ICEI-PUC-Minas-PMGES-TI/pmg-es-2025-1-ti3-9577100-villa-pisani
 license: CC-BY-4.0
 version: 1.0.0
-date-released:
+date-released: 2025-06-24
