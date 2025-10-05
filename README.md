@@ -18,3 +18,4 @@ Desenvolver um sistema de gestão condominial para o Condomínio Villa Pisani, v
 ## Instruções de utilização
 
 Para roda o sistema localmente copie os valoes do arquivo .env.example para .env e preenchar os valores corretamente. faça isso na pasta [codigo](/Codigo/) e na pasta [backend](/Codigo/backend/). Apos preencher as variavis de ambiente execute o docker-compose dentro de [codigo](/Codigo/) caso não saiba siga os passo de [como rodar Docker do projeto](/Codigo/README.md)
+
